@@ -1,6 +1,6 @@
-'use client';
 
-import { useParams, useRouter } from 'next/navigation';
+import { Metadata } from 'next';
+import { notFound } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
 import { 
@@ -12,7 +12,8 @@ import {
   latestResources,
   eventsCategory
 } from '@/lib/mockData';
-import { Post, Podcast, Resource, Event, Category } from '@/types';
+import { Post, Podcast, Resource, Event } from '@/types';
+import ShareActions from '@/components/ShareActions';
 
 // Helper types
 type ContentItem = Post | Podcast | Resource | Event;
@@ -38,7 +39,6 @@ const findContent = (type: string, slug: string): ContentItem | undefined => {
         ...latestPosts, 
         ...newsPosts, 
         ...trendingPosts,
-        // Also check nested posts in mainCategories if needed, but these are main ones
       ].find(item => item.slug === slug);
     
     case 'podcast':
@@ -62,12 +62,8 @@ const getImageUrl = (item: ContentItem): string => {
   return '/images/music.svg';
 };
 
-// Helper to get title safely
-const getTitle = (item: ContentItem): string => {
-  return item.title;
-};
-
-// Helper to get date safely
+// Helper to get safe properties
+const getTitle = (item: ContentItem) => item.title;
 const getDate = (item: ContentItem): string => {
   if ('published_at' in item && item.published_at) return new Date(item.published_at).toLocaleDateString();
   if ('created_at' in item && item.created_at) return new Date(item.created_at).toLocaleDateString();
@@ -75,33 +71,50 @@ const getDate = (item: ContentItem): string => {
   return '';
 };
 
-export default function ContentDetailPage() {
-  const params = useParams();
-  const type = params.type as string;
-  const slug = params.slug as string;
+// Generate Metadata for SEO
+export async function generateMetadata({ params }: { params: Promise<{ type: string, slug: string }> }): Promise<Metadata> {
+  const { type, slug } = await params;
+  const content = findContent(type, slug);
+  
+  if (!content) {
+    return {
+      title: 'Content Not Found',
+    };
+  }
+
+  const title = getTitle(content);
+  // @ts-ignore
+  const description = content.excerpt || content.content?.substring(0, 160) || `Read more about ${title} on Dynamic Listing.`;
+  const image = getImageUrl(content);
+
+  return {
+    title: `${title} - Dynamic Listing`,
+    description: description,
+    openGraph: {
+      title: title,
+      description: description,
+      images: [image],
+    },
+  };
+}
+
+export default async function ContentDetailPage({ params }: { params: Promise<{ type: string, slug: string }> }) {
+  const { type, slug } = await params;
   const content = findContent(type, slug);
 
   if (!content) {
-    return (
-      <div className="min-h-screen bg-white pt-32 pb-20 px-5 flex flex-col items-center justify-center">
-        <h1 className="text-3xl font-clash font-semibold text-gray-900 mb-4">Content Not Found</h1>
-        <p className="text-gray-600 mb-8">Sorry, we couldn&apos;t find the page you&apos;re looking for.</p>
-        <Link href="/" className="px-6 py-3 bg-primary text-white rounded-full hover:bg-opacity-90 transition-all">
-          Back to Home
-        </Link>
-      </div>
-    );
+    notFound();
   }
 
   const title = getTitle(content);
   const image = getImageUrl(content);
   const date = getDate(content);
-  // @ts-ignore - accessing common properties that might not exist on all overlapping types without strict guards
+  // @ts-ignore
   const author = content.author_name || content.user?.name || '';
   // @ts-ignore
   const bodyContent = content.content || content.excerpt || 'No content available.';
   // @ts-ignore
-  const categoryName = content.category?.name || type;
+  const categoryName = content.category?.name || params.type;
 
   return (
     <main className="min-h-screen bg-white pt-24 pb-20">
@@ -137,10 +150,13 @@ export default function ContentDetailPage() {
           />
         </div>
 
+        {/* Share Buttons */}
+        <div className="flex justify-center mb-12">
+           <ShareActions title={title} />
+        </div>
+
         {/* Content */}
         <div className="prose prose-lg max-w-none text-gray-700 leading-relaxed">
-           {/* Render HTML content safely if needed, or just text for now */}
-           {/* For mock data we often have plain text or simple HTML */}
            <div dangerouslySetInnerHTML={{ __html: bodyContent.replace(/\n/g, '<br />') }} />
         </div>
         
@@ -164,12 +180,10 @@ export default function ContentDetailPage() {
         <div className="mt-20 pt-12 border-t border-gray-100">
           <h2 className="text-2xl font-clash font-bold text-gray-900 mb-8">Related Content</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-             {/* Simple Related Cards Logic */}
              {(
                 type === 'post' ? [...latestPosts, ...newsPosts].filter(p => p.slug !== slug && p.category?.id === (content as Post).category?.id).slice(0, 3) :
                 type === 'podcast' ? latestPodcasts.filter(p => p.slug !== slug).slice(0, 3) :
                 type === 'resource' ? latestResources.filter(p => p.slug !== slug).slice(0, 3) :
-                // For events or others, just show latest posts for now as fallback
                 latestPosts.slice(0, 3)
              ).map((item) => (
                <Link href={`/content/${type}/${item.slug}`} key={item.id} className="group block">

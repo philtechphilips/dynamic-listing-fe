@@ -3,8 +3,8 @@
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { usePathname } from "next/navigation";
-import { ArrowDown, ArrowRight, ChevronRight, X, User } from "lucide-react";
+import { usePathname, useRouter } from "next/navigation";
+import { ArrowDown, ArrowRight, ChevronRight, X, User, Search } from "lucide-react";
 
 
 export default function Navbar() {
@@ -13,6 +13,16 @@ export default function Navbar() {
   const pathname = usePathname();
   const mobileMenuRef = useRef<HTMLDivElement>(null);
   const mobileMenuButtonRef = useRef<HTMLImageElement>(null);
+  const router = useRouter();
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      router.push(`/search?q=${encodeURIComponent(searchQuery)}`);
+      setIsMobileMenuOpen(false);
+    }
+  };
 
   // Close mobile menu when route changes
   useEffect(() => {
@@ -159,6 +169,31 @@ export default function Navbar() {
               </li>
             </ul>
 
+            {/* Animated Search Bar - Desktop */}
+            <div className={`hidden lg:flex items-center transition-all duration-300 ease-in-out ${searchQuery ? 'w-64' : 'w-auto'}`}>
+              <form 
+                onSubmit={handleSearch} 
+                className={`relative flex items-center bg-white/10 border border-gray-200/50 rounded-full overflow-hidden transition-all duration-300 ${
+                   searchQuery ? 'w-64 shadow-md bg-white' : 'w-10 h-10 hover:w-64 hover:bg-white hover:shadow-md'
+                }`}
+              >
+                 <button 
+                  type="submit" 
+                  className={`absolute left-0 top-0 bottom-0 w-10 flex items-center justify-center text-gray-500 hover:text-primary transition-colors z-10`}
+                  aria-label="Search"
+                 >
+                   <Search className="w-4 h-4" />
+                 </button>
+                 <input
+                  type="text"
+                  placeholder="Search..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className={`w-full h-full bg-transparent border-none py-2 pl-10 pr-4 text-sm focus:outline-none focus:ring-0 placeholder-gray-400 text-gray-900 transition-opacity duration-200`}
+                 />
+              </form>
+            </div>
+
             <div className="">
                 <Link
                     href="/login"
@@ -221,6 +256,24 @@ export default function Navbar() {
         </div>
 
         <ul className="flex flex-col gap-6">
+          {/* Search Bar - Mobile */}
+          <li>
+            <form onSubmit={handleSearch} className="relative">
+               <input
+                type="text"
+                placeholder="Search..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full bg-gray-50 border border-gray-200 rounded-xl py-3 pl-4 pr-10 text-base focus:outline-none focus:ring-2 focus:ring-primary/50"
+               />
+               <button 
+                type="submit" 
+                className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400"
+               >
+                 <Search className="w-5 h-5" />
+               </button>
+            </form>
+          </li>
           <li>
             <Link
               href="/category/restaurants"

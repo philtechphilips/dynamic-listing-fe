@@ -105,185 +105,147 @@ export default function Footer() {
                 className="hover:opacity-80 transition-opacity"
               >
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M22.54 6.42C22.4208 5.94541 22.1795 5.51061 21.8398 5.15874C21.5001 4.80687 21.0734 4.54972 20.6 4.41C18.88 4 12 4 12 4C12 4 5.12 4 3.4 4.41C2.92659 4.54972 2.49988 4.80687 2.16017 5.15874C1.82046 5.51061 1.57916 5.94541 1.46 6.42C1.26477 8.28315 1.26477 10.1568 1.46 12.02C1.57916 12.4946 1.82046 12.9294 2.16017 13.2813C2.49988 13.6331 2.92659 13.8903 3.4 14.03C5.12 14.44 12 14.44 12 14.44C12 14.44 18.88 14.44 20.6 14.03C21.0734 13.8903 21.5001 13.6331 21.8398 13.2813C22.1795 12.9294 22.4208 12.4946 22.54 12.02C22.7352 10.1568 22.7352 8.28315 22.54 6.42Z" stroke="#1F2937" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                    <path d="M9.75 15.02L15.5 11.75L9.75 8.48001V15.02Z" stroke="#1F2937" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    <path d="M22.54 6.42C22.4208 5.94541 22.1795 5.51061 21.8398 5.15874C21.5001 4.80687 21.0734 4.54972 20.6 4.41C18.88 4 12 4 12 4C12 4 5.12 4 3.4 4.41C2.92659 4.54972 2.49988 4.80687 2.16017 5.15874C1.82046 5.51061 1.57916 5.94541 1.46 6.42C1.26477 8.28315 1.26477 10.1568 1.46 12.02C1.57916 12.4946 1.82046 12.9294 2.16017 13.2813C2.49988 13.6331 2.92659 13.8903 3.4 14.03C5.12 14.44 12 14.44 12 14.44C12 14.44 18.88 14.44 20.6 14.03C21.0734 13.8903 21.5001 13.6331 21.8398 13.2813C22.1795 12.9294 22.4208 12.4946 22.54 12.02C22.7352 10.1568 22.7352 8.28315 22.54 6.42Z" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    <path d="M9.75 15.02L15.5 11.75L9.75 8.48001V15.02Z" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                 </svg>
               </a>
             </div>
           </div>
         </div>
 
-        <div className="md:w-fit w-[40%]">
-          <h6 className="text-gray-900 font-clash font-semibold text-lg">
-            Quick Links
-          </h6>
-          <ul className="flex flex-col gap-4 text-gray-600 font-medium text-sm mt-4">
+        {/* Column 2 - Discover */}
+        <div className="md:col-span-2 col-span-1">
+          <h4 className="text-gray-100 font-semibold text-lg mb-6 font-clash">
+            Discover
+          </h4>
+          <ul className="flex flex-col gap-4">
             <li>
-              <Link href="/" className="hover:text-primary transition-colors">
-                Home
+              <Link
+                href="/search"
+                className="text-gray-200 hover:text-primary transition-colors inline-block"
+              >
+                Search
               </Link>
             </li>
             <li>
               <Link
-                href="/about-us"
-                className="hover:text-primary transition-colors"
+                href="/category/news"
+                className="text-gray-200 hover:text-primary transition-colors inline-block"
               >
-                About us
+                Latest News
               </Link>
             </li>
             <li>
               <Link
-                href="/services"
-                className="hover:text-primary transition-colors"
+                href="/category/events"
+                className="text-gray-200 hover:text-primary transition-colors inline-block"
               >
-                Services
+                Events
               </Link>
             </li>
             <li>
               <Link
-                href="/case-study"
-                className="hover:text-primary transition-colors"
+                href="/category/podcasts"
+                className="text-gray-200 hover:text-primary transition-colors inline-block"
               >
-                Case Studies
-              </Link>
-            </li>
-            <li>
-              <Link
-                href="/partner"
-                className="hover:text-primary transition-colors"
-              >
-                Partners
-              </Link>
-            </li>
-            <li>
-              <Link
-                href="/faqs"
-                className="hover:text-primary transition-colors"
-              >
-                FAQs
+                Podcasts
               </Link>
             </li>
           </ul>
         </div>
 
-        <div className="md:w-fit w-[50%]">
-          <h6 className="text-gray-900 font-clash font-semibold text-lg">
-            Top Categories
-          </h6>
-          <ul className="flex flex-col gap-4 text-gray-600 font-medium text-sm mt-4">
+        {/* Column 3 - Categories */}
+        <div className="md:col-span-2 col-span-1">
+          <h4 className="text-gray-100 font-semibold text-lg mb-6 font-clash">
+            Categories
+          </h4>
+          <ul className="flex flex-col gap-4">
             <li>
               <Link
-                href="/listing/restaurants"
-                className="hover:text-primary transition-colors"
+                href="/category/restaurants"
+                className="text-gray-200 hover:text-primary transition-colors inline-block"
               >
                 Restaurants
               </Link>
             </li>
             <li>
               <Link
-                href="/listing/movies"
-                className="hover:text-primary transition-colors"
+                href="/category/movies"
+                className="text-gray-200 hover:text-primary transition-colors inline-block"
               >
                 Movies
               </Link>
             </li>
             <li>
               <Link
-                href="/listing/hotels"
-                className="hover:text-primary transition-colors"
+                href="/category/hotels"
+                className="text-gray-200 hover:text-primary transition-colors inline-block"
               >
                 Hotels
               </Link>
             </li>
-             <li>
-                <Link
-                    href="/listing/gyms"
-                    className="hover:text-primary transition-colors"
-                >
-                    Gyms & Fitness
-                </Link>
-             </li>
-              <li>
-                  <Link
-                      href="/all-post/news"
-                      className="hover:text-primary transition-colors"
-                  >
-                      Latest News
-                  </Link>
-              </li>
             <li>
-              <Link className="flex flex-row gap-2 items-center" href="/#">
-                <p>Musifyr</p>
-                <div className="border border-gray-300 rounded-full text-[10px] font-medium text-primary px-2 py-0.5">
-                  Coming Soon
-                </div>
+              <Link
+                href="/category/gyms"
+                className="text-gray-200 hover:text-primary transition-colors inline-block"
+              >
+                Gyms & Fitness
+              </Link>
+            </li>
+            <li>
+              <Link
+                href="/category/salons"
+                className="text-gray-200 hover:text-primary transition-colors inline-block"
+              >
+                Salons & Spas
               </Link>
             </li>
           </ul>
         </div>
 
-        <div className="md:w-fit">
-          <h6 className="text-gray-900 font-clash font-semibold text-lg">
-            Contact
-          </h6>
-          <div className="flex items-start gap-2 mt-4">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="mt-1 text-gray-900">
-                <path d="M22 16.92V19.92C22.0011 20.1986 21.9204 20.471 21.767 20.7057C21.6137 20.9403 21.3941 21.1274 21.1343 21.2449C20.8745 21.3624 20.5855 21.4055 20.3013 21.3691C20.017 21.3327 19.7492 21.2183 19.53 21.04C16.5004 18.9882 13.9189 16.4067 11.8671 13.3771C11.6877 13.1555 11.5727 12.8851 11.5362 12.5996C11.4996 12.3142 11.543 12.0245 11.6611 11.7634C11.7792 11.5024 11.967 11.2804 12.2032 11.1235C12.4394 10.9666 12.7144 10.881 12.9972 10.8771H15.9972C16.8909 10.8711 17.6534 11.5645 17.72 12.4552C17.7735 13.1666 18.1578 13.8016 18.7738 14.2045C19.0494 14.3853 19.3804 14.4754 19.71 14.4593C20.0397 14.4431 20.3541 14.3214 20.6 14.1147L21.45 13.3999" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                <path d="M11.11 13.89L13.16 11.84" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                <path d="M15 4H19" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                <path d="M15 8H19" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
-            <div>
-              <p className="text-gray-600 font-medium">+234 810 288 2412</p>
-              <p className="text-gray-600 font-medium mt-2">+44 7459 802902</p>
-            </div>
-          </div>
-
-          <div className="flex items-start gap-2 mt-4">
-             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="mt-1 text-gray-900">
-                <path d="M4 4H20C21.1 4 22 4.9 22 6V18C22 19.1 21.1 20 20 20H4C2.9 20 2 19.1 2 18V6C2 4.9 2.9 4 4 4Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                <path d="M22 6L12 13L2 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
-            <div className="text-gray-600 font-medium">
-              <p>info@dynamiclisting.com</p>
-            </div>
-          </div>
-        </div>
-
-        <div className="md:w-1/4 w-full">
-          <h6 className="text-gray-900 font-clash font-semibold text-lg">
-            Office Locations
-          </h6>
-          <div className="flex items-start gap-2 mt-4">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="mt-1 text-gray-900">
-                <path d="M21 10C21 17 12 23 12 23C12 23 3 17 3 10C3 7.61305 3.94821 5.32387 5.63604 3.63604C7.32387 1.94821 9.61305 1 12 1C14.3869 1 16.6761 1.94821 18.364 3.63604C20.0518 5.32387 21 7.61305 21 10Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                <path d="M12 13C13.6569 13 15 11.6569 15 10C15 8.34315 13.6569 7 12 7C10.3431 7 9 8.34315 9 10C9 11.6569 10.3431 13 12 13Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
-            <div>
-              <h6 className="text-gray-900 font-semibold">Nigeria Office</h6>
-              <p className="text-gray-600 font-medium mt-2">
-                Dynamic Listing Brand 22 Imoro Peace Avenue , Ikorodu
-              </p>
-            </div>
-          </div>
-          <div className="flex items-start gap-2 mt-4">
-             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="mt-1 text-gray-900">
-                <path d="M21 10C21 17 12 23 12 23C12 23 3 17 3 10C3 7.61305 3.94821 5.32387 5.63604 3.63604C7.32387 1.94821 9.61305 1 12 1C14.3869 1 16.6761 1.94821 18.364 3.63604C20.0518 5.32387 21 7.61305 21 10Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                <path d="M12 13C13.6569 13 15 11.6569 15 10C15 8.34315 13.6569 7 12 7C10.3431 7 9 8.34315 9 10C9 11.6569 10.3431 13 12 13Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
-            <div>
-              <h6 className="text-gray-900 font-semibold">
-                United Kingdom Office
-              </h6>
-              <p className="text-gray-600 font-medium mt-2">
-                Dynamic Listing Brand 58 Strathmore Avenue CV1 2AH
-              </p>
-            </div>
-          </div>
+        {/* Column 4 - Company */}
+        <div className="md:col-span-2 col-span-1">
+          <h4 className="text-gray-100 font-semibold text-lg mb-6 font-clash">
+            Company
+          </h4>
+          <ul className="flex flex-col gap-4">
+            <li>
+              <Link
+                href="/about"
+                className="text-gray-200 hover:text-primary transition-colors inline-block"
+              >
+                About Us
+              </Link>
+            </li>
+            <li>
+              <Link
+                href="/contact"
+                className="text-gray-200 hover:text-primary transition-colors inline-block"
+              >
+                Contact
+              </Link>
+            </li>
+            <li>
+              <Link
+                href="/login"
+                className="text-gray-200 hover:text-primary transition-colors inline-block"
+              >
+                Login
+              </Link>
+            </li>
+             <li>
+              <Link
+                href="/privacy-policy"
+                className="text-gray-200 hover:text-primary transition-colors inline-block"
+              >
+                Privacy Policy
+              </Link>
+            </li>
+          </ul>
         </div>
       </div>
 
-      <div className="w-full h-[1px] bg-gray-200 my-10"></div>
+      <div className="w-full h-[1px] bg-gray-700 my-10"></div>
 
       <div className="flex md:flex-row flex-col-reverse md:items-center items-start gap-4 md:justify-between">
         <p className="text-gray-600 font-medium text-sm text-left">

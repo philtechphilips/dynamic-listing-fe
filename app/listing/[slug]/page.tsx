@@ -1,8 +1,8 @@
-'use client';
 
-import { useParams, useRouter } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
+import { Metadata } from 'next';
+import { notFound } from 'next/navigation';
 import { 
   topRestaurants, 
   topMovies, 
@@ -13,9 +13,9 @@ import {
   topPlumbers 
 } from '@/lib/mockData';
 import { Listing } from '@/types';
-import SectionHeader from '@/components/SectionHeader';
+import ListingInteractions from '@/components/ListingInteractions';
 
-// Helper to find listing from all categories
+// Helper to find listing
 const findListingBySlug = (slug: string): Listing | undefined => {
   const allListings = [
     ...topRestaurants,
@@ -29,7 +29,29 @@ const findListingBySlug = (slug: string): Listing | undefined => {
   return allListings.find((item) => item.slug === slug);
 };
 
-// Reused StarRating component
+// Generate SEO Metadata
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+  const { slug } = await params;
+  const listing = findListingBySlug(slug);
+  
+  if (!listing) {
+    return {
+      title: 'Listing Not Found',
+    };
+  }
+
+  return {
+    title: `${listing.title} - Dynamic Listing`,
+    description: listing.excerpt || `Check out ${listing.title} on Dynamic Listing.`,
+    openGraph: {
+      title: listing.title,
+      description: listing.excerpt,
+      images: [listing.featured_image || '/images/music.svg'],
+    },
+  };
+}
+
+// Reused StarRating component (Display Only)
 function StarRating({ rating = 0, reviewCount }: { rating?: number; reviewCount?: number }) {
   const fullStars = Math.floor(rating);
   const hasHalfStar = rating % 1 >= 0.5;
@@ -70,28 +92,18 @@ function StarRating({ rating = 0, reviewCount }: { rating?: number; reviewCount?
   );
 }
 
-export default function ListingDetailPage() {
-  const params = useParams();
-  const router = useRouter();
-  const slug = params.slug as string;
+export default async function ListingDetailPage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
   const listing = findListingBySlug(slug);
 
   if (!listing) {
-    return (
-      <div className="min-h-screen bg-white pt-32 pb-20 px-5 flex flex-col items-center justify-center">
-        <h1 className="text-3xl font-clash font-semibold text-gray-900 mb-4">Listing Not Found</h1>
-        <p className="text-gray-600 mb-8">Sorry, we couldn&apos;t find the listing you&apos;re looking for.</p>
-        <Link href="/" className="px-6 py-3 bg-primary text-white rounded-full hover:bg-opacity-90 transition-all">
-          Back to Home
-        </Link>
-      </div>
-    );
+    notFound();
   }
 
   return (
     <main className="min-h-screen bg-white pt-24 pb-20">
       {/* Hero / Header Section */}
-      <div className="relative h-[400px] md:h-[500px] w-full">
+      <div className="relative h-[400px] md:h-[500px] w-full -mt-25">
         <Image
           src={listing.featured_image || '/images/music.svg'}
           alt={listing.title}
@@ -151,13 +163,17 @@ export default function ListingDetailPage() {
               <h3 className="text-lg font-semibold text-gray-900 mb-4">Tags</h3>
               <div className="flex flex-wrap gap-2">
                 {listing.tags.map(tag => (
-                  <span key={tag.id} className="px-3 py-1 bg-gray-100 text-gray-600 rounded-full text-sm">
+                  <span key={tag.id} className="px-4 py-2 bg-primary-300 text-primary rounded-full text-sm font-semibold hover:opacity-80 transition-opacity cursor-default">
                     {tag.name}
                   </span>
                 ))}
               </div>
             </div>
           )}
+
+          <div className="mt-8">
+             <ListingInteractions listingTitle={listing.title} />
+          </div>
         </div>
 
         {/* Sidebar */}
