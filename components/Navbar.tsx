@@ -1,221 +1,305 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
+import { ArrowDown, ArrowRight, ChevronRight, X, User } from "lucide-react";
+
 
 export default function Navbar() {
-  const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isProductsDropdownOpen, setIsProductsDropdownOpen] = useState(false);
   const pathname = usePathname();
+  const mobileMenuRef = useRef<HTMLDivElement>(null);
+  const mobileMenuButtonRef = useRef<HTMLImageElement>(null);
 
+  // Close mobile menu when route changes
   useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 20);
+    setIsMobileMenuOpen(false);
+    setIsProductsDropdownOpen(false);
+  }, [pathname]);
+
+  // Close mobile menu when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        isMobileMenuOpen &&
+        mobileMenuRef.current &&
+        !mobileMenuRef.current.contains(event.target as Node) &&
+        mobileMenuButtonRef.current &&
+        !mobileMenuButtonRef.current.contains(event.target as Node)
+      ) {
+        setIsMobileMenuOpen(false);
+      }
     };
 
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [isMobileMenuOpen]);
 
-  const navLinks = [
-    { href: "/", label: "Home" },
-    { href: "/listing/restaurants", label: "Restaurants" },
-    { href: "/listing/movies", label: "Movies" },
-    { href: "/listing/hotels", label: "Hotels" },
-    { href: "/listing/gyms", label: "Gyms" },
-    { href: "/listing/salons", label: "Salons" },
-    { href: "/all-post/podcast", label: "Podcast" },
-  ];
-
-  const isActive = (href: string) => {
-    if (href === "/") {
-      return pathname === "/";
+  // Lock body scroll when mobile menu is open
+  useEffect(() => {
+    if (isMobileMenuOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "unset";
     }
-    return pathname?.startsWith(href);
-  };
+    return () => {
+      document.body.style.overflow = "unset";
+    };
+  }, [isMobileMenuOpen]);
+
+  const isActive = (path: string) => pathname === path;
+  const isPathActive = (path: string) => pathname?.startsWith(path);
 
   return (
     <>
-      <nav
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
-          isScrolled
-            ? "bg-white/95 backdrop-blur-xl shadow-2xl border-b border-gray-400"
-            : "bg-white/80 backdrop-blur-sm"
-        }`}
-      >
-        <div className="2xl:px-[120px] md:px-10 px-5">
-          <div className="flex items-center justify-between h-24">
-            {/* Creative Logo */}
-            <Link href="/" className="flex items-center gap-3 group relative">
-              <div className="relative">
-                {/* Animated gradient background */}
-                <div className="absolute inset-0 bg-gradient-to-br from-primary via-primary to-red-600 rounded-xl blur-lg opacity-0 group-hover:opacity-60 transition-opacity duration-500 animate-pulse" />
-                {/* Glowing effect */}
-                <div className="absolute -inset-1 bg-gradient-to-r from-primary to-red-500 rounded-xl opacity-0 group-hover:opacity-20 blur transition-opacity duration-500" />
-              </div>
-              <div className="flex flex-col">
-                <span className="text-gray-100 font-clash font-bold text-xl md:text-2xl leading-tight hidden sm:block group-hover:text-primary transition-colors duration-300">
-                  Dynamic
-                </span>
-                <span className="text-xs text-gray-300 font-medium hidden sm:block -mt-1">
-                  Discover & Explore
-                </span>
-              </div>
-            </Link>
+      <div className="md:py-6 2xl:px-30 md:px-16 px-4 py-4 fixed top-0 left-0 right-0 bg-transparent z-[1000]">
+        <nav
+          className="bg-surface-300/60 border border-surface-300 md:px-10 px-4 py-2 rounded-full flex justify-between items-center relative z-10"
+          style={{
+            boxShadow: "0px 4px 4px 0px #1A1A1A0D",
+            backdropFilter: "blur(35px)",
+            WebkitBackdropFilter: "blur(35px)",
+          }}
+        >
+          <Link
+            href="/"
+            className={`w-fit z-50 font-bold text-2xl ${
+              isActive("/") ? "opacity-100" : "opacity-90 hover:opacity-100"
+            }`}
+            aria-label="Dynamic Listing Home"
+          >
+            <span className="text-primary font-clash">Dynamic</span>
+            <span className="text-gray-100 font-clash">Listing</span>
+          </Link>
 
-            {/* Desktop Navigation with Creative Effects */}
-            <div className="hidden lg:flex items-center gap-2">
-              {navLinks.map((link, index) => (
+          {/* Desktop Navigation */}
+          <div className="md:flex hidden items-center gap-8 z-10">
+            <ul className="flex items-center gap-8">
+              <li>
                 <Link
-                  key={link.href}
-                  href={link.href}
-                  className={`group relative px-4 py-2 rounded-lg transition-all duration-300 ${
-                    isActive(link.href)
-                      ? "text-gray-100"
-                      : "text-gray-200 hover:text-gray-100"
+                  href="/category/restaurants"
+                  className={`font-semibold text-base ${
+                    isPathActive("/category/restaurants")
+                      ? "text-primary transition-colors"
+                      : "text-gray-100 hover:text-primary transition-colors"
                   }`}
-                  style={{ animationDelay: `${index * 50}ms` }}
                 >
-                  {/* Hover background */}
-                  <div className="absolute inset-0 bg-gradient-to-r from-primary-300 to-red-100 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                  {/* Content */}
-                  <span className="relative flex items-center text-sm font-semibold">
-                    {link.label}
-                  </span>
-                  {/* Active indicator dot */}
-                  {isActive(link.href) && (
-                    <div className="absolute -bottom-1 left-1/2 transform -translate-x-1/2 w-1.5 h-1.5 bg-primary rounded-full animate-pulse" />
-                  )}
+                  Restaurants
                 </Link>
-              ))}
-            </div>
+              </li>
+              <li>
+                <Link
+                  href="/category/movies"
+                  className={`font-semibold text-base ${
+                    isPathActive("/category/movies")
+                      ? "text-primary transition-colors"
+                      : "text-gray-100 hover:text-primary transition-colors"
+                  }`}
+                >
+                  Movies
+                </Link>
+              </li>
+               <li>
+                <Link
+                  href="/category/hotels"
+                  className={`font-semibold text-base ${
+                    isPathActive("/category/hotels")
+                      ? "text-primary transition-colors"
+                      : "text-gray-100 hover:text-primary transition-colors"
+                  }`}
+                >
+                  Hotels
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/category/gyms"
+                  className={`font-semibold text-base ${
+                    isPathActive("/category/gyms")
+                      ? "text-primary transition-colors"
+                      : "text-gray-100 hover:text-primary transition-colors"
+                  }`}
+                >
+                  Gyms
+                </Link>
+              </li>
 
-            {/* Login Button */}
-            <div className="hidden lg:flex items-center">
-              <Link
-                href="/login"
-                className="group relative px-6 py-2.5 text-sm font-semibold text-white rounded-full overflow-hidden transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-red-500/50"
-              >
-                {/* Gradient Background */}
-                <div className="absolute inset-0 bg-gradient-to-r from-red-500 via-red-600 to-red-700 group-hover:from-red-600 group-hover:via-red-700 group-hover:to-red-800 transition-all duration-300" />
-                
-                {/* Shine Effect */}
-                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700" />
-                
-                {/* Content */}
-                <span className="relative z-10 flex items-center gap-2">
-                  Login
-                  <svg
-                    className="w-4 h-4 transform group-hover:translate-x-1 transition-transform duration-300"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M13 7l5 5m0 0l-5 5m5-5H6"
-                    />
-                  </svg>
-                </span>
-              </Link>
-            </div>
+              <li className="relative group">
+                <Link
+                  href="#"
+                  className="font-semibold text-base text-gray-100 hover:text-primary flex items-center gap-1 transition-colors"
+                >
+                  More <ArrowDown className="w-4 h-4 transition-transform duration-200 group-hover:rotate-180" />
+                </Link>
 
-            {/* Mobile Menu Button with Creative Animation */}
+                <div
+                  className="absolute rounded-lg p-2 top-8 w-[200px] left-1/2 transform -translate-x-1/2 bg-white flex flex-col gap-1 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300"
+                  style={{
+                    boxShadow: "0px 10px 18px -2px #10192812",
+                  }}
+                >
+                   <Link
+                    href="/category/salons"
+                    className="block px-4 py-2 hover:bg-surface-300 rounded-md text-gray-100 hover:text-primary transition-colors font-medium text-sm"
+                   >
+                     Salons
+                   </Link>
+                   <Link
+                    href="/category/podcasts"
+                    className="block px-4 py-2 hover:bg-surface-300 rounded-md text-gray-100 hover:text-primary transition-colors font-medium text-sm"
+                   >
+                     Podcast
+                   </Link>
+                </div>
+              </li>
+            </ul>
+
+            <div className="">
+                <Link
+                    href="/login"
+                    className="bg-primary hover:bg-red-700 text-white px-6 py-2.5 rounded-full font-semibold transition-all duration-300 flex items-center gap-2 text-sm"
+                >
+                    <User className="w-4 h-4" />
+                    Login
+                </Link>
+            </div>
+          </div>
+
+          {/* Mobile Menu Toggles */}
+          <div className="md:hidden flex items-center gap-10">
             <button
-              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="lg:hidden relative flex flex-col gap-1.5 p-3 rounded-lg hover:bg-gray-400 transition-colors duration-300 group"
-              aria-label="Toggle menu"
+               onClick={() => setIsMobileMenuOpen(true)}
+               aria-label="Open Menu"
+               className="text-gray-100"
             >
-              <span
-                className={`block w-7 h-0.5 bg-gray-100 transition-all duration-500 rounded-full ${
-                  isMobileMenuOpen
-                    ? "rotate-45 translate-y-2.5 bg-primary"
-                    : "group-hover:bg-primary"
-                }`}
-              />
-              <span
-                className={`block w-7 h-0.5 bg-gray-100 transition-all duration-500 rounded-full ${
-                  isMobileMenuOpen
-                    ? "opacity-0 scale-0"
-                    : "group-hover:bg-primary"
-                }`}
-              />
-              <span
-                className={`block w-7 h-0.5 bg-gray-100 transition-all duration-500 rounded-full ${
-                  isMobileMenuOpen
-                    ? "-rotate-45 -translate-y-2.5 bg-primary"
-                    : "group-hover:bg-primary"
-                }`}
-              />
+                <div className="space-y-1.5 cursor-pointer">
+                    <span className="block w-8 h-0.5 bg-gray-100"></span>
+                    <span className="block w-8 h-0.5 bg-gray-100"></span>
+                    <span className="block w-8 h-0.5 bg-gray-100"></span>
+                </div>
             </button>
           </div>
+        </nav>
+      </div>
 
-          {/* Mobile Menu with Creative Slide Animation */}
-          <div
-            className={`lg:hidden overflow-hidden transition-all duration-500 ease-in-out ${
-              isMobileMenuOpen
-                ? "max-h-[600px] opacity-100"
-                : "max-h-0 opacity-0"
-            }`}
-          >
-            <div className="py-6 space-y-2 border-t-2 border-gray-400 mt-2">
-              {navLinks.map((link, index) => (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  onClick={() => setIsMobileMenuOpen(false)}
-                  className={`group flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-300 transform hover:translate-x-2 ${
-                    isActive(link.href)
-                      ? "text-gray-100"
-                      : "text-gray-200 hover:bg-gray-400 hover:text-gray-100"
-                  }`}
-                  style={{ animationDelay: `${index * 50}ms` }}
-                >
-                  <span className="text-base font-semibold">{link.label}</span>
-                  {isActive(link.href) && (
-                    <div className="ml-auto w-2 h-2 bg-primary rounded-full animate-pulse" />
-                  )}
-                </Link>
-              ))}
-              <div className="pt-4 border-t border-gray-200 mt-4">
-                <Link
-                  href="/login"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                  className="group relative block px-6 py-3 text-sm font-semibold text-white rounded-full overflow-hidden transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-red-500/50"
-                >
-                  {/* Gradient Background */}
-                  <div className="absolute inset-0 bg-gradient-to-r from-red-500 via-red-600 to-red-700 group-hover:from-red-600 group-hover:via-red-700 group-hover:to-red-800 transition-all duration-300" />
-                  
-                  {/* Shine Effect */}
-                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700" />
-                  
-                  {/* Content */}
-                  <span className="relative z-10 flex items-center justify-center gap-2">
-                    Login
-                    <svg
-                      className="w-4 h-4 transform group-hover:translate-x-1 transition-transform duration-300"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M13 7l5 5m0 0l-5 5m5-5H6"
-                      />
-                    </svg>
-                  </span>
-                </Link>
-              </div>
-            </div>
-          </div>
+      {/* Mobile Menu Backdrop */}
+      <div
+        className={`md:hidden fixed inset-0 bg-black/50 z-40 transition-opacity duration-[500ms] ease-in-out ${
+          isMobileMenuOpen
+            ? "opacity-100 pointer-events-auto"
+            : "opacity-0 pointer-events-none"
+        }`}
+        onClick={() => setIsMobileMenuOpen(false)}
+      />
+
+      {/* Mobile Menu */}
+      <div
+        ref={mobileMenuRef}
+        className={`md:hidden bg-white p-4 w-[85vw] h-screen z-50 fixed top-0 right-0 shadow-2xl transition-transform duration-[500ms] ease-in-out ${
+          isMobileMenuOpen
+            ? "translate-x-0"
+            : "translate-x-full"
+        }`}
+      >
+        <div className="flex justify-between items-center mb-8">
+            <Link
+                href="/"
+                className="font-bold text-xl"
+                onClick={() => setIsMobileMenuOpen(false)}
+            >
+                <span className="text-primary font-clash">Dynamic</span>
+                <span className="text-gray-100 font-clash">Listing</span>
+            </Link>
+          <button onClick={() => setIsMobileMenuOpen(false)} aria-label="Close Menu">
+            <X className="w-6 h-6 text-gray-100" />
+          </button>
         </div>
-      </nav>
+
+        <ul className="flex flex-col gap-6">
+          <li>
+            <Link
+              href="/category/restaurants"
+              onClick={() => setIsMobileMenuOpen(false)}
+              className={`font-semibold text-lg flex items-center gap-3 ${
+                isPathActive("/category/restaurants") ? "text-primary" : "text-gray-200"
+              }`}
+            >
+                Restaurants
+            </Link>
+          </li>
+          <li>
+            <Link
+              href="/category/movies"
+              onClick={() => setIsMobileMenuOpen(false)}
+              className={`font-semibold text-lg flex items-center gap-3 ${
+                isPathActive("/category/movies") ? "text-primary" : "text-gray-200"
+              }`}
+            >
+                Movies
+            </Link>
+          </li>
+          <li>
+            <Link
+              href="/category/hotels"
+              onClick={() => setIsMobileMenuOpen(false)}
+              className={`font-semibold text-lg flex items-center gap-3 ${
+                isPathActive("/category/hotels") ? "text-primary" : "text-gray-200"
+              }`}
+            >
+                Hotels
+            </Link>
+          </li>
+          <li>
+            <Link
+              href="/category/gyms"
+              onClick={() => setIsMobileMenuOpen(false)}
+              className={`font-semibold text-lg flex items-center gap-3 ${
+                isPathActive("/category/gyms") ? "text-primary" : "text-gray-200"
+              }`}
+            >
+                Gyms
+            </Link>
+          </li>
+          <li>
+             <Link
+               href="/category/salons"
+              onClick={() => setIsMobileMenuOpen(false)}
+              className={`font-semibold text-lg flex items-center gap-3 ${
+                isPathActive("/category/salons") ? "text-primary" : "text-gray-200"
+              }`}
+            >
+                Salons
+            </Link>
+          </li>
+          <li>
+             <Link
+               href="/category/podcasts"
+              onClick={() => setIsMobileMenuOpen(false)}
+              className={`font-semibold text-lg flex items-center gap-3 ${
+                isPathActive("/category/podcasts") ? "text-primary" : "text-gray-200"
+              }`}
+            >
+                Podcast
+            </Link>
+          </li>
+        </ul>
+
+        <div className="mt-8 border-t border-gray-100 pt-6">
+             <Link
+                href="/login"
+                onClick={() => setIsMobileMenuOpen(false)}
+                className="w-full bg-primary text-white py-3 rounded-lg font-semibold flex justify-center items-center gap-2"
+            >
+                <User className="w-5 h-5" />
+                Login
+            </Link>
+        </div>
+      </div>
     </>
   );
 }
-

@@ -377,12 +377,12 @@ export default function BlogCard({
   // Default Layout
   return (
     <Link href={href} className="w-full h-full flex flex-col hover:opacity-90 transition-opacity">
-      <div className="w-full overflow-hidden rounded-lg flex-1 relative">
+      <div className={`w-full overflow-hidden rounded-lg relative ${imageHeight === 'h-full' ? 'flex-1' : imageHeight}`}>
         <Image
           src={image}
           alt={title}
           fill
-          className={`w-full ${imageHeight} object-cover scale-100 hover:scale-105 transition-all duration-500`}
+          className="w-full h-full object-cover scale-100 hover:scale-105 transition-all duration-500"
         />
         {isPodcast && <PlayButton onClick={handlePodcastPlay} />}
       </div>

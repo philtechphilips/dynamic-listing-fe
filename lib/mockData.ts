@@ -9,7 +9,11 @@ export const latestPosts: Post[] = [
     slug: "politically-conscious-afrobeats",
     excerpt:
       "Exploring the intersection of music and social commentary in modern Afrobeats.",
-    content: "Full article content here...",
+    content: `Afrobeats has always been more than just a genre; it's a movement. In recent years, a wave of artists has used their platform to address social and political issues affecting the continent. From Burna Boy's "Monsters You Made" to Falz's "This Is Nigeria," music is becoming a powerful tool for activism.
+    
+    This list curates 12 songs that not only make you move but also make you think. We explore the lyrics, the context, and the impact of these politically conscious tracks. These artists are fearlessly speaking truth to power, demanding accountability, and inspiring a new generation to stay woke.
+    
+    Listen to the playlist and dive deep into the stories behind the songs that are defining a politically charged era of African music.`,
     featured_image:
       "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=800&h=600&fit=crop",
     published_at: "2025-06-12T10:00:00Z",
@@ -23,7 +27,11 @@ export const latestPosts: Post[] = [
     title: "The Rise of Amapiano: How South African Beats Conquered the World",
     slug: "rise-of-amapiano",
     excerpt: "A deep dive into the global phenomenon of Amapiano music.",
-    content: "Full article content here...",
+    content: `From the townships of South Africa to the clubs of London and Lagos, Amapiano has become a global phenomenon. Its distinctive log drum basslines and soulful piano chords have captured the hearts of music lovers worldwide. But how did this genre rise so quickly?
+    
+    We trace the roots of Amapiano, exploring its evolution from Kwaito and Deep House. We speak to pioneers like Kabza De Small and DJ Maphorisa about the early days and the explosive growth of the sound. The genre's ability to constantly reinvent itself is key to its longevity.
+    
+    As Amapiano continues to dominate charts and festivals, we look at what the future holds for this infectious sound and how it's shaping the global perception of African electronic music.`,
     featured_image:
       "https://images.unsplash.com/photo-1514320291840-2e0a9bf2a9ae?w=800&h=600&fit=crop",
     published_at: "2025-06-10T10:00:00Z",
@@ -39,7 +47,11 @@ export const latestPosts: Post[] = [
     slug: "festival-season-2025",
     excerpt:
       "Your comprehensive guide to the best music festivals across Africa.",
-    content: "Full article content here...",
+    content: `2025 is shaping up to be the biggest year yet for African music festivals. From Afro Nation in Portugal to Felabration in Lagos and specialized jazz festivals in Cape Town, the calendar is packed with unmissable events.
+    
+    This guide breaks down the top festivals you need to attend this year. We cover lineups, ticket prices, travel tips, and what to expect from each experience. Whether you're a hardcore raver or looking for a chilled cultural experience, there's a festival for you.
+    
+    Pack your bags and get ready for a season of incredible music, vibrant culture, and unforgettable memories across the continent and beyond.`,
     featured_image:
       "https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=800&h=600&fit=crop",
     published_at: "2025-06-08T10:00:00Z",
@@ -58,7 +70,11 @@ export const newsPosts: Post[] = [
     slug: "new-streaming-platform-africa",
     excerpt:
       "A revolutionary new platform aims to change how African artists distribute their music globally.",
-    content: "Full article content here...",
+    content: `In a major development for the African music industry, a new streaming platform, "AfroStream," has officially launched today. Promoting itself as an artist-first platform, it promises higher royalty rates and better discovery tools for independent African artists.
+    
+    The launch event in Nairobi was attended by industry heavyweights and top artists who endorsed the platform's mission to democratize music distribution. With features tailored to local markets, such as mobile money integration and offline listening modes optimized for lower-end devices, AfroStream aims to capture the massive untapped market of African listeners.
+    
+    Analysts predict this could shake up the dominance of international players like Spotify and Apple Music on the continent.`,
     featured_image:
       "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=800&h=600&fit=crop",
     published_at: "2025-06-15T10:00:00Z",
@@ -73,7 +89,11 @@ export const newsPosts: Post[] = [
     slug: "grammy-2025-african-nominations",
     excerpt:
       "Record-breaking number of African artists receive Grammy nominations this year.",
-    content: "Full article content here...",
+    content: `The 2025 Grammy nominations have been announced, and it's a historic year for African music. A record-breaking number of artists from the continent have received nods across multiple categories, not just in the Global Music field.
+    
+    Leading the pack are heavyweights like Tems and Burna Boy, but there are also surprise nominations for rising stars in the Alternative and R&B categories. This shift signals the Recording Academy's growing recognition of the diversity and quality of music coming out of Africa.
+    
+    We break down the key nominations, the snubs, and what this means for the future of African music on the global stage.`,
     featured_image:
       "https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=800&h=600&fit=crop",
     published_at: "2025-06-14T10:00:00Z",
@@ -88,7 +108,11 @@ export const newsPosts: Post[] = [
     slug: "major-label-investment-africa",
     excerpt:
       "Historic investment signals growing recognition of African music industry potential.",
-    content: "Full article content here...",
+    content: `Universal Music Group has announced a historic $50 million investment fund dedicated to developing talent and infrastructure within the African music ecosystem. The fund will focus on signing new artists, building state-of-the-art recording studios, and improving distribution networks.
+    
+    "Africa is the future of music," said the CEO in a press statement. This move comes as major labels race to establish a stronger foothold in the continent's booming entertainment sector. The investment is expected to create jobs and provide resources that have been long lacking in many local industries.
+    
+    Industry experts weigh in on the potential impact and challenges of this massive influx of capital.`,
     featured_image:
       "https://images.unsplash.com/photo-1484704849700-f032a568e944?w=800&h=600&fit=crop",
     published_at: "2025-06-13T10:00:00Z",
@@ -103,7 +127,11 @@ export const newsPosts: Post[] = [
     slug: "afrobeats-star-deal",
     excerpt:
       "Top artist secures one of the largest record deals in African music history.",
-    content: "Full article content here...",
+    content: `In a deal that has sent shockwaves through the industry, Afrobeats superstar Wizkid has reportedly signed a new multi-album deal worth over $30 million. The partnership with a major global distributor gives him unprecedented creative control and ownership of his masters.
+    
+    This deal sets a new benchmark for what is possible for African artists, shifting the power dynamic back towards the creators. Sources close to the artist say the new deal will allow him to launch his own label imprint and sign upcoming talent.
+    
+    We analyze the details of the contract and compare it to other major deals in the history of the genre.`,
     featured_image:
       "https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=800&h=600&fit=crop",
     published_at: "2025-06-12T10:00:00Z",
@@ -118,7 +146,11 @@ export const newsPosts: Post[] = [
     slug: "pan-african-music-festival",
     excerpt:
       "Ambitious festival aims to unite African music scenes across the continent.",
-    content: "Full article content here...",
+    content: `The "Pan-African Sound Festival" is a bold new initiative set to launch simultaneously across 10 African capital cities next month. The goal is to unite the continent through music, with live streams connecting performances from Lagos to Nairobi, Johannesburg to Cairo.
+    
+    Organizers hope to foster cross-cultural collaboration and tour circuits within the continent. "It's about time we toured our own continent as much as we tour Europe," said one of the lead organizers. The lineup features a mix of established legends and exciting new discoveries from each host country.
+    
+    Tickets go on sale this Friday, with affordable pricing tiers to ensure accessibility for all fans.`,
     featured_image:
       "https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=800&h=600&fit=crop",
     published_at: "2025-06-11T10:00:00Z",
@@ -136,7 +168,11 @@ export const trendingPosts: Post[] = [
     title: "Burna Boy Announces New Album: What We Know So Far",
     slug: "burna-boy-new-album",
     excerpt: "Everything you need to know about the upcoming release.",
-    content: "Full article content here...",
+    content: `The African Giant is back! Burna Boy has officially announced the release date for his highly anticipated seventh studio album. While the title remains under wraps, sources close to the production team hint at a return to his dancehall roots infused with experimental electronic sounds.
+    
+    The album is rumored to feature collaborations with global icons as well as emerging talent from the Nigerian underground scene. In a cryptic tweet, Burna teased, "This one is for the soul, but it will make your body move."
+    
+    Fans are already speculating about the tracklist and potential tour dates. We break down everything we know so far, from confirmed producers to the possible themes the album will explore.`,
     featured_image:
       "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=800&h=600&fit=crop",
     published_at: "2025-06-11T10:00:00Z",
@@ -152,7 +188,11 @@ export const trendingPosts: Post[] = [
     slug: "evolution-nigerian-hiphop",
     excerpt:
       "Tracing the journey of Nigerian hip-hop from the streets to the world stage.",
-    content: "Full article content here...",
+    content: `Nigerian Hip-Hop has come a long way since the days of The Remedies and Plantashun Boiz. Today, artists like Olamide, Phyno, and Blaqbonez are topping charts not just in Lagos, but in London and New York. But the journey hasn't been a straight line.
+    
+    We take a retrospective look at the evolution of the genre, from the raw, grit-infused rhymes of the early 2000s to the polished, Afrobeats-fused sound that dominates the airwaves today. We examine the role of indigenous rap in bringing the genre to the masses and how streaming has democratized access for independent artists.
+    
+    This is the definitive history of how Nigerian MCs found their voice and took it to the world stage.`,
     featured_image:
       "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=800&h=600&fit=crop",
     published_at: "2025-06-09T10:00:00Z",
@@ -166,7 +206,11 @@ export const trendingPosts: Post[] = [
     title: "Exclusive Interview: Tems on Her Grammy Win and What Comes Next",
     slug: "tems-grammy-interview",
     excerpt: "An intimate conversation with the Nigerian singer-songwriter.",
-    content: "Full article content here...",
+    content: `"It still feels like a dream," says Tems, reflecting on her historic Grammy win. In this exclusive interview, the singer-songwriter opens up about her whirlwind journey from quitting her corporate job to collaborating with Beyoncé and Drake.
+    
+    She discusses the pressure of newfound fame, her creative process, and why she chooses to stay grounded in her identity. "I make music for me first," she insists. "If the world likes it, that's a blessing."
+    
+    Tems also gives us a sneak peek into her upcoming projects, hinting at a more acoustic, intimate sound for her next EP. Read on to discover the woman behind the voice that conquered the globe.`,
     featured_image:
       "https://images.unsplash.com/photo-1507838153414-b4b713384a76?w=800&h=600&fit=crop",
     published_at: "2025-06-07T10:00:00Z",
@@ -328,7 +372,7 @@ export const eventsCategory: Category = {
           featured_image:
             "https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=800&h=600&fit=crop",
           event_date_time: "2025-07-15T20:00:00Z",
-          event_location: "Eko Convention Center, Lagos",
+          event_location: "Makati",
           tags: [{ id: 9, name: "Concert", slug: "concert" }],
         },
         {
@@ -340,7 +384,7 @@ export const eventsCategory: Category = {
           featured_image:
             "https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=800&h=600&fit=crop",
           event_date_time: "2025-08-20T19:00:00Z",
-          event_location: "O2 Arena, London",
+          event_location: "Taguig",
           tags: [{ id: 9, name: "Concert", slug: "concert" }],
         },
       ],
@@ -359,7 +403,7 @@ export const eventsCategory: Category = {
           featured_image:
             "https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=800&h=600&fit=crop",
           event_date_time: "2025-07-01T12:00:00Z",
-          event_location: "Portimão, Portugal",
+          event_location: "Laguna",
           tags: [{ id: 3, name: "Festival", slug: "festival" }],
         },
       ],
@@ -486,20 +530,33 @@ export const topRestaurants: Listing[] = [
     slug: "the-gourmet-kitchen",
     excerpt:
       "Award-winning fine dining restaurant offering contemporary African cuisine with a modern twist.",
-    content: "Full content here...",
+    content: `Experience the pinnacle of fine dining at The Gourmet Kitchen, where culinary artistry meets the rich flavors of Africa. Our award-winning chefs meticulously craft each dish using locally sourced ingredients, reimagining traditional recipes with a modern, sophisticated twist. 
+    
+    From our signature Jollof Risotto to the delicate Plantain Gnocchi, every bite is a journey through the continent's diverse culinary landscape. The ambiance is equally captivating, featuring elegant decor inspired by African art and culture, creating the perfect setting for a romantic dinner or a celebratory feast.
+    
+    Join us for an unforgettable gastronomic adventure that celebrates the heritage and future of African cuisine.`,
     featured_image:
       "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=800&h=600&fit=crop",
     rating: 4.8,
     review_count: 324,
-    location: "Lagos, Nigeria",
+    location: "Makati",
     category: "Fine Dining",
     price_range: "$$$$",
-    tags: [{ id: 1, name: "Fine Dining", slug: "fine-dining" }],
+    tags: [
+      { id: 1, name: "Fine Dining", slug: "fine-dining" },
+      { id: 101, name: "Romantic", slug: "romantic" },
+      { id: 102, name: "Fusion", slug: "fusion" }
+    ],
     created_at: "2025-06-01T10:00:00Z",
     seo_title: "The Gourmet Kitchen - Best Fine Dining Restaurant in Lagos",
     seo_description:
       "Experience award-winning contemporary African cuisine at The Gourmet Kitchen in Lagos.",
     seo_keywords: "fine dining, restaurant, Lagos, African cuisine",
+    address: "123 Victoria Island, Lagos, Nigeria",
+    website: "https://thegourmetkitchen.com",
+    phone: "+234 800 123 4567",
+    email: "reservations@thegourmetkitchen.com",
+    opening_hours: "Mon-Sun: 11:00 AM - 11:00 PM",
   },
   {
     id: 302,
@@ -507,20 +564,33 @@ export const topRestaurants: Listing[] = [
     slug: "spice-route-bistro",
     excerpt:
       "Authentic Indian-African fusion restaurant known for its bold flavors and vibrant atmosphere.",
-    content: "Full content here...",
+    content: `Spice Route Bistro invites you to explore the vibrant intersection of Indian and East African cuisines. Our menu is a celebration of the historical trade routes that connected these two rich culinary traditions, resulting in dishes that are bold, aromatic, and deeply satisfying.
+    
+    Savor our famous Butter Chicken with a hint of Swahili spices, or try the Samosa Chaat topped with tangy tamarind chutney. The lively atmosphere, reminiscent of a bustling spice market, makes every meal a festive occasion.
+    
+    Whether you're a spice enthusiast or looking for comfort food with a kick, Spice Route Bistro offers a unique dining experience that honors the shared history of two continents.`,
     featured_image:
       "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=800&h=600&fit=crop",
     rating: 4.6,
     review_count: 287,
-    location: "Nairobi, Kenya",
+    location: "Mandaluyong",
     category: "Fusion",
     price_range: "$$$",
-    tags: [{ id: 2, name: "Fusion", slug: "fusion" }],
+    tags: [
+      { id: 2, name: "Fusion", slug: "fusion" },
+      { id: 103, name: "Spicy", slug: "spicy" },
+      { id: 104, name: "Casual", slug: "casual" }
+    ],
     created_at: "2025-06-02T10:00:00Z",
     seo_title: "Spice Route Bistro - Indian-African Fusion Restaurant Nairobi",
     seo_description:
       "Discover authentic Indian-African fusion cuisine at Spice Route Bistro in Nairobi.",
     seo_keywords: "fusion restaurant, Indian food, Nairobi, African cuisine",
+    address: "88 Westlands Road, Nairobi, Kenya",
+    website: "https://spiceroutebistro.co.ke",
+    phone: "+254 700 123 456",
+    email: "dine@spiceroutebistro.co.ke",
+    opening_hours: "Mon-Sun: 12:00 PM - 10:30 PM",
   },
   {
     id: 303,
@@ -533,7 +603,7 @@ export const topRestaurants: Listing[] = [
       "https://images.unsplash.com/photo-1559339352-11d035aa65de?w=800&h=600&fit=crop",
     rating: 4.7,
     review_count: 412,
-    location: "Cape Town, South Africa",
+    location: "Pasig",
     category: "Seafood",
     price_range: "$$$",
     tags: [{ id: 3, name: "Seafood", slug: "seafood" }],
@@ -542,6 +612,11 @@ export const topRestaurants: Listing[] = [
     seo_description:
       "Enjoy fresh seafood with ocean views at Coastal Catch Seafood in Cape Town.",
     seo_keywords: "seafood, restaurant, Cape Town, fresh fish",
+    address: "22 Victoria & Alfred Waterfront, Cape Town, South Africa",
+    website: "https://coastalcatch.co.za",
+    phone: "+27 21 555 0199",
+    email: "info@coastalcatch.co.za",
+    opening_hours: "Tue-Sun: 11:30 AM - 10:00 PM",
   },
   {
     id: 304,
@@ -554,7 +629,7 @@ export const topRestaurants: Listing[] = [
       "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=800&h=600&fit=crop",
     rating: 4.5,
     review_count: 198,
-    location: "Accra, Ghana",
+    location: "Quezon",
     category: "Vegan",
     price_range: "$$",
     tags: [{ id: 4, name: "Vegan", slug: "vegan" }],
@@ -563,6 +638,11 @@ export const topRestaurants: Listing[] = [
     seo_description:
       "Experience creative plant-based cuisine at The Vegan Garden in Accra.",
     seo_keywords: "vegan, restaurant, Accra, plant-based",
+    address: "15 Osu Oxford Street, Accra, Ghana",
+    website: "https://vegangarden.gh",
+    phone: "+233 20 555 6789",
+    email: "hello@vegangarden.gh",
+    opening_hours: "Mon-Sat: 9:00 AM - 8:00 PM",
   },
   {
     id: 305,
@@ -575,7 +655,7 @@ export const topRestaurants: Listing[] = [
       "https://images.unsplash.com/photo-1544025162-d76694265947?w=800&h=600&fit=crop",
     rating: 4.9,
     review_count: 523,
-    location: "Johannesburg, South Africa",
+    location: "Taguig",
     category: "Barbecue",
     price_range: "$$",
     tags: [{ id: 5, name: "BBQ", slug: "bbq" }],
@@ -584,6 +664,11 @@ export const topRestaurants: Listing[] = [
     seo_description:
       "Taste authentic African barbecue at BBQ Masters in Johannesburg.",
     seo_keywords: "barbecue, BBQ, restaurant, Johannesburg, smoked meat",
+    address: "42 Maboneng Precinct, Johannesburg, South Africa",
+    website: "https://bbqmasters.co.za",
+    phone: "+27 11 555 3344",
+    email: "smoke@bbqmasters.co.za",
+    opening_hours: "Wed-Sun: 12:00 PM - 11:00 PM",
   },
 ];
 
@@ -595,7 +680,11 @@ export const topMovies: Listing[] = [
     slug: "lion-king-legacy",
     excerpt:
       "Epic animated adventure following the journey of a young lion prince in the African savanna.",
-    content: "Full content here...",
+    content: `Return to the Pride Lands in "The Lion King: Legacy", a breathtaking animated adventure that continues the saga of Simba and his family. This new chapter explores the challenges faced by the next generation as they navigate a changing world and discover their own place in the Circle of Life.
+    
+    With stunning visuals that push the boundaries of animation and a powerful musical score featuring new songs by top African artists, this film is a tribute to the beauty and resilience of the African savanna.
+    
+    Don't miss the cinematic event of the year that celebrates family, courage, and the enduring spirit of nature.`,
     featured_image:
       "https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?w=800&h=600&fit=crop",
     rating: 4.9,
@@ -603,12 +692,18 @@ export const topMovies: Listing[] = [
     location: "Cinema Release",
     category: "Animation",
     price_range: "$$",
-    tags: [{ id: 1, name: "Animation", slug: "animation" }],
+    tags: [
+      { id: 1, name: "Animation", slug: "animation" },
+      { id: 105, name: "Family", slug: "family" },
+      { id: 106, name: "Adventure", slug: "adventure" }
+    ],
     created_at: "2025-06-10T10:00:00Z",
     seo_title: "The Lion King: Legacy - Best Animated Movie 2025",
     seo_description:
       "Watch the epic animated adventure The Lion King: Legacy in theaters now.",
     seo_keywords: "animation, movie, cinema, family film",
+    website: "https://www.disney.com/the-lion-king",
+    opening_hours: "Showing times vary by theater",
   },
   {
     id: 402,
@@ -630,6 +725,8 @@ export const topMovies: Listing[] = [
     seo_description:
       "Experience the thrilling crime drama Nairobi Nights in theaters.",
     seo_keywords: "crime drama, movie, Nairobi, thriller",
+    website: "https://netflix.com/title/12345",
+    opening_hours: "Available on Streaming & Select Theaters",
   },
   {
     id: 403,
@@ -650,6 +747,8 @@ export const topMovies: Listing[] = [
     seo_title: "Love in Lagos - Romantic Comedy Movie 2025",
     seo_description: "Watch the romantic comedy Love in Lagos in theaters now.",
     seo_keywords: "romance, comedy, movie, Lagos, romantic comedy",
+    website: "https://loveinlagos-movie.com",
+    opening_hours: "In Theaters Natiowide",
   },
   {
     id: 404,
@@ -671,6 +770,8 @@ export const topMovies: Listing[] = [
     seo_description:
       "Experience the historical epic The Warrior Queen in theaters.",
     seo_keywords: "historical, epic, movie, African history",
+    website: "https://warriorqueen.com",
+    opening_hours: "IMAX & Standard Theaters",
   },
 ];
 
@@ -682,20 +783,33 @@ export const topElectricians: Listing[] = [
     slug: "pro-electric-services",
     excerpt:
       "Licensed and insured electrical contractors specializing in residential and commercial installations.",
-    content: "Full content here...",
+    content: `Pro Electric Services is your trusted partner for all electrical needs in Lagos. With over 15 years of experience, our team of licensed and insured electricians is dedicated to providing top-quality workmanship and exceptional customer service.
+    
+    We specialize in a wide range of services, including residential wiring, commercial installations, lighting design, and emergency repairs. We prioritize safety and code compliance in every project we undertake, ensuring your home or business is powered reliably and securely.
+    
+    Contact us today for a free estimate and experience the difference of working with true professionals.`,
     featured_image:
       "https://images.unsplash.com/photo-1621905251918-48416bd8575a?w=800&h=600&fit=crop",
     rating: 4.9,
     review_count: 156,
-    location: "Lagos, Nigeria",
+    location: "Makati",
     category: "Electrical Services",
     price_range: "$$",
-    tags: [{ id: 1, name: "Residential", slug: "residential" }],
+    tags: [
+      { id: 1, name: "Residential", slug: "residential" },
+      { id: 107, name: "Commercial", slug: "commercial" },
+      { id: 108, name: "Licensed", slug: "licensed" }
+    ],
     created_at: "2025-06-01T10:00:00Z",
     seo_title: "Pro Electric Services - Best Electrician Lagos",
     seo_description:
       "Professional electrical services in Lagos. Licensed and insured electricians.",
     seo_keywords: "electrician, electrical services, Lagos, wiring",
+    address: "45 Lekki Phase 1, Lagos, Nigeria",
+    website: "https://proelectric.com",
+    phone: "+234 800 987 6543",
+    email: "contact@proelectric.com",
+    opening_hours: "Mon-Fri: 8:00 AM - 6:00 PM",
   },
   {
     id: 502,
@@ -708,7 +822,7 @@ export const topElectricians: Listing[] = [
       "https://images.unsplash.com/photo-1621905251918-48416bd8575a?w=800&h=600&fit=crop",
     rating: 4.7,
     review_count: 203,
-    location: "Nairobi, Kenya",
+    location: "Mandaluyong",
     category: "Electrical Services",
     price_range: "$$",
     tags: [{ id: 2, name: "Emergency", slug: "emergency" }],
@@ -717,6 +831,11 @@ export const topElectricians: Listing[] = [
     seo_description:
       "24/7 emergency electrical services in Nairobi. Expert electricians available.",
     seo_keywords: "electrician, emergency, Nairobi, electrical repair",
+    address: "101 Upper Hill, Nairobi, Kenya",
+    website: "https://brightsolutions.co.ke",
+    phone: "+254 722 999 888",
+    email: "emergency@brightsolutions.co.ke",
+    opening_hours: "24/7 Emergency Service",
   },
   {
     id: 503,
@@ -729,7 +848,7 @@ export const topElectricians: Listing[] = [
       "https://images.unsplash.com/photo-1621905251918-48416bd8575a?w=800&h=600&fit=crop",
     rating: 4.8,
     review_count: 178,
-    location: "Cape Town, South Africa",
+    location: "Pasig",
     category: "Commercial Electrical",
     price_range: "$$$",
     tags: [{ id: 3, name: "Commercial", slug: "commercial" }],
@@ -739,6 +858,11 @@ export const topElectricians: Listing[] = [
       "Commercial and industrial electrical services in Cape Town. 20+ years experience.",
     seo_keywords:
       "commercial electrician, industrial, Cape Town, electrical contractor",
+    address: "5 Industrial Way, Paarden Eiland, Cape Town",
+    website: "https://masterelectric.co.za",
+    phone: "+27 21 555 7777",
+    email: "projects@masterelectric.co.za",
+    opening_hours: "Mon-Fri: 7:00 AM - 5:00 PM",
   },
   {
     id: 504,
@@ -751,7 +875,7 @@ export const topElectricians: Listing[] = [
       "https://images.unsplash.com/photo-1621905251918-48416bd8575a?w=800&h=600&fit=crop",
     rating: 4.6,
     review_count: 134,
-    location: "Accra, Ghana",
+    location: "Quezon",
     category: "Residential Electrical",
     price_range: "$$",
     tags: [{ id: 4, name: "Safety", slug: "safety" }],
@@ -760,6 +884,11 @@ export const topElectricians: Listing[] = [
     seo_description:
       "Safe and reliable residential electrical services in Accra.",
     seo_keywords: "residential electrician, safety, Accra, wiring",
+    address: "22 East Legon, Accra, Ghana",
+    website: "https://safewire.gh",
+    phone: "+233 24 555 4321",
+    email: "service@safewire.gh",
+    opening_hours: "Mon-Sat: 8:00 AM - 6:00 PM",
   },
 ];
 
@@ -771,20 +900,33 @@ export const topHotels: Listing[] = [
     slug: "grand-african-resort",
     excerpt:
       "Luxury beachfront resort offering world-class amenities, spa services, and fine dining with stunning ocean views.",
-    content: "Full content here...",
+    content: `Escape to paradise at Grand African Resort, a sanctuary of luxury nestled along the pristine coastline of Lagos. Our resort offers an unparalleled blend of modern elegance and traditional African charm, featuring spacious suites with breathtaking ocean views and private balconies.
+    
+    Indulge your senses at our world-class spa, savor exquisite cuisine at our beachfront restaurants, or simply relax by our infinity pool. Whether you're seeking a romantic getaway, a family vacation, or a venue for a special event, Grand African Resort promises an experience of pure bliss and relaxation.
+    
+    Book your stay with us and discover the true meaning of African hospitality.`,
     featured_image:
       "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800&h=600&fit=crop",
     rating: 4.8,
     review_count: 542,
-    location: "Lagos, Nigeria",
+    location: "Makati",
     category: "Luxury Resort",
     price_range: "$$$$",
-    tags: [{ id: 1, name: "Beachfront", slug: "beachfront" }],
+    tags: [
+      { id: 1, name: "Beachfront", slug: "beachfront" },
+      { id: 109, name: "Spa", slug: "spa" },
+      { id: 110, name: "Pool", slug: "pool" }
+    ],
     created_at: "2025-06-01T10:00:00Z",
     seo_title: "Grand African Resort - Best Luxury Hotel Lagos",
     seo_description:
       "Experience luxury at Grand African Resort in Lagos. Beachfront location with world-class amenities.",
     seo_keywords: "luxury hotel, resort, Lagos, beachfront, spa",
+    address: "1 Eko Atlantic Blvd, Lagos, Nigeria",
+    website: "https://grandafricanresort.com",
+    phone: "+234 1 555 0000",
+    email: "reservations@grandafricanresort.com",
+    opening_hours: "24/7 Check-in",
   },
   {
     id: 602,
@@ -797,7 +939,7 @@ export const topHotels: Listing[] = [
       "https://images.unsplash.com/photo-1564501049412-61c2a3083791?w=800&h=600&fit=crop",
     rating: 4.7,
     review_count: 389,
-    location: "Nairobi, Kenya",
+    location: "Mandaluyong",
     category: "Safari Lodge",
     price_range: "$$$",
     tags: [{ id: 2, name: "Safari", slug: "safari" }],
@@ -818,7 +960,7 @@ export const topHotels: Listing[] = [
       "https://images.unsplash.com/photo-1590490360182-c33d57733427?w=800&h=600&fit=crop",
     rating: 4.6,
     review_count: 267,
-    location: "Cape Town, South Africa",
+    location: "Pasig",
     category: "Boutique Hotel",
     price_range: "$$$",
     tags: [{ id: 3, name: "Boutique", slug: "boutique" }],
@@ -839,7 +981,7 @@ export const topHotels: Listing[] = [
       "https://images.unsplash.com/photo-1571896349842-33c89424de2d?w=800&h=600&fit=crop",
     rating: 4.5,
     review_count: 198,
-    location: "Accra, Ghana",
+    location: "Quezon",
     category: "Business Hotel",
     price_range: "$$",
     tags: [{ id: 4, name: "Business", slug: "business" }],
@@ -859,20 +1001,33 @@ export const topGyms: Listing[] = [
     slug: "fitzone-premium-gym",
     excerpt:
       "State-of-the-art fitness center with modern equipment, personal trainers, and group fitness classes.",
-    content: "Full content here...",
+    content: `Transform your fitness journey at FitZone Premium Gym, Lagos's premier destination for health and wellness. Our state-of-the-art facility is equipped with the latest cardio and strength training machines, ensuring you have everything you need to achieve your goals.
+    
+    Our certified personal trainers are here to guide and motivate you, offering personalized workout plans and nutritional advice. Join our vibrant community and participate in a wide variety of group fitness classes, from high-energy HIIT to calming yoga sessions.
+    
+    At FitZone, we believe that fitness is a lifestyle. Come visit us and start building a stronger, healthier you today.`,
     featured_image:
       "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=800&h=600&fit=crop",
     rating: 4.9,
     review_count: 423,
-    location: "Lagos, Nigeria",
+    location: "Makati",
     category: "Fitness Center",
     price_range: "$$",
-    tags: [{ id: 1, name: "Premium", slug: "premium" }],
+    tags: [
+      { id: 1, name: "Premium", slug: "premium" },
+      { id: 111, name: "Classes", slug: "classes" },
+      { id: 112, name: "Personal Training", slug: "personal-training" }
+    ],
     created_at: "2025-06-01T10:00:00Z",
     seo_title: "FitZone Premium Gym - Best Gym Lagos",
     seo_description:
       "Join FitZone Premium Gym in Lagos. Modern equipment, personal trainers, and group classes.",
     seo_keywords: "gym, fitness center, Lagos, personal training, workout",
+    address: "77 Admiralty Way, Lekki Phase 1, Lagos",
+    website: "https://fitzone.com",
+    phone: "+234 81 222 3344",
+    email: "join@fitzone.com",
+    opening_hours: "Mon-Sun: 5:00 AM - 11:00 PM",
   },
   {
     id: 702,
@@ -885,7 +1040,7 @@ export const topGyms: Listing[] = [
       "https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=800&h=600&fit=crop",
     rating: 4.8,
     review_count: 312,
-    location: "Nairobi, Kenya",
+    location: "Mandaluyong",
     category: "CrossFit",
     price_range: "$$",
     tags: [{ id: 2, name: "CrossFit", slug: "crossfit" }],
@@ -894,6 +1049,11 @@ export const topGyms: Listing[] = [
     seo_description:
       "High-intensity CrossFit training at CrossFit Nairobi. Certified coaches and community workouts.",
     seo_keywords: "CrossFit, gym, Nairobi, high-intensity, training",
+    address: "12 Waiyaki Way, Nairobi",
+    website: "https://crossfitnairobi.co.ke",
+    phone: "+254 711 555 666",
+    email: "coach@crossfitnairobi.co.ke",
+    opening_hours: "Mon-Sat: 6:00 AM - 9:00 PM",
   },
   {
     id: 703,
@@ -906,7 +1066,7 @@ export const topGyms: Listing[] = [
       "https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=800&h=600&fit=crop",
     rating: 4.7,
     review_count: 245,
-    location: "Cape Town, South Africa",
+    location: "Pasig",
     category: "Yoga Studio",
     price_range: "$$",
     tags: [{ id: 3, name: "Yoga", slug: "yoga" }],
@@ -915,6 +1075,11 @@ export const topGyms: Listing[] = [
     seo_description:
       "Find peace at Yoga Studio Cape Town. Various yoga styles, meditation, and wellness programs.",
     seo_keywords: "yoga, meditation, Cape Town, wellness, studio",
+    address: "33 Long Street, Cape Town City Centre",
+    website: "https://yogastudio.co.za",
+    phone: "+27 21 444 5566",
+    email: "namaste@yogastudio.co.za",
+    opening_hours: "Mon-Sun: 7:00 AM - 8:00 PM",
   },
   {
     id: 704,
@@ -927,7 +1092,7 @@ export const topGyms: Listing[] = [
       "https://images.unsplash.com/photo-1540497077202-7c8a3999166f?w=800&h=600&fit=crop",
     rating: 4.6,
     review_count: 189,
-    location: "Accra, Ghana",
+    location: "Quezon",
     category: "24/7 Gym",
     price_range: "$$",
     tags: [{ id: 4, name: "24/7", slug: "24-7" }],
@@ -936,6 +1101,11 @@ export const topGyms: Listing[] = [
     seo_description:
       "24/7 access gym in Accra. Strength training, cardio, and nutrition counseling available.",
     seo_keywords: "gym, 24/7, Accra, fitness, strength training",
+    address: "55 Oxford Street, Osu, Accra",
+    website: "https://powerhouse.gh",
+    phone: "+233 26 777 8899",
+    email: "info@powerhouse.gh",
+    opening_hours: "24/7 Access",
   },
 ];
 
@@ -947,20 +1117,33 @@ export const topSalons: Listing[] = [
     slug: "glamour-hair-beauty-salon",
     excerpt:
       "Premium hair salon offering cutting-edge hairstyles, color treatments, and beauty services.",
-    content: "Full content here...",
+    content: `Step into a world of elegance and style at Glamour Hair & Beauty Salon. We are passionate about helping you look and feel your absolute best. Our team of expert stylists and beauty therapists stays ahead of the latest trends and techniques to deliver exceptional results tailored to your unique personality.
+    
+    From precision haircuts and vibrant coloring to rejuvenating facials and luxurious manicures, we offer a comprehensive range of services using only high-quality, professional products. Relax in our chic and comfortable salon environment while we pamper you from head to toe.
+    
+    Book your appointment at Glamour Hair & Beauty Salon and let us unveil your inner radiance.`,
     featured_image:
       "https://images.unsplash.com/photo-1562322140-8baeececf3df?w=800&h=600&fit=crop",
     rating: 4.8,
     review_count: 367,
-    location: "Lagos, Nigeria",
+    location: "Makati",
     category: "Hair Salon",
     price_range: "$$",
-    tags: [{ id: 1, name: "Hair", slug: "hair" }],
+    tags: [
+      { id: 1, name: "Hair", slug: "hair" },
+      { id: 113, name: "Beauty", slug: "beauty" },
+      { id: 114, name: "Coloring", slug: "coloring" }
+    ],
     created_at: "2025-06-01T10:00:00Z",
     seo_title: "Glamour Hair & Beauty Salon - Best Hair Salon Lagos",
     seo_description:
       "Premium hair and beauty services at Glamour Salon in Lagos. Expert stylists and color treatments.",
     seo_keywords: "hair salon, beauty, Lagos, hairstyling, color",
+    address: "8 Ozumba Mbadiwe Ave, Victoria Island, Lagos",
+    website: "https://glamoursalon.com",
+    phone: "+234 1 222 3333",
+    email: "book@glamoursalon.com",
+    opening_hours: "Tue-Sat: 9:00 AM - 7:00 PM",
   },
   {
     id: 802,
@@ -973,7 +1156,7 @@ export const topSalons: Listing[] = [
       "https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=800&h=600&fit=crop",
     rating: 4.7,
     review_count: 289,
-    location: "Nairobi, Kenya",
+    location: "Mandaluyong",
     category: "Nail Salon",
     price_range: "$$",
     tags: [{ id: 2, name: "Nails", slug: "nails" }],
@@ -982,6 +1165,11 @@ export const topSalons: Listing[] = [
     seo_description:
       "Expert nail services at Nairobi Nail Studio. Manicures, pedicures, and nail art.",
     seo_keywords: "nail salon, manicure, pedicure, Nairobi, nail art",
+    address: "The Hub Karen, Nairobi",
+    website: "https://nairobinails.co.ke",
+    phone: "+254 733 444 555",
+    email: "appointments@nairobinails.co.ke",
+    opening_hours: "Mon-Sun: 10:00 AM - 6:00 PM",
   },
   {
     id: 803,
@@ -994,7 +1182,7 @@ export const topSalons: Listing[] = [
       "https://images.unsplash.com/photo-1544161515-4ab6ce6db874?w=800&h=600&fit=crop",
     rating: 4.9,
     review_count: 456,
-    location: "Cape Town, South Africa",
+    location: "Pasig",
     category: "Spa",
     price_range: "$$$",
     tags: [{ id: 3, name: "Spa", slug: "spa" }],
@@ -1003,6 +1191,11 @@ export const topSalons: Listing[] = [
     seo_description:
       "Relax at Cape Town Spa & Wellness. Massages, facials, and body treatments available.",
     seo_keywords: "spa, wellness, Cape Town, massage, facial",
+    address: "10 Kloof Street, Gardens, Cape Town",
+    website: "https://ctspa.co.za",
+    phone: "+27 21 888 9999",
+    email: "relax@ctspa.co.za",
+    opening_hours: "Mon-Sun: 9:00 AM - 9:00 PM",
   },
   {
     id: 804,
@@ -1015,7 +1208,7 @@ export const topSalons: Listing[] = [
       "https://images.unsplash.com/photo-1621605815971-fbc98d665033?w=800&h=600&fit=crop",
     rating: 4.6,
     review_count: 234,
-    location: "Accra, Ghana",
+    location: "Quezon",
     category: "Barber Shop",
     price_range: "$$",
     tags: [{ id: 4, name: "Barber", slug: "barber" }],
@@ -1024,6 +1217,11 @@ export const topSalons: Listing[] = [
     seo_description:
       "Expert barbering services at Accra Barber Shop. Traditional and modern styles available.",
     seo_keywords: "barber shop, grooming, Accra, haircut, styling",
+    address: "14 Spintex Road, Accra",
+    website: "https://accrabarber.gh",
+    phone: "+233 27 111 2222",
+    email: "cut@accrabarber.gh",
+    opening_hours: "Mon-Sat: 8:00 AM - 8:00 PM",
   },
 ];
 
@@ -1035,20 +1233,33 @@ export const topPlumbers: Listing[] = [
     slug: "reliable-plumbing-services",
     excerpt:
       "Licensed plumbers providing emergency repairs, installations, and maintenance services 24/7.",
-    content: "Full content here...",
+    content: `When plumbing issues strike, you need a service you can rely on. Reliable Plumbing Services offers prompt, professional, and affordable plumbing solutions for homes and businesses across Lagos. Our team is available 24/7 to handle emergencies, from burst pipes to clogged drains.
+    
+    We pride ourselves on our transparency and integrity, providing upfront pricing and guaranteed satisfaction on all our work. Whether you need a simple repair, a new installation, or routine maintenance, our skilled technicians possess the expertise to get the job done right the first time.
+    
+    Trust Reliable Plumbing Services to keep your water flowing smoothly.`,
     featured_image:
       "https://images.unsplash.com/photo-1621905251918-48416bd8575a?w=800&h=600&fit=crop",
     rating: 4.8,
     review_count: 278,
-    location: "Lagos, Nigeria",
+    location: "Laguna",
     category: "Plumbing Services",
     price_range: "$$",
-    tags: [{ id: 1, name: "Emergency", slug: "emergency" }],
+    tags: [
+      { id: 1, name: "Emergency", slug: "emergency" },
+      { id: 115, name: "Repairs", slug: "repairs" },
+      { id: 116, name: "Maintenance", slug: "maintenance" }
+    ],
     created_at: "2025-06-01T10:00:00Z",
     seo_title: "Reliable Plumbing Services - Best Plumber Lagos",
     seo_description:
       "24/7 plumbing services in Lagos. Emergency repairs, installations, and maintenance.",
     seo_keywords: "plumber, plumbing, Lagos, emergency, repairs",
+    address: "99 Isaac John St, Ikeja GRA, Lagos",
+    website: "https://reliableplumbing.ng",
+    phone: "+234 80 555 6666",
+    email: "help@reliableplumbing.ng",
+    opening_hours: "24/7 Emergency",
   },
   {
     id: 902,
@@ -1061,7 +1272,7 @@ export const topPlumbers: Listing[] = [
       "https://images.unsplash.com/photo-1621905251918-48416bd8575a?w=800&h=600&fit=crop",
     rating: 4.7,
     review_count: 195,
-    location: "Nairobi, Kenya",
+    location: "Mandaluyong",
     category: "Plumbing Services",
     price_range: "$$",
     tags: [{ id: 2, name: "Commercial", slug: "commercial" }],
@@ -1070,6 +1281,11 @@ export const topPlumbers: Listing[] = [
     seo_description:
       "Expert plumbing services in Nairobi. Residential and commercial solutions available.",
     seo_keywords: "plumber, plumbing, Nairobi, commercial, residential",
+    address: "44 Mombasa Road, Industrial Area, Nairobi",
+    website: "https://masterplumber.co.ke",
+    phone: "+254 20 222 3333",
+    email: "service@masterplumber.co.ke",
+    opening_hours: "Mon-Fri: 8:00 AM - 5:00 PM",
   },
   {
     id: 903,
@@ -1082,7 +1298,7 @@ export const topPlumbers: Listing[] = [
       "https://images.unsplash.com/photo-1621905251918-48416bd8575a?w=800&h=600&fit=crop",
     rating: 4.6,
     review_count: 167,
-    location: "Cape Town, South Africa",
+    location: "Pasig",
     category: "Plumbing Services",
     price_range: "$$",
     tags: [{ id: 3, name: "Fast Service", slug: "fast-service" }],
@@ -1091,6 +1307,11 @@ export const topPlumbers: Listing[] = [
     seo_description:
       "Fast plumbing service in Cape Town. Same-day repairs for leaks, clogs, and water heaters.",
     seo_keywords: "plumber, plumbing, Cape Town, fast service, repairs",
+    address: "15 Bree Street, Cape Town City Centre",
+    website: "https://quickfix.co.za",
+    phone: "+27 82 123 4567",
+    email: "dispatch@quickfix.co.za",
+    opening_hours: "Mon-Sat: 7:00 AM - 7:00 PM",
   },
   {
     id: 904,
@@ -1103,7 +1324,7 @@ export const topPlumbers: Listing[] = [
       "https://images.unsplash.com/photo-1621905251918-48416bd8575a?w=800&h=600&fit=crop",
     rating: 4.9,
     review_count: 312,
-    location: "Accra, Ghana",
+    location: "Quezon",
     category: "Plumbing Services",
     price_range: "$$",
     tags: [{ id: 4, name: "Certified", slug: "certified" }],
@@ -1112,5 +1333,10 @@ export const topPlumbers: Listing[] = [
     seo_description:
       "Certified plumbing services in Accra. Quality guarantee on all work performed.",
     seo_keywords: "plumber, plumbing, Accra, certified, professional",
+    address: "33 Independence Ave, Accra",
+    website: "https://proplumbing.gh",
+    phone: "+233 30 222 4444",
+    email: "info@proplumbing.gh",
+    opening_hours: "Mon-Fri: 8:00 AM - 6:00 PM",
   },
 ];

@@ -112,6 +112,11 @@ export interface Listing {
   seo_title?: string;
   seo_description?: string;
   seo_keywords?: string;
+  address?: string;
+  website?: string;
+  phone?: string;
+  email?: string;
+  opening_hours?: string;
 }
 
 // Helper function types

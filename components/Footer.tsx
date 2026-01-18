@@ -1,291 +1,308 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
+import Image from "next/image";
+import GetStartedButton from "./GetStartedButton";
 
 export default function Footer() {
+  const pathname = usePathname();
   const currentYear = new Date().getFullYear();
-
-  const footerLinks = {
-    discover: [
-      { href: "/listing/restaurants", label: "Restaurants" },
-      { href: "/listing/movies", label: "Movies" },
-      { href: "/listing/hotels", label: "Hotels" },
-      { href: "/listing/gyms", label: "Gyms & Fitness" },
-      { href: "/listing/salons", label: "Salons & Spas" },
-    ],
-    services: [
-      { href: "/listing/electricians", label: "Electricians" },
-      { href: "/listing/plumbers", label: "Plumbers" },
-      { href: "/all-post/podcast", label: "Podcasts" },
-      { href: "/all-post/top-videos", label: "Videos" },
-      { href: "/all-post/news", label: "News" },
-    ],
-    company: [
-      { href: "/about", label: "About Us" },
-      { href: "/contact", label: "Contact" },
-      { href: "/careers", label: "Careers" },
-      { href: "/advertise", label: "Advertise" },
-      { href: "/press", label: "Press" },
-    ],
-    support: [
-      { href: "/help", label: "Help Center" },
-      { href: "/privacy", label: "Privacy Policy" },
-      { href: "/terms", label: "Terms of Service" },
-      { href: "/cookies", label: "Cookie Policy" },
-      { href: "/accessibility", label: "Accessibility" },
-    ],
-  };
-
-  const socialLinks = [
-    {
-      name: "Facebook",
-      href: "#",
-      icon: (
-        <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-          <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
-        </svg>
-      ),
-    },
-    {
-      name: "Twitter",
-      href: "#",
-      icon: (
-        <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-          <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
-        </svg>
-      ),
-    },
-    {
-      name: "Instagram",
-      href: "#",
-      icon: (
-        <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-          <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z" />
-        </svg>
-      ),
-    },
-    {
-      name: "LinkedIn",
-      href: "#",
-      icon: (
-        <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-          <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
-        </svg>
-      ),
-    },
-    {
-      name: "YouTube",
-      href: "#",
-      icon: (
-        <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-          <path d="M23.498 6.186a3.016 3.016 0 00-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 00.502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 002.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 002.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z" />
-        </svg>
-      ),
-    },
-  ];
+  const isContactPage = pathname === "/contact-us";
 
   return (
-    <footer className="relative bg-gray-100 overflow-hidden">
-      {/* Decorative gradient elements */}
-      <div className="absolute top-0 left-0 w-96 h-96 bg-primary/10 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2" />
-      <div className="absolute bottom-0 right-0 w-80 h-80 bg-red-600/10 rounded-full blur-3xl translate-x-1/2 translate-y-1/2" />
-      <div className="absolute top-1/2 left-1/2 w-64 h-64 bg-red-400/5 rounded-full blur-2xl -translate-x-1/2 -translate-y-1/2" />
+    <footer className="bg-white 2xl:px-30 md:px-16 px-5 pt-16 pb-12">
+      <div className="w-full flex md:flex-row flex-wrap md:flex-nowrap md:gap-10 gap-x-2 gap-y-10 items-start justify-between">
+        <div className="md:w-1/4 w-full">
+          {/* Logo Replacement */}
+          <Link href="/" className="inline-block">
+            <h2 className="text-2xl font-bold font-clash text-gray-900">
+              Dynamic Listing
+            </h2>
+          </Link>
 
-      {/* Main Footer Content */}
-      <div className="relative 2xl:px-[120px] md:px-10 px-5 pt-20 pb-10">
-        {/* Top Section - Logo, Description, Newsletter */}
-        <div className="flex flex-col lg:flex-row gap-16 pb-16 border-b border-white/10">
-          {/* Brand Section */}
-          <div className="lg:w-1/3">
-            <Link href="/" className="inline-flex items-center gap-3 group">
-              <div className="relative">
-                {/* Glowing effect */}
-                <div className="absolute -inset-2 bg-gradient-to-r from-primary to-red-500 rounded-xl opacity-0 group-hover:opacity-30 blur-lg transition-opacity duration-500" />
-              </div>
-              <div className="flex flex-col relative">
-                <span className="text-white font-clash font-bold text-3xl leading-tight group-hover:text-primary transition-colors duration-300">
-                  Dynamic
-                </span>
-                <span className="text-sm text-gray-300 font-medium -mt-1">
-                  Discover & Explore
-                </span>
-              </div>
-            </Link>
-            <p className="mt-6 text-gray-300 leading-relaxed max-w-sm">
-              Your ultimate destination for discovering the best local
-              businesses, entertainment, and services. Explore top-rated venues
-              and stay informed with the latest news.
-            </p>
+          <p className="text-sm text-gray-600 mt-2 font-medium">
+            Creativity. Culture. Data. Global Impact.
+          </p>
 
-            {/* Newsletter Subscription */}
-            <div className="mt-8">
-              <h4 className="text-white font-semibold mb-4">
-                Subscribe to our newsletter
-              </h4>
-              <div className="flex gap-3">
-                <div className="relative flex-1">
-                  <input
-                    type="email"
-                    placeholder="Enter your email"
-                    className="w-full px-5 py-3.5 bg-white/10 border border-white/20 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all duration-300"
-                  />
-                </div>
-                <button className="group relative px-6 py-3.5 text-sm font-semibold text-white rounded-xl overflow-hidden transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-red-500/30">
-                  {/* Gradient Background */}
-                  <div className="absolute inset-0 bg-gradient-to-r from-primary via-red-600 to-red-700 group-hover:from-red-600 group-hover:via-red-700 group-hover:to-red-800 transition-all duration-300" />
-
-                  {/* Shine Effect */}
-                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700" />
-
-                  {/* Content */}
-                  <span className="relative z-10 flex items-center gap-2">
+          <section className="bg-white">
+            <div className="">
+              <div className="mt-8 flex">
+                <form action="" className="w-full">
+                  <div className="bg-gray-100 flex items-center rounded-full p-1 pl-4 w-full max-w-[340px]">
                     <svg
-                      className="w-5 h-5"
-                      fill="none"
-                      stroke="currentColor"
+                      width="20"
+                      height="20"
                       viewBox="0 0 24 24"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="text-gray-400"
                     >
                       <path
+                        d="M4 4H20C21.1 4 22 4.9 22 6V18C22 19.1 21.1 20 20 20H4C2.9 20 2 19.1 2 18V6C2 4.9 2.9 4 4 4Z"
+                        stroke="currentColor"
+                        strokeWidth="2"
                         strokeLinecap="round"
                         strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M13 7l5 5m0 0l-5 5m5-5H6"
+                      />
+                      <path
+                        d="M22 6L12 13L2 6"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
                       />
                     </svg>
-                  </span>
-                </button>
+                    <input
+                      type="email"
+                      placeholder="Enter your email"
+                      className="bg-transparent border-none outline-none rounded-l-md px-3 py-2 w-full focus:ring-0 text-sm"
+                    />
+                    <button
+                      type="submit"
+                      className="bg-gray-900 text-white px-5 py-2 rounded-full text-sm font-medium hover:bg-gray-800 transition-colors"
+                    >
+                      Subscribe
+                    </button>
+                  </div>
+                </form>
               </div>
             </div>
-          </div>
+          </section>
+          <p className="text-sm text-gray-600 font-medium mt-3">
+            Get the latest updates and insights from Dynamic Listing. No spam.
+            Just value.
+          </p>
 
-          {/* Links Grid */}
-          <div className="lg:w-2/3 grid grid-cols-2 md:grid-cols-4 gap-8">
-            {/* Discover Column */}
-            <div>
-              <h4 className="text-white font-clash font-semibold text-lg mb-6 relative inline-block">
-                Discover
-                <span className="absolute -bottom-1 left-0 w-8 h-0.5 bg-gradient-to-r from-primary to-red-500" />
-              </h4>
-              <ul className="space-y-4">
-                {footerLinks.discover.map((link) => (
-                  <li key={link.href}>
-                    <Link
-                      href={link.href}
-                      className="group text-gray-300 hover:text-white transition-colors duration-300 flex items-center gap-2"
-                    >
-                      <span className="w-0 h-0.5 bg-primary group-hover:w-3 transition-all duration-300" />
-                      {link.label}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            {/* Services Column */}
-            <div>
-              <h4 className="text-white font-clash font-semibold text-lg mb-6 relative inline-block">
-                Services
-                <span className="absolute -bottom-1 left-0 w-8 h-0.5 bg-gradient-to-r from-primary to-red-500" />
-              </h4>
-              <ul className="space-y-4">
-                {footerLinks.services.map((link) => (
-                  <li key={link.href}>
-                    <Link
-                      href={link.href}
-                      className="group text-gray-300 hover:text-white transition-colors duration-300 flex items-center gap-2"
-                    >
-                      <span className="w-0 h-0.5 bg-primary group-hover:w-3 transition-all duration-300" />
-                      {link.label}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            {/* Company Column */}
-            <div>
-              <h4 className="text-white font-clash font-semibold text-lg mb-6 relative inline-block">
-                Company
-                <span className="absolute -bottom-1 left-0 w-8 h-0.5 bg-gradient-to-r from-primary to-red-500" />
-              </h4>
-              <ul className="space-y-4">
-                {footerLinks.company.map((link) => (
-                  <li key={link.href}>
-                    <Link
-                      href={link.href}
-                      className="group text-gray-300 hover:text-white transition-colors duration-300 flex items-center gap-2"
-                    >
-                      <span className="w-0 h-0.5 bg-primary group-hover:w-3 transition-all duration-300" />
-                      {link.label}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            {/* Support Column */}
-            <div>
-              <h4 className="text-white font-clash font-semibold text-lg mb-6 relative inline-block">
-                Support
-                <span className="absolute -bottom-1 left-0 w-8 h-0.5 bg-gradient-to-r from-primary to-red-500" />
-              </h4>
-              <ul className="space-y-4">
-                {footerLinks.support.map((link) => (
-                  <li key={link.href}>
-                    <Link
-                      href={link.href}
-                      className="group text-gray-300 hover:text-white transition-colors duration-300 flex items-center gap-2"
-                    >
-                      <span className="w-0 h-0.5 bg-primary group-hover:w-3 transition-all duration-300" />
-                      {link.label}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </div>
-        </div>
-
-        {/* Bottom Section */}
-        <div className="pt-10 flex flex-col md:flex-row items-center justify-between gap-8">
-          {/* Copyright */}
-          <div className="flex flex-col md:flex-row items-center gap-4">
-            <p className="text-gray-400 text-sm">
-              © {currentYear}{" "}
-              <span className="text-white font-medium">Dynamic</span>. All
-              rights reserved.
-            </p>
-            <span className="hidden md:block text-gray-600">|</span>
-            <p className="text-gray-400 text-sm">
-              Made with{" "}
-              <span className="text-primary animate-pulse inline-block">❤</span>{" "}
-              for discovering amazing places
-            </p>
-          </div>
-
-          {/* Social Links */}
-          <div className="flex items-center gap-4">
-            {socialLinks.map((social) => (
-              <Link
-                key={social.name}
-                href={social.href}
-                aria-label={social.name}
-                className="group relative w-10 h-10 flex items-center justify-center rounded-full bg-white/5 border border-white/10 text-gray-400 hover:text-white hover:border-primary/50 transition-all duration-300 overflow-hidden"
+          <div className="mt-6">
+            <div className="flex items-center gap-4 mt-4">
+              <a
+                target="_blank"
+                aria-label="Visit us on Facebook"
+                href="https://facebook.com"
+                className="hover:opacity-80 transition-opacity"
               >
-                {/* Hover background */}
-                <div className="absolute inset-0 bg-gradient-to-br from-primary to-red-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-
-                {/* Icon */}
-                <span className="relative z-10 transform group-hover:scale-110 transition-transform duration-300">
-                  {social.icon}
-                </span>
-              </Link>
-            ))}
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M18 2H15C13.6739 2 12.4021 2.52678 11.4645 3.46447C10.5268 4.40215 10 5.67392 10 7V10H7V14H10V22H14V14H17L18 10H14V7C14 6.73478 14.1054 6.48043 14.2929 6.29289C14.4804 6.10536 14.7348 6 15 6H18V2Z" stroke="#1F2937" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              </a>
+              <a
+                target="_blank"
+                href="https://instagram.com"
+                aria-label="Visit us on Instagram"
+                className="hover:opacity-80 transition-opacity"
+              >
+                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M17 2H7C4.23858 2 2 4.23858 2 7V17C2 19.7614 4.23858 22 7 22H17C19.7614 22 22 19.7614 22 17V7C22 4.23858 19.7614 2 17 2Z" stroke="#1F2937" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    <path d="M16 11.37C16.1234 12.2022 15.9813 13.0522 15.5938 13.799C15.2063 14.5458 14.5931 15.1514 13.8416 15.5297C13.0901 15.9079 12.2384 16.0396 11.4078 15.906C10.5771 15.7723 9.80976 15.3801 9.21484 14.7852C8.61991 14.1902 8.22773 13.4229 8.09406 12.5922C7.96039 11.7615 8.09206 10.9099 8.47032 10.1584C8.84858 9.40685 9.45418 8.79374 10.201 8.40624C10.9478 8.01874 11.7978 7.87658 12.63 8H12.63C13.5235 8.00008 14.3808 8.35506 15.0126 8.98687C15.6444 9.61869 15.9994 10.476 15.9994 11.37H16Z" stroke="#1F2937" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    <path d="M17.5 6.5H17.51" stroke="#1F2937" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              </a>
+              <a
+                target="_blank"
+                href="https://youtube.com"
+                aria-label="Visit us on YouTube"
+                className="hover:opacity-80 transition-opacity"
+              >
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M22.54 6.42C22.4208 5.94541 22.1795 5.51061 21.8398 5.15874C21.5001 4.80687 21.0734 4.54972 20.6 4.41C18.88 4 12 4 12 4C12 4 5.12 4 3.4 4.41C2.92659 4.54972 2.49988 4.80687 2.16017 5.15874C1.82046 5.51061 1.57916 5.94541 1.46 6.42C1.26477 8.28315 1.26477 10.1568 1.46 12.02C1.57916 12.4946 1.82046 12.9294 2.16017 13.2813C2.49988 13.6331 2.92659 13.8903 3.4 14.03C5.12 14.44 12 14.44 12 14.44C12 14.44 18.88 14.44 20.6 14.03C21.0734 13.8903 21.5001 13.6331 21.8398 13.2813C22.1795 12.9294 22.4208 12.4946 22.54 12.02C22.7352 10.1568 22.7352 8.28315 22.54 6.42Z" stroke="#1F2937" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    <path d="M9.75 15.02L15.5 11.75L9.75 8.48001V15.02Z" stroke="#1F2937" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              </a>
+            </div>
           </div>
         </div>
 
-        {/* Decorative bottom line */}
-        <div className="mt-10 h-1 w-full bg-gradient-to-r from-transparent via-primary/50 to-transparent rounded-full" />
+        <div className="md:w-fit w-[40%]">
+          <h6 className="text-gray-900 font-clash font-semibold text-lg">
+            Quick Links
+          </h6>
+          <ul className="flex flex-col gap-4 text-gray-600 font-medium text-sm mt-4">
+            <li>
+              <Link href="/" className="hover:text-primary transition-colors">
+                Home
+              </Link>
+            </li>
+            <li>
+              <Link
+                href="/about-us"
+                className="hover:text-primary transition-colors"
+              >
+                About us
+              </Link>
+            </li>
+            <li>
+              <Link
+                href="/services"
+                className="hover:text-primary transition-colors"
+              >
+                Services
+              </Link>
+            </li>
+            <li>
+              <Link
+                href="/case-study"
+                className="hover:text-primary transition-colors"
+              >
+                Case Studies
+              </Link>
+            </li>
+            <li>
+              <Link
+                href="/partner"
+                className="hover:text-primary transition-colors"
+              >
+                Partners
+              </Link>
+            </li>
+            <li>
+              <Link
+                href="/faqs"
+                className="hover:text-primary transition-colors"
+              >
+                FAQs
+              </Link>
+            </li>
+          </ul>
+        </div>
+
+        <div className="md:w-fit w-[50%]">
+          <h6 className="text-gray-900 font-clash font-semibold text-lg">
+            Top Categories
+          </h6>
+          <ul className="flex flex-col gap-4 text-gray-600 font-medium text-sm mt-4">
+            <li>
+              <Link
+                href="/listing/restaurants"
+                className="hover:text-primary transition-colors"
+              >
+                Restaurants
+              </Link>
+            </li>
+            <li>
+              <Link
+                href="/listing/movies"
+                className="hover:text-primary transition-colors"
+              >
+                Movies
+              </Link>
+            </li>
+            <li>
+              <Link
+                href="/listing/hotels"
+                className="hover:text-primary transition-colors"
+              >
+                Hotels
+              </Link>
+            </li>
+             <li>
+                <Link
+                    href="/listing/gyms"
+                    className="hover:text-primary transition-colors"
+                >
+                    Gyms & Fitness
+                </Link>
+             </li>
+              <li>
+                  <Link
+                      href="/all-post/news"
+                      className="hover:text-primary transition-colors"
+                  >
+                      Latest News
+                  </Link>
+              </li>
+            <li>
+              <Link className="flex flex-row gap-2 items-center" href="/#">
+                <p>Musifyr</p>
+                <div className="border border-gray-300 rounded-full text-[10px] font-medium text-primary px-2 py-0.5">
+                  Coming Soon
+                </div>
+              </Link>
+            </li>
+          </ul>
+        </div>
+
+        <div className="md:w-fit">
+          <h6 className="text-gray-900 font-clash font-semibold text-lg">
+            Contact
+          </h6>
+          <div className="flex items-start gap-2 mt-4">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="mt-1 text-gray-900">
+                <path d="M22 16.92V19.92C22.0011 20.1986 21.9204 20.471 21.767 20.7057C21.6137 20.9403 21.3941 21.1274 21.1343 21.2449C20.8745 21.3624 20.5855 21.4055 20.3013 21.3691C20.017 21.3327 19.7492 21.2183 19.53 21.04C16.5004 18.9882 13.9189 16.4067 11.8671 13.3771C11.6877 13.1555 11.5727 12.8851 11.5362 12.5996C11.4996 12.3142 11.543 12.0245 11.6611 11.7634C11.7792 11.5024 11.967 11.2804 12.2032 11.1235C12.4394 10.9666 12.7144 10.881 12.9972 10.8771H15.9972C16.8909 10.8711 17.6534 11.5645 17.72 12.4552C17.7735 13.1666 18.1578 13.8016 18.7738 14.2045C19.0494 14.3853 19.3804 14.4754 19.71 14.4593C20.0397 14.4431 20.3541 14.3214 20.6 14.1147L21.45 13.3999" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                <path d="M11.11 13.89L13.16 11.84" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                <path d="M15 4H19" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                <path d="M15 8H19" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+            <div>
+              <p className="text-gray-600 font-medium">+234 810 288 2412</p>
+              <p className="text-gray-600 font-medium mt-2">+44 7459 802902</p>
+            </div>
+          </div>
+
+          <div className="flex items-start gap-2 mt-4">
+             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="mt-1 text-gray-900">
+                <path d="M4 4H20C21.1 4 22 4.9 22 6V18C22 19.1 21.1 20 20 20H4C2.9 20 2 19.1 2 18V6C2 4.9 2.9 4 4 4Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                <path d="M22 6L12 13L2 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+            <div className="text-gray-600 font-medium">
+              <p>info@dynamiclisting.com</p>
+            </div>
+          </div>
+        </div>
+
+        <div className="md:w-1/4 w-full">
+          <h6 className="text-gray-900 font-clash font-semibold text-lg">
+            Office Locations
+          </h6>
+          <div className="flex items-start gap-2 mt-4">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="mt-1 text-gray-900">
+                <path d="M21 10C21 17 12 23 12 23C12 23 3 17 3 10C3 7.61305 3.94821 5.32387 5.63604 3.63604C7.32387 1.94821 9.61305 1 12 1C14.3869 1 16.6761 1.94821 18.364 3.63604C20.0518 5.32387 21 7.61305 21 10Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                <path d="M12 13C13.6569 13 15 11.6569 15 10C15 8.34315 13.6569 7 12 7C10.3431 7 9 8.34315 9 10C9 11.6569 10.3431 13 12 13Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+            <div>
+              <h6 className="text-gray-900 font-semibold">Nigeria Office</h6>
+              <p className="text-gray-600 font-medium mt-2">
+                Dynamic Listing Brand 22 Imoro Peace Avenue , Ikorodu
+              </p>
+            </div>
+          </div>
+          <div className="flex items-start gap-2 mt-4">
+             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="mt-1 text-gray-900">
+                <path d="M21 10C21 17 12 23 12 23C12 23 3 17 3 10C3 7.61305 3.94821 5.32387 5.63604 3.63604C7.32387 1.94821 9.61305 1 12 1C14.3869 1 16.6761 1.94821 18.364 3.63604C20.0518 5.32387 21 7.61305 21 10Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                <path d="M12 13C13.6569 13 15 11.6569 15 10C15 8.34315 13.6569 7 12 7C10.3431 7 9 8.34315 9 10C9 11.6569 10.3431 13 12 13Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+            <div>
+              <h6 className="text-gray-900 font-semibold">
+                United Kingdom Office
+              </h6>
+              <p className="text-gray-600 font-medium mt-2">
+                Dynamic Listing Brand 58 Strathmore Avenue CV1 2AH
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="w-full h-[1px] bg-gray-200 my-10"></div>
+
+      <div className="flex md:flex-row flex-col-reverse md:items-center items-start gap-4 md:justify-between">
+        <p className="text-gray-600 font-medium text-sm text-left">
+          © {currentYear} Dynamic Listing. All rights reserved.
+        </p>
+        <div className="flex items-center gap-4">
+          <Link
+            href="/privacy-policy"
+            className="text-gray-600 font-medium text-sm hover:text-primary transition-colors"
+          >
+            Privacy Policy
+          </Link>
+          <Link
+            href="/terms-of-service"
+            className="text-gray-600 font-medium text-sm hover:text-primary transition-colors"
+          >
+            Terms of Service
+          </Link>
+        </div>
       </div>
     </footer>
   );
