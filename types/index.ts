@@ -117,6 +117,7 @@ export interface Listing {
   phone?: string;
   email?: string;
   opening_hours?: string;
+  google_map_url?: string;
 }
 
 // Helper function types

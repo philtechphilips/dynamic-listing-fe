@@ -3,14 +3,14 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import { 
-  topRestaurants, 
-  topMovies, 
-  topElectricians, 
-  topHotels, 
-  topGyms, 
-  topSalons, 
-  topPlumbers 
+import {
+  topRestaurants,
+  topMovies,
+  topElectricians,
+  topHotels,
+  topGyms,
+  topSalons,
+  topPlumbers
 } from '@/lib/mockData';
 import { Listing } from '@/types';
 import ListingInteractions from '@/components/ListingInteractions';
@@ -33,7 +33,7 @@ const findListingBySlug = (slug: string): Listing | undefined => {
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
   const listing = findListingBySlug(slug);
-  
+
   if (!listing) {
     return {
       title: 'Listing Not Found',
@@ -114,15 +114,15 @@ export default async function ListingDetailPage({ params }: { params: Promise<{ 
         <div className="absolute inset-0 bg-black/40" />
         <div className="absolute bottom-0 left-0 w-full p-6 md:p-12 text-white bg-gradient-to-t from-black/80 to-transparent">
           <div className="max-w-7xl mx-auto">
-             {/* Category Tag */}
+            {/* Category Tag */}
             {listing.category && (
               <span className="inline-block px-3 py-1 bg-primary text-white text-sm font-medium rounded-full mb-4">
                 {listing.category}
               </span>
             )}
-            
+
             <h1 className="text-3xl md:text-5xl font-clash font-bold mb-4">{listing.title}</h1>
-            
+
             <div className="flex flex-wrap items-center gap-6 text-sm md:text-base">
               {listing.location && (
                 <div className="flex items-center gap-2">
@@ -132,7 +132,7 @@ export default async function ListingDetailPage({ params }: { params: Promise<{ 
                   <span>{listing.location}</span>
                 </div>
               )}
-              
+
               <div className="flex items-center gap-2">
                 <StarRating rating={listing.rating} reviewCount={listing.review_count} />
               </div>
@@ -172,7 +172,7 @@ export default async function ListingDetailPage({ params }: { params: Promise<{ 
           )}
 
           <div className="mt-8">
-             <ListingInteractions listingTitle={listing.title} />
+            <ListingInteractions listingTitle={listing.title} />
           </div>
         </div>
 
@@ -180,7 +180,7 @@ export default async function ListingDetailPage({ params }: { params: Promise<{ 
         <div className="lg:col-span-1">
           <div className="bg-gray-50 rounded-2xl p-6 md:p-8 sticky top-32">
             <h3 className="text-xl font-clash font-semibold text-gray-900 mb-6">Contact & Info</h3>
-            
+
             <div className="space-y-6">
               {listing.address && (
                 <div className="flex gap-4">
@@ -206,10 +206,10 @@ export default async function ListingDetailPage({ params }: { params: Promise<{ 
                   </div>
                   <div>
                     <h4 className="font-medium text-gray-900">Website</h4>
-                    <a 
-                      href={listing.website} 
-                      target="_blank" 
-                      rel="noopener noreferrer" 
+                    <a
+                      href={listing.website}
+                      target="_blank"
+                      rel="noopener noreferrer"
                       className="text-primary hover:underline text-sm mt-1 block break-all"
                     >
                       Visit Website
@@ -265,9 +265,38 @@ export default async function ListingDetailPage({ params }: { params: Promise<{ 
               )}
             </div>
 
+            {listing.google_map_url && (
+              <div className="mt-6">
+                <h4 className="font-medium text-gray-900 mb-3">Location</h4>
+                <div className="rounded-xl overflow-hidden shadow-sm h-64 relative border border-gray-200">
+                  <iframe
+                    src={listing.google_map_url}
+                    width="100%"
+                    height="100%"
+                    style={{ border: 0 }}
+                    allowFullScreen
+                    loading="lazy"
+                    referrerPolicy="no-referrer-when-downgrade"
+                    title={`${listing.title} Location`}
+                  />
+                </div>
+                <div className="mt-2 text-right">
+                  <a
+                    href={listing.google_map_url.replace('/embed', '')} // Simple fallback attempt, though ideally we store both or construct the link
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-xs text-primary hover:underline font-medium"
+                  >
+                    Get Directions
+                  </a>
+                </div>
+              </div>
+            )}
+
+
             <div className="mt-8 pt-6 border-t">
-              <Link 
-                href="/" 
+              <Link
+                href="/"
                 className="flex items-center justify-center gap-2 w-full py-3 border border-gray-300 rounded-full hover:bg-gray-50 transition-colors text-gray-700 font-medium"
               >
                 <svg className="w-4 h-4 transform rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -286,60 +315,60 @@ export default async function ListingDetailPage({ params }: { params: Promise<{ 
         <h2 className="text-2xl font-clash font-bold text-gray-900 mb-8">Related Listings</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {[
-              ...topRestaurants,
-              ...topMovies,
-              ...topElectricians,
-              ...topHotels,
-              ...topGyms,
-              ...topSalons,
-              ...topPlumbers,
-            ]
+            ...topRestaurants,
+            ...topMovies,
+            ...topElectricians,
+            ...topHotels,
+            ...topGyms,
+            ...topSalons,
+            ...topPlumbers,
+          ]
             .filter(item => item.category === listing.category && item.slug !== listing.slug)
             .slice(0, 3)
             .map(item => (
-            <Link href={`/listing/${item.slug}`} key={item.id} className="group block h-full">
-              <div className="bg-white border rounded-xl overflow-hidden hover:shadow-lg transition-all duration-300 h-full flex flex-col">
-                <div className="relative h-48 w-full">
-                  <Image
-                    src={item.featured_image || '/images/music.svg'}
-                    alt={item.title}
-                    fill
-                    className="object-cover group-hover:scale-105 transition-transform duration-500"
-                  />
-                  <div className="absolute top-4 left-4">
-                     <span className="px-2 py-1 bg-white/90 backdrop-blur text-xs font-medium text-gray-900 rounded-md">
-                       {item.category}
-                     </span>
+              <Link href={`/listing/${item.slug}`} key={item.id} className="group block h-full">
+                <div className="bg-white border rounded-xl overflow-hidden hover:shadow-lg transition-all duration-300 h-full flex flex-col">
+                  <div className="relative h-48 w-full">
+                    <Image
+                      src={item.featured_image || '/images/music.svg'}
+                      alt={item.title}
+                      fill
+                      className="object-cover group-hover:scale-105 transition-transform duration-500"
+                    />
+                    <div className="absolute top-4 left-4">
+                      <span className="px-2 py-1 bg-white/90 backdrop-blur text-xs font-medium text-gray-900 rounded-md">
+                        {item.category}
+                      </span>
+                    </div>
+                  </div>
+                  <div className="p-5 flex flex-col flex-1">
+                    <div className="flex justify-between items-start mb-2">
+                      <h3 className="font-clash font-semibold text-lg text-gray-900 group-hover:text-primary transition-colors line-clamp-1">
+                        {item.title}
+                      </h3>
+                      {item.rating && (
+                        <div className="flex items-center gap-1 bg-yellow-50 px-2 py-0.5 rounded-md">
+                          <svg className="w-4 h-4 text-yellow-500 fill-current" viewBox="0 0 20 20">
+                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                          </svg>
+                          <span className="text-sm font-medium text-gray-900">{item.rating}</span>
+                        </div>
+                      )}
+                    </div>
+                    <p className="text-gray-500 text-sm line-clamp-2 mb-4 flex-1">
+                      {item.excerpt}
+                    </p>
+                    <div className="flex items-center gap-2 text-sm text-gray-400 mt-auto pt-4 border-t border-gray-50">
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                      </svg>
+                      <span className="truncate">{item.location}</span>
+                    </div>
                   </div>
                 </div>
-                <div className="p-5 flex flex-col flex-1">
-                  <div className="flex justify-between items-start mb-2">
-                    <h3 className="font-clash font-semibold text-lg text-gray-900 group-hover:text-primary transition-colors line-clamp-1">
-                      {item.title}
-                    </h3>
-                    {item.rating && (
-                      <div className="flex items-center gap-1 bg-yellow-50 px-2 py-0.5 rounded-md">
-                        <svg className="w-4 h-4 text-yellow-500 fill-current" viewBox="0 0 20 20">
-                          <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                        </svg>
-                        <span className="text-sm font-medium text-gray-900">{item.rating}</span>
-                      </div>
-                    )}
-                  </div>
-                  <p className="text-gray-500 text-sm line-clamp-2 mb-4 flex-1">
-                    {item.excerpt}
-                  </p>
-                  <div className="flex items-center gap-2 text-sm text-gray-400 mt-auto pt-4 border-t border-gray-50">
-                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                     </svg>
-                     <span className="truncate">{item.location}</span>
-                  </div>
-                </div>
-              </div>
-            </Link>
-          ))}
+              </Link>
+            ))}
         </div>
       </div>
     </main>

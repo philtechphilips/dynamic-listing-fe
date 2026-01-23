@@ -557,6 +557,7 @@ export const topRestaurants: Listing[] = [
     phone: "+234 800 123 4567",
     email: "reservations@thegourmetkitchen.com",
     opening_hours: "Mon-Sun: 11:00 AM - 11:00 PM",
+    google_map_url: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3963.952912260219!2d3.375295414770757!3d6.527631695278783!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x103b8b2ae68280c1%3A0xdc939f243026a798!2sLagos%2C%20Nigeria!5e0!3m2!1sen!2sng!4v1626078726000!5m2!1sen!2sng",
   },
   {
     id: 302,
@@ -795,6 +796,7 @@ export const topElectricians: Listing[] = [
     location: "Makati",
     category: "Electrical Services",
     price_range: "$$",
+    google_map_url: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d15856.88569502795!2d3.375295414770757!3d6.527631695278783!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x103b8b2ae68280c1%3A0xdc939f243026a798!2sLagos%2C%20Nigeria!5e0!3m2!1sen!2sng!4v1626078726000!5m2!1sen!2sng",
     tags: [
       { id: 1, name: "Residential", slug: "residential" },
       { id: 107, name: "Commercial", slug: "commercial" },
