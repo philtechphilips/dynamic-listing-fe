@@ -4,65 +4,68 @@ import { CartesianGrid, Line, LineChart, XAxis, YAxis } from "recharts";
 import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from "./ui/chart";
 
 const chartData = [
-  { month: "January", desktop: 186, mobile: 80 },
-  { month: "February", desktop: 305, mobile: 200 },
-  { month: "March", desktop: 237, mobile: 120 },
-  { month: "April", desktop: 73, mobile: 190 },
-  { month: "May", desktop: 209, mobile: 130 },
-  { month: "June", desktop: 214, mobile: 140 },
+  { month: "January", newUsers: 450, activeUsers: 1200 },
+  { month: "February", newUsers: 520, activeUsers: 1400 },
+  { month: "March", newUsers: 480, activeUsers: 1350 },
+  { month: "April", newUsers: 610, activeUsers: 1600 },
+  { month: "May", newUsers: 750, activeUsers: 1900 },
+  { month: "June", newUsers: 820, activeUsers: 2100 },
 ];
 const chartConfig = {
-  desktop: {
-    label: "Desktop",
+  newUsers: {
+    label: "New Users",
     color: "var(--chart-1)",
   },
-  mobile: {
-    label: "Mobile",
+  activeUsers: {
+    label: "Active Users",
     color: "var(--chart-2)",
   },
 } satisfies ChartConfig;
 
 const AppLineChart = () => {
   return (
-    <ChartContainer config={chartConfig} className="mt-6">
-      <LineChart
-        accessibilityLayer
-        data={chartData}
-        margin={{
-          left: 12,
-          right: 12,
-        }}
-      >
-        <CartesianGrid vertical={false} />
-        <XAxis
-          dataKey="month"
-          tickLine={false}
-          axisLine={false}
-          tickMargin={8}
-          tickFormatter={(value) => value.slice(0, 3)}
-        />
-        <YAxis
-          tickLine={false}
-          axisLine={false}
-          tickMargin={8}
-        />
-        <ChartTooltip cursor={false} content={<ChartTooltipContent />} />
-        <Line
-          dataKey="desktop"
-          type="monotone"
-          stroke="var(--color-desktop)"
-          strokeWidth={2}
-          dot={false}
-        />
-        <Line
-          dataKey="mobile"
-          type="monotone"
-          stroke="var(--color-mobile)"
-          strokeWidth={2}
-          dot={false}
-        />
-      </LineChart>
-    </ChartContainer>
+    <div className="">
+      <h1 className="text-lg font-medium mb-6">User Growth & Engagement</h1>
+      <ChartContainer config={chartConfig} className="min-h-[200px] w-full">
+        <LineChart
+          accessibilityLayer
+          data={chartData}
+          margin={{
+            left: 12,
+            right: 12,
+          }}
+        >
+          <CartesianGrid vertical={false} />
+          <XAxis
+            dataKey="month"
+            tickLine={false}
+            axisLine={false}
+            tickMargin={8}
+            tickFormatter={(value) => value.slice(0, 3)}
+          />
+          <YAxis
+            tickLine={false}
+            axisLine={false}
+            tickMargin={8}
+          />
+          <ChartTooltip cursor={false} content={<ChartTooltipContent />} />
+          <Line
+            dataKey="newUsers"
+            type="monotone"
+            stroke="var(--color-newUsers)"
+            strokeWidth={2}
+            dot={false}
+          />
+          <Line
+            dataKey="activeUsers"
+            type="monotone"
+            stroke="var(--color-activeUsers)"
+            strokeWidth={2}
+            dot={false}
+          />
+        </LineChart>
+      </ChartContainer>
+    </div>
   );
 };
 

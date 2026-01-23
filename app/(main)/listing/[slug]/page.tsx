@@ -14,6 +14,7 @@ import {
 } from '@/lib/mockData';
 import { Listing } from '@/types';
 import ListingInteractions from '@/components/ListingInteractions';
+import Comments from '@/components/Comments';
 
 // Helper to find listing
 const findListingBySlug = (slug: string): Listing | undefined => {
@@ -173,6 +174,7 @@ export default async function ListingDetailPage({ params }: { params: Promise<{ 
 
           <div className="mt-8">
             <ListingInteractions listingTitle={listing.title} />
+            <Comments />
           </div>
         </div>
 

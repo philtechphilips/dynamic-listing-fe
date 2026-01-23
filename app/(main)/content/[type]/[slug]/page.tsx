@@ -3,9 +3,9 @@ import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
-import { 
-  latestPosts, 
-  newsPosts, 
+import {
+  latestPosts,
+  newsPosts,
   trendingPosts,
   latestPodcasts,
   topVideos,
@@ -14,6 +14,7 @@ import {
 } from '@/lib/mockData';
 import { Post, Podcast, Resource, Event } from '@/types';
 import ShareActions from '@/components/ShareActions';
+import Comments from '@/components/Comments';
 
 // Helper types
 type ContentItem = Post | Podcast | Resource | Event;
@@ -36,20 +37,20 @@ const findContent = (type: string, slug: string): ContentItem | undefined => {
   switch (type) {
     case 'post':
       return [
-        ...latestPosts, 
-        ...newsPosts, 
+        ...latestPosts,
+        ...newsPosts,
         ...trendingPosts,
       ].find(item => item.slug === slug);
-    
+
     case 'podcast':
       return [...latestPodcasts, ...topVideos].find(item => item.slug === slug);
-      
+
     case 'resource':
       return latestResources.find(item => item.slug === slug);
-      
+
     case 'event':
       return getAllEvents().find(item => item.slug === slug);
-      
+
     default:
       return undefined;
   }
@@ -75,7 +76,7 @@ const getDate = (item: ContentItem): string => {
 export async function generateMetadata({ params }: { params: Promise<{ type: string, slug: string }> }): Promise<Metadata> {
   const { type, slug } = await params;
   const content = findContent(type, slug);
-  
+
   if (!content) {
     return {
       title: 'Content Not Found',
@@ -127,7 +128,7 @@ export default async function ContentDetailPage({ params }: { params: Promise<{ 
           <h1 className="text-3xl md:text-5xl font-clash font-bold text-gray-900 mb-6 leading-tight">
             {title}
           </h1>
-          
+
           <div className="flex items-center justify-center gap-4 text-gray-500 text-sm">
             {date && <p>{date}</p>}
             {author && (
@@ -152,64 +153,66 @@ export default async function ContentDetailPage({ params }: { params: Promise<{ 
 
         {/* Share Buttons */}
         <div className="flex justify-center mb-12">
-           <ShareActions title={title} />
+          <ShareActions title={title} />
         </div>
 
         {/* Content */}
         <div className="prose prose-lg max-w-none text-gray-700 leading-relaxed">
-           <div dangerouslySetInnerHTML={{ __html: bodyContent.replace(/\n/g, '<br />') }} />
+          <div dangerouslySetInnerHTML={{ __html: bodyContent.replace(/\n/g, '<br />') }} />
         </div>
-        
+
+        <Comments />
+
         {/* Video Embed for Podcasts/Videos */}
         {'video_url' in content && content.video_url && (
-            <div className="mt-12 mb-12">
-              <div className="aspect-w-16 aspect-h-9 bg-gray-100 rounded-xl overflow-hidden shadow-lg">
-                <iframe 
-                  src={`https://www.youtube.com/embed/${content.video_url.split('v=')[1]}`} 
-                  title={title}
-                  frameBorder="0" 
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-                  allowFullScreen
-                  className="w-full h-full min-h-[400px]"
-                ></iframe>
-              </div>
+          <div className="mt-12 mb-12">
+            <div className="aspect-w-16 aspect-h-9 bg-gray-100 rounded-xl overflow-hidden shadow-lg">
+              <iframe
+                src={`https://www.youtube.com/embed/${content.video_url.split('v=')[1]}`}
+                title={title}
+                frameBorder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+                className="w-full h-full min-h-[400px]"
+              ></iframe>
             </div>
+          </div>
         )}
 
         {/* Related Content */}
         <div className="mt-20 pt-12 border-t border-gray-100">
           <h2 className="text-2xl font-clash font-bold text-gray-900 mb-8">Related Content</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-             {(
-                type === 'post' ? [...latestPosts, ...newsPosts].filter(p => p.slug !== slug && p.category?.id === (content as Post).category?.id).slice(0, 3) :
+            {(
+              type === 'post' ? [...latestPosts, ...newsPosts].filter(p => p.slug !== slug && p.category?.id === (content as Post).category?.id).slice(0, 3) :
                 type === 'podcast' ? latestPodcasts.filter(p => p.slug !== slug).slice(0, 3) :
-                type === 'resource' ? latestResources.filter(p => p.slug !== slug).slice(0, 3) :
-                latestPosts.slice(0, 3)
-             ).map((item) => (
-               <Link href={`/content/${type}/${item.slug}`} key={item.id} className="group block">
-                 <div className="relative h-48 rounded-xl overflow-hidden mb-4">
-                   <Image 
-                      src={'featured_image_webp' in item && item.featured_image_webp ? item.featured_image_webp : 'featured_image' in item && item.featured_image ? item.featured_image : '/images/music.svg'} 
-                      alt={item.title} 
-                      fill 
-                      className="object-cover group-hover:scale-105 transition-transform duration-500"
-                   />
-                 </div>
-                 <h3 className="font-clash font-semibold text-lg text-gray-900 leading-tight group-hover:text-primary transition-colors">
-                   {item.title}
-                 </h3>
-                 <p className="text-gray-500 text-sm mt-2">
-                   {'published_at' in item ? new Date(item.published_at as string).toLocaleDateString() : 'created_at' in item ? new Date(item.created_at as string).toLocaleDateString() : ''}
-                 </p>
-               </Link>
-             ))}
+                  type === 'resource' ? latestResources.filter(p => p.slug !== slug).slice(0, 3) :
+                    latestPosts.slice(0, 3)
+            ).map((item) => (
+              <Link href={`/content/${type}/${item.slug}`} key={item.id} className="group block">
+                <div className="relative h-48 rounded-xl overflow-hidden mb-4">
+                  <Image
+                    src={'featured_image_webp' in item && item.featured_image_webp ? item.featured_image_webp : 'featured_image' in item && item.featured_image ? item.featured_image : '/images/music.svg'}
+                    alt={item.title}
+                    fill
+                    className="object-cover group-hover:scale-105 transition-transform duration-500"
+                  />
+                </div>
+                <h3 className="font-clash font-semibold text-lg text-gray-900 leading-tight group-hover:text-primary transition-colors">
+                  {item.title}
+                </h3>
+                <p className="text-gray-500 text-sm mt-2">
+                  {'published_at' in item ? new Date(item.published_at as string).toLocaleDateString() : 'created_at' in item ? new Date(item.created_at as string).toLocaleDateString() : ''}
+                </p>
+              </Link>
+            ))}
           </div>
         </div>
 
         {/* Navigation */}
         <div className="mt-16 flex justify-center">
-          <Link 
-            href="/" 
+          <Link
+            href="/"
             className="flex items-center gap-2 px-6 py-3 border border-gray-300 rounded-full hover:bg-gray-50 transition-colors text-gray-700 font-medium"
           >
             <svg className="w-4 h-4 transform rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">

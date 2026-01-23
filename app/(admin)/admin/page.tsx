@@ -1,27 +1,37 @@
 import AppAreaChart from "@/components/AppAreaChart";
 import AppBarChart from "@/components/AppBarChart";
+import AppLineChart from "@/components/AppLineChart";
 import AppPieChart from "@/components/AppPieChart";
 import CardList from "@/components/CardList";
-import TodoList from "@/components/TodoList";
 
 const Homepage = () => {
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 2xl:grid-cols-4 gap-4">
-      <div className="bg-primary-foreground p-4 rounded-lg lg:col-span-2 xl:col-span-1 2xl:col-span-2">
+    <div className="grid grid-cols-1 lg:grid-cols-2 2xl:grid-cols-4 gap-6">
+      {/* ROW 1 */}
+      <div className="bg-primary-foreground p-6 rounded-2xl border border-gray-100 shadow-sm lg:col-span-2 2xl:col-span-3">
         <AppBarChart />
       </div>
-      <div className="bg-primary-foreground p-4 rounded-lg">
-        <CardList title="Latest Transactions" />
+      <div className="bg-primary-foreground p-6 rounded-2xl border border-gray-100 shadow-sm">
+        <CardList title="Latest Comments" />
       </div>
-      <div className="bg-primary-foreground p-4 rounded-lg">
+
+      {/* ROW 2 */}
+      <div className="bg-primary-foreground p-6 rounded-2xl border border-gray-100 shadow-sm lg:col-span-2">
+        <AppLineChart />
+      </div>
+      <div className="bg-primary-foreground p-6 rounded-2xl border border-gray-100 shadow-sm">
         <AppPieChart />
       </div>
-      <div className="bg-primary-foreground p-4 rounded-lg"><TodoList /></div>
-      <div className="bg-primary-foreground p-4 rounded-lg lg:col-span-2 xl:col-span-1 2xl:col-span-2">
+      <div className="bg-primary-foreground p-6 rounded-2xl border border-gray-100 shadow-sm">
+        <CardList title="Trending Searches" />
+      </div>
+
+      {/* ROW 3 */}
+      <div className="bg-primary-foreground p-6 rounded-2xl border border-gray-100 shadow-sm lg:col-span-2 2xl:col-span-3">
         <AppAreaChart />
       </div>
-      <div className="bg-primary-foreground p-4 rounded-lg">
-        <CardList title="Popular News" />
+      <div className="bg-primary-foreground p-6 rounded-2xl border border-gray-100 shadow-sm">
+        <CardList title="Popular Content" />
       </div>
     </div>
   );
