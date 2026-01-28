@@ -11,6 +11,7 @@ import PodcastPlayerModal from '@/components/PodcastPlayerModal';
 import FeaturedBanner from '@/components/FeaturedBanner';
 import ListingCard from '@/components/ListingCard';
 import { Podcast } from '@/types';
+import { Newspaper } from 'lucide-react';
 
 // Import mock data
 import {
@@ -50,15 +51,15 @@ export default function Home() {
   };
 
   return (
-    <main className="min-h-screen bg-white pt-20">
+    <main className="min-h-screen bg-gray-50/50 pt-20">
       {/* News Section */}
-      <section className="w-full bg-white 2xl:px-[120px] md:px-10 px-5 py-20">
-        <h3 className="text-gray-100 font-semibold md:text-5xl text-4xl font-clash">
+      <section className="w-full bg-background 2xl:px-[120px] md:px-10 px-5 py-20">
+        <h2 className="text-foreground font-bold md:text-5xl text-4xl font-clash tracking-tight">
           News
-        </h3>
+        </h2>
 
         {/* Desktop Layout */}
-        <div className="mt-16 w-full hidden md:flex md:flex-row flex-col gap-12">
+        <div className="mt-12 w-full hidden md:flex md:flex-row flex-col gap-8">
           {newsPosts.length > 0 ? (
             <>
               <div className="md:w-1/2 w-full">
@@ -72,26 +73,24 @@ export default function Home() {
             </>
           ) : (
             <div className="w-full flex items-center justify-center py-16">
-              <p className="text-gray-200 text-lg">No news available.</p>
+              <p className="text-muted-foreground text-base">No news available.</p>
             </div>
           )}
         </div>
 
         {/* Mobile Layout */}
-        <div className="mt-16 w-full flex md:hidden flex-col gap-10">
+        <div className="mt-12 w-full flex md:hidden flex-col gap-8">
           {newsPosts.length > 0 ? (
             newsPosts.map((post) => (
               <BlogCard key={post.id} post={post} imageHeight="h-[300px]" showTags />
             ))
           ) : (
             <div className="w-full flex flex-col items-center justify-center py-16 px-4">
-              <div className="w-24 h-24 bg-primary-300 rounded-full flex items-center justify-center mb-6">
-                <svg className="w-12 h-12 text-primary" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
-                </svg>
+              <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mb-4">
+                <Newspaper className="w-8 h-8 text-muted-foreground" />
               </div>
-              <h4 className="text-gray-100 font-semibold text-xl mb-3 font-clash">No News Available</h4>
-              <p className="text-gray-200 text-center max-w-md leading-relaxed">
+              <h3 className="text-foreground font-semibold text-lg mb-2">No News Available</h3>
+              <p className="text-muted-foreground text-center text-sm max-w-md">
                 We&apos;re working on bringing you the latest news.
               </p>
             </div>
@@ -105,10 +104,10 @@ export default function Home() {
 
       {/* Top Videos Section */}
       {topVideos.length > 0 && (
-        <section className="w-full bg-white 2xl:px-[120px] md:px-10 px-5 py-20">
+        <section className="w-full bg-background 2xl:px-[120px] md:px-10 px-5 py-16">
           <SectionHeader title="Top Videos" viewAllHref="/all-post/top-videos" />
 
-          <div className="mt-16 w-full flex md:flex-row flex-col gap-10">
+          <div className="mt-12 w-full flex md:flex-row flex-col gap-8">
             {topVideos.map((video) => (
               <div key={video.id} className="w-full">
                 <PodcastCard
@@ -126,106 +125,106 @@ export default function Home() {
 
       {/* Top Restaurants Section */}
       {topRestaurants.length > 0 && (
-        <section className="w-full bg-white 2xl:px-[120px] md:px-10 px-5 py-20">
-          <SectionHeader title="Top Restaurants" viewAllHref="/listing/restaurants" />
+        <section className="w-full bg-background 2xl:px-[120px] md:px-10 px-5 py-16">
+          <SectionHeader title="Top Restaurants" viewAllHref="/category/restaurants" />
 
-          <div className="mt-16 w-full flex md:flex-row flex-col gap-10">
+          <div className="mt-12 w-full flex md:flex-row flex-col gap-8">
             {topRestaurants.map((restaurant) => (
               <ListingCard key={restaurant.id} listing={restaurant} imageHeight="h-[300px]" />
             ))}
           </div>
 
-          <MobileViewAllButton href="/listing/restaurants" />
+          <MobileViewAllButton href="/category/restaurants" />
         </section>
       )}
 
       {/* Top Movies Section */}
       {topMovies.length > 0 && (
-        <section className="w-full bg-white 2xl:px-[120px] md:px-10 px-5 py-20">
-          <SectionHeader title="Top Movies of the Week" viewAllHref="/listing/movies" />
+        <section className="w-full bg-background 2xl:px-[120px] md:px-10 px-5 py-16">
+          <SectionHeader title="Top Movies of the Week" viewAllHref="/category/movies" />
 
-          <div className="mt-16 w-full flex md:flex-row flex-col gap-10">
+          <div className="mt-12 w-full flex md:flex-row flex-col gap-8">
             {topMovies.map((movie) => (
               <ListingCard key={movie.id} listing={movie} imageHeight="h-[300px]" />
             ))}
           </div>
 
-          <MobileViewAllButton href="/listing/movies" />
+          <MobileViewAllButton href="/category/movies" />
         </section>
       )}
 
       {/* Top Electricians Section */}
       {topElectricians.length > 0 && (
-        <section className="w-full bg-white 2xl:px-[120px] md:px-10 px-5 py-20">
-          <SectionHeader title="Top Electricians" viewAllHref="/listing/electricians" />
+        <section className="w-full bg-background 2xl:px-[120px] md:px-10 px-5 py-16">
+          <SectionHeader title="Top Electricians" viewAllHref="/category/electricians" />
 
-          <div className="mt-16 w-full flex md:flex-row flex-col gap-10">
+          <div className="mt-12 w-full flex md:flex-row flex-col gap-8">
             {topElectricians.map((electrician) => (
               <ListingCard key={electrician.id} listing={electrician} imageHeight="h-[300px]" />
             ))}
           </div>
 
-          <MobileViewAllButton href="/listing/electricians" />
+          <MobileViewAllButton href="/category/electricians" />
         </section>
       )}
 
       {/* Top Hotels Section */}
       {topHotels.length > 0 && (
-        <section className="w-full bg-white 2xl:px-[120px] md:px-10 px-5 py-20">
-          <SectionHeader title="Top Hotels" viewAllHref="/listing/hotels" />
+        <section className="w-full bg-background 2xl:px-[120px] md:px-10 px-5 py-16">
+          <SectionHeader title="Top Hotels" viewAllHref="/category/hotels" />
 
-          <div className="mt-16 w-full flex md:flex-row flex-col gap-10">
+          <div className="mt-12 w-full flex md:flex-row flex-col gap-8">
             {topHotels.map((hotel) => (
               <ListingCard key={hotel.id} listing={hotel} imageHeight="h-[300px]" />
             ))}
           </div>
 
-          <MobileViewAllButton href="/listing/hotels" />
+          <MobileViewAllButton href="/category/hotels" />
         </section>
       )}
 
       {/* Top Gyms Section */}
       {topGyms.length > 0 && (
-        <section className="w-full bg-white 2xl:px-[120px] md:px-10 px-5 py-20">
-          <SectionHeader title="Top Gyms & Fitness Centers" viewAllHref="/listing/gyms" />
+        <section className="w-full bg-background 2xl:px-[120px] md:px-10 px-5 py-16">
+          <SectionHeader title="Top Gyms & Fitness Centers" viewAllHref="/category/gyms" />
 
-          <div className="mt-16 w-full flex md:flex-row flex-col gap-10">
+          <div className="mt-12 w-full flex md:flex-row flex-col gap-8">
             {topGyms.map((gym) => (
               <ListingCard key={gym.id} listing={gym} imageHeight="h-[300px]" />
             ))}
           </div>
 
-          <MobileViewAllButton href="/listing/gyms" />
+          <MobileViewAllButton href="/category/gyms" />
         </section>
       )}
 
       {/* Top Salons Section */}
       {topSalons.length > 0 && (
-        <section className="w-full bg-white 2xl:px-[120px] md:px-10 px-5 py-20">
-          <SectionHeader title="Top Salons & Spas" viewAllHref="/listing/salons" />
+        <section className="w-full bg-background 2xl:px-[120px] md:px-10 px-5 py-16">
+          <SectionHeader title="Top Salons & Spas" viewAllHref="/category/salons" />
 
-          <div className="mt-16 w-full flex md:flex-row flex-col gap-10">
+          <div className="mt-12 w-full flex md:flex-row flex-col gap-8">
             {topSalons.map((salon) => (
               <ListingCard key={salon.id} listing={salon} imageHeight="h-[300px]" />
             ))}
           </div>
 
-          <MobileViewAllButton href="/listing/salons" />
+          <MobileViewAllButton href="/category/salons" />
         </section>
       )}
 
       {/* Top Plumbers Section */}
       {topPlumbers.length > 0 && (
-        <section className="w-full bg-white 2xl:px-[120px] md:px-10 px-5 py-20">
-          <SectionHeader title="Top Plumbers" viewAllHref="/listing/plumbers" />
+        <section className="w-full bg-background 2xl:px-[120px] md:px-10 px-5 py-16">
+          <SectionHeader title="Top Plumbers" viewAllHref="/category/plumbers" />
 
-          <div className="mt-16 w-full flex md:flex-row flex-col gap-10">
+          <div className="mt-12 w-full flex md:flex-row flex-col gap-8">
             {topPlumbers.map((plumber) => (
               <ListingCard key={plumber.id} listing={plumber} imageHeight="h-[300px]" />
             ))}
           </div>
 
-          <MobileViewAllButton href="/listing/plumbers" />
+          <MobileViewAllButton href="/category/plumbers" />
         </section>
       )}
     </main>

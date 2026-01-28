@@ -14,7 +14,7 @@ function limitString(str: string, limit: number): string {
 
 export default function ResourceCard({ resource }: ResourceCardProps) {
   return (
-    <Link href={`/content/resource/${resource.slug}`} className="block">
+    <Link href={`/item/${resource.slug}`} className="block">
       <div className="flex flex-col w-full group">
         {/* Image */}
         <div className="w-full h-[300px] overflow-hidden rounded-lg">

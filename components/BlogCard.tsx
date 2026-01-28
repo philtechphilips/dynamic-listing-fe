@@ -85,7 +85,7 @@ function limitString(str: string, limit: number): string {
 
 // Helper function to get content route
 function getContentRoute(type: ContentType, slug: string): string {
-  return `/content/${type}/${slug}`;
+  return `/item/${slug}`;
 }
 
 // Play button overlay component for podcasts
@@ -108,14 +108,14 @@ function PlayButton({ size = 'lg', onClick }: { size?: 'sm' | 'lg'; onClick: (e:
 }
 
 // Author avatar component
-function AuthorAvatar({ 
-  user, 
-  authorImage, 
-  author, 
-  size = 'md' 
-}: { 
-  user?: User; 
-  authorImage?: string; 
+function AuthorAvatar({
+  user,
+  authorImage,
+  author,
+  size = 'md'
+}: {
+  user?: User;
+  authorImage?: string;
   author: string;
   size?: 'sm' | 'md';
 }) {
@@ -159,10 +159,10 @@ function AuthorAvatar({
 }
 
 // Tags component
-function TagsList({ tags, category, showTags, showCategory }: { 
-  tags?: Tag[]; 
-  category: string; 
-  showTags: boolean; 
+function TagsList({ tags, category, showTags, showCategory }: {
+  tags?: Tag[];
+  category: string;
+  showTags: boolean;
   showCategory: boolean;
 }) {
   if (showTags && tags && tags.length > 0) {

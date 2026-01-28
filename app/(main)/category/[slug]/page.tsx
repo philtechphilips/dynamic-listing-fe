@@ -6,7 +6,7 @@ import Image from 'next/image';
 import { useState, useMemo } from 'react';
 import ListingCard from '@/components/ListingCard';
 import BlogCard from '@/components/BlogCard';
-import { ChevronDown, Filter, ChevronUp } from 'lucide-react';
+import { ChevronDown, Filter, Search } from 'lucide-react';
 import { 
   topRestaurants, 
   topMovies, 
@@ -22,6 +22,16 @@ import {
   latestResources
 } from '@/lib/mockData';
 import { Listing, Post, Podcast, Resource } from '@/types';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 // Helper to normalize slugs for comparison (e.g., "Restaurants" -> "restaurants")
 const normalizeSlug = (slug: string) => slug.toLowerCase();
@@ -131,13 +141,15 @@ export default function CategoryPage() {
 
 
   return (
-    <main className="min-h-screen bg-white pt-32 pb-20">
+    <main className="min-h-screen bg-gray-50/50 pt-32 pb-20">
       <div className="max-w-7xl mx-auto px-5 md:px-12">
         {/* Header */}
-        <div className="text-center mb-16">
-           <span className="text-primary font-medium tracking-wider uppercase text-sm">Category</span>
-           <h1 className="text-4xl md:text-5xl font-clash font-bold text-gray-900 mt-3">{categoryName}</h1>
-           <p className="text-gray-500 mt-4 max-w-2xl mx-auto">
+        <div className="text-center mb-12">
+           <Badge variant="secondary" className="mb-3 uppercase tracking-wider border-0">
+             Category
+           </Badge>
+           <h1 className="text-4xl md:text-5xl font-clash font-bold text-foreground tracking-tight">{categoryName}</h1>
+           <p className="text-muted-foreground mt-3 max-w-2xl mx-auto">
              Explore our top picks and latest updates for {categoryName}.
            </p>
         </div>
@@ -145,76 +157,71 @@ export default function CategoryPage() {
 
 
         {/* Filters and Sorting Controls */}
-        <div className="mb-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+        <div className="mb-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
             
             {/* Mobile Filter Toggle */}
-            <button 
-                className="md:hidden flex items-center gap-2 px-4 py-2 border rounded-full text-sm font-medium"
+            <Button 
+                variant="outline"
+                className="md:hidden gap-2"
                 onClick={() => setIsFilterOpen(!isFilterOpen)}
             >
                 <Filter className="w-4 h-4" />
                 Filters
-            </button>
+            </Button>
 
             {/* Filters (Desktop: Always visible, Mobile: Conditional) */}
-            <div className={`${isFilterOpen ? 'flex' : 'hidden'} md:flex flex-col md:flex-row gap-4 w-full md:w-auto`}>
+            <div className={`${isFilterOpen ? 'flex' : 'hidden'} md:flex flex-col md:flex-row gap-3 w-full md:w-auto`}>
                {isListing && (
                    <>
                      {/* Location Filter */}
-                    <div className="relative">
-                        <select 
-                            value={filterLocation}
-                            onChange={(e) => setFilterLocation(e.target.value)}
-                            className="appearance-none bg-white border border-gray-300 hover:border-gray-400 rounded-full py-3 px-5 pr-10 text-sm font-medium text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary w-full md:w-48 transition-colors shadow-sm cursor-pointer"
-                        >
-                            <option value="">All Locations</option>
-                            <option value="Lagos">Lagos</option>
-                            <option value="Abuja">Abuja</option>
-                            <option value="London">London</option>
-                        </select>
-                         <ChevronDown className="absolute right-4 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-600 pointer-events-none" />
-                    </div>
+                    <Select value={filterLocation} onValueChange={setFilterLocation}>
+                      <SelectTrigger className="w-full md:w-[180px]">
+                        <SelectValue placeholder="All Locations" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="">All Locations</SelectItem>
+                        <SelectItem value="Lagos">Lagos</SelectItem>
+                        <SelectItem value="Abuja">Abuja</SelectItem>
+                        <SelectItem value="London">London</SelectItem>
+                      </SelectContent>
+                    </Select>
 
                     {/* Price Filter */}
-                    <div className="relative">
-                        <select 
-                            value={filterPrice}
-                            onChange={(e) => setFilterPrice(e.target.value)}
-                            className="appearance-none bg-white border border-gray-300 hover:border-gray-400 rounded-full py-3 px-5 pr-10 text-sm font-medium text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary w-full md:w-48 transition-colors shadow-sm cursor-pointer"
-                        >
-                            <option value="">Any Price</option>
-                            <option value="$">$ (Budget)</option>
-                            <option value="$$">$$ (Moderate)</option>
-                            <option value="$$$">$$$ (Expensive)</option>
-                        </select>
-                        <ChevronDown className="absolute right-4 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-600 pointer-events-none" />
-                    </div>
+                    <Select value={filterPrice} onValueChange={setFilterPrice}>
+                      <SelectTrigger className="w-full md:w-[180px]">
+                        <SelectValue placeholder="Any Price" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="">Any Price</SelectItem>
+                        <SelectItem value="$">$ (Budget)</SelectItem>
+                        <SelectItem value="$$">$$ (Moderate)</SelectItem>
+                        <SelectItem value="$$$">$$$ (Expensive)</SelectItem>
+                      </SelectContent>
+                    </Select>
                    </>
                )}
             </div>
 
             {/* Sort Dropdown */}
-            <div className="relative self-end md:self-auto">
-                <span className="text-gray-500 text-sm mr-2">Sort by:</span>
-                <div className="inline-block relative">
-                    <select 
-                        value={sortBy}
-                        onChange={(e) => setSortBy(e.target.value as any)}
-                        className="appearance-none font-medium bg-transparent border-none pr-6 text-gray-900 focus:ring-0 cursor-pointer"
-                    >
-                        <option value="top_rated">Top Rated</option>
-                        <option value="latest">Latest</option>
-                        <option value="most_viewed">Most Viewed</option>
-                    </select>
-                    <ChevronDown className="absolute right-0 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-900 pointer-events-none" />
-                </div>
+            <div className="flex items-center gap-2">
+                <span className="text-muted-foreground text-sm">Sort by:</span>
+                <Select value={sortBy} onValueChange={(value: any) => setSortBy(value)}>
+                  <SelectTrigger className="w-[140px] border-0 bg-transparent font-medium">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="top_rated">Top Rated</SelectItem>
+                    <SelectItem value="latest">Latest</SelectItem>
+                    <SelectItem value="most_viewed">Most Viewed</SelectItem>
+                  </SelectContent>
+                </Select>
             </div>
         </div>
 
         {/* Content Grid */}
         {visibleItems.length > 0 ? (
           <>
-            <div className={`grid grid-cols-1 ${isListing ? 'md:grid-cols-2 lg:grid-cols-3' : 'md:grid-cols-2 lg:grid-cols-3'} gap-8`}>
+            <div className={`grid grid-cols-1 ${isListing ? 'md:grid-cols-2 lg:grid-cols-3' : 'md:grid-cols-2 lg:grid-cols-3'} gap-6`}>
                 {visibleItems.map((item: any) => (
                 isListing ? (
                     <div key={item.id} className="h-full">
@@ -233,31 +240,33 @@ export default function CategoryPage() {
 
             {/* Load More Button */}
             {hasMore && (
-                <div className="mt-16 flex justify-center">
-                    <button 
+                <div className="mt-12 flex justify-center">
+                    <Button 
+                        variant="outline"
                         onClick={handleLoadMore}
-                        className="px-8 py-3 border border-gray-200 rounded-full text-gray-900 font-medium hover:bg-gray-50 transition-colors"
                     >
                         Load More
-                    </button>
+                    </Button>
                 </div>
             )}
           </>
         ) : (
-          <div className="flex flex-col items-center justify-center py-20 bg-gray-50 rounded-2xl">
-            <div className="w-16 h-16 bg-gray-200 rounded-full flex items-center justify-center mb-4 text-gray-400">
-               <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-               </svg>
-            </div>
-            <h3 className="text-xl font-bold text-gray-900 mb-2">No items found</h3>
-            <p className="text-gray-500 text-center max-w-md">
-              We couldn't find any content for this category. Try checking back later or browse other categories.
-            </p>
-            <Link href="/" className="mt-6 px-6 py-2.5 bg-primary text-white rounded-full hover:bg-opacity-90 transition-all">
-              Browse All
-            </Link>
-          </div>
+          <Card className="border-0 shadow-sm">
+            <CardContent className="flex flex-col items-center justify-center py-16">
+              <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mb-4">
+                <Search className="w-8 h-8 text-muted-foreground" />
+              </div>
+              <h3 className="text-xl font-bold text-foreground mb-2">No items found</h3>
+              <p className="text-muted-foreground text-center max-w-md mb-6">
+                We couldn't find any content for this category. Try checking back later or browse other categories.
+              </p>
+              <Button asChild className="text-white">
+                <Link href="/">
+                  Browse All
+                </Link>
+              </Button>
+            </CardContent>
+          </Card>
         )}
       </div>
     </main>

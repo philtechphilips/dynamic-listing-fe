@@ -58,7 +58,7 @@ export default function EventCard({ event }: EventCardProps) {
         {/* Title */}
         <h5 className="font-clash text-gray-100 font-semibold text-lg mb-2 mt-4">
           <Link
-            href={`/content/event/${event.slug}`}
+            href={`/item/${event.slug}`}
             className="hover:text-gray-300 transition-colors"
           >
             {limitString(event.title, 50)}

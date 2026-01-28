@@ -3,6 +3,9 @@
 import React, { useEffect, useState } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { CheckCircle2, XCircle, Loader2 } from 'lucide-react';
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 
 export default function VerifyEmailPage() {
     const searchParams = useSearchParams();
@@ -37,51 +40,58 @@ export default function VerifyEmailPage() {
     }, [searchParams]);
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-            <div className="max-w-md w-full bg-white p-10 rounded-2xl shadow-xl text-center">
-                {status === 'loading' && (
-                    <>
-                        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
-                        <h2 className="text-xl font-semibold text-gray-900">Verifying your email...</h2>
-                    </>
-                )}
-
-                {status === 'success' && (
-                    <>
-                        <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                            <svg className="w-8 h-8 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                            </svg>
+        <div className="min-h-screen flex items-center justify-center bg-gray-50/50 py-12 px-4 sm:px-6 lg:px-8">
+            <Card className="max-w-md w-full border-0 shadow-lg">
+                <CardContent className="p-8 sm:p-10 text-center">
+                    {status === 'loading' && (
+                        <div className="space-y-4">
+                            <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto">
+                                <Loader2 className="w-8 h-8 text-primary animate-spin" />
+                            </div>
+                            <div className="space-y-2">
+                                <h2 className="text-2xl font-bold text-foreground">Verifying...</h2>
+                                <p className="text-sm text-muted-foreground">
+                                    Please wait while we verify your email address
+                                </p>
+                            </div>
                         </div>
-                        <h2 className="text-2xl font-bold text-gray-900 mb-2">Email Verified!</h2>
-                        <p className="text-gray-600 mb-6">{message}</p>
-                        <Link
-                            href="/login"
-                            className="inline-flex items-center justify-center px-6 py-3 bg-primary text-white font-medium rounded-xl hover:bg-red-700 transition-colors"
-                        >
-                            Sign in to your account
-                        </Link>
-                    </>
-                )}
+                    )}
 
-                {status === 'error' && (
-                    <>
-                        <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                            <svg className="w-8 h-8 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                            </svg>
+                    {status === 'success' && (
+                        <div className="space-y-6">
+                            <div className="w-16 h-16 bg-green-50 rounded-full flex items-center justify-center mx-auto">
+                                <CheckCircle2 className="w-8 h-8 text-green-600" />
+                            </div>
+                            <div className="space-y-2">
+                                <h2 className="text-2xl font-bold text-foreground">Email Verified!</h2>
+                                <p className="text-sm text-muted-foreground">{message}</p>
+                            </div>
+                            <Button asChild className="w-full text-white">
+                                <Link href="/login">
+                                    Sign in to your account
+                                </Link>
+                            </Button>
                         </div>
-                        <h2 className="text-2xl font-bold text-gray-900 mb-2">Verification Failed</h2>
-                        <p className="text-gray-600 mb-6">{message}</p>
-                        <Link
-                            href="/register"
-                            className="inline-flex items-center justify-center px-6 py-3 bg-primary text-white font-medium rounded-xl hover:bg-red-700 transition-colors"
-                        >
-                            Try again
-                        </Link>
-                    </>
-                )}
-            </div>
+                    )}
+
+                    {status === 'error' && (
+                        <div className="space-y-6">
+                            <div className="w-16 h-16 bg-destructive/10 rounded-full flex items-center justify-center mx-auto">
+                                <XCircle className="w-8 h-8 text-destructive" />
+                            </div>
+                            <div className="space-y-2">
+                                <h2 className="text-2xl font-bold text-foreground">Verification Failed</h2>
+                                <p className="text-sm text-muted-foreground">{message}</p>
+                            </div>
+                            <Button asChild variant="outline" className="w-full">
+                                <Link href="/register">
+                                    Try again
+                                </Link>
+                            </Button>
+                        </div>
+                    )}
+                </CardContent>
+            </Card>
         </div>
     );
 }

@@ -69,7 +69,7 @@ export default function ListingCard({
   imageHeight = 'h-full',
   showTags = false,
 }: ListingCardProps) {
-  const href = `/listing/${listing.slug}`;
+  const href = `/item/${listing.slug}`;
 
   // Horizontal Layout
   if (layout === 'horizontal') {

@@ -49,7 +49,7 @@ export default function PodcastCard({ podcast, variant = 'sidebar', onPlay }: Po
           </h5>
           {podcast.content && (
             <Link
-              href={`/content/podcast/${podcast.slug}`}
+              href={`/item/${podcast.slug}`}
               className="mt-4 text-sm font-medium w-fit text-white pb-1 hover-line-effect-white"
             >
               Read about it
@@ -115,7 +115,7 @@ export default function PodcastCard({ podcast, variant = 'sidebar', onPlay }: Po
           </h5>
           {podcast.content && (
             <Link
-              href={`/content/podcast/${podcast.slug}`}
+              href={`/item/${podcast.slug}`}
               className="mt-4 text-sm font-medium text-gray-100 pb-1 hover-line-effect"
             >
               Read about it
@@ -167,7 +167,7 @@ export default function PodcastCard({ podcast, variant = 'sidebar', onPlay }: Po
         </h5>
         {podcast.content && (
           <Link
-            href={`/content/podcast/${podcast.slug}`}
+            href={`/item/${podcast.slug}`}
             className="mt-4 text-sm font-medium text-gray-100 pb-1 mobile-line-effect"
           >
             Read about it

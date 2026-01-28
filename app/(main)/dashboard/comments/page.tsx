@@ -8,8 +8,7 @@ import {
     Edit3,
     ExternalLink,
     Search,
-    MoreVertical,
-    Filter
+    MoreVertical
 } from 'lucide-react';
 import {
     DropdownMenu,
@@ -17,6 +16,10 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 
 const initialComments = [
     {
@@ -53,6 +56,107 @@ const initialComments = [
     }
 ];
 
+interface CommentCardProps {
+    comment: typeof initialComments[0];
+    onDelete: (id: string) => void;
+}
+
+function CommentCard({ comment, onDelete }: CommentCardProps) {
+    return (
+        <Card className="group hover:shadow-md transition-all duration-200 border-0">
+            <CardContent className="p-6">
+                <div className="flex gap-4">
+                    {/* Thumbnail */}
+                    <div className="hidden sm:block w-20 h-20 rounded-lg overflow-hidden flex-shrink-0 bg-muted">
+                        <img
+                            src={comment.avatar}
+                            alt={comment.listing}
+                            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                        />
+                    </div>
+
+                    {/* Content */}
+                    <div className="flex-1 min-w-0 space-y-3">
+                        {/* Header */}
+                        <div className="flex justify-between items-start gap-2">
+                            <div className="flex-1 min-w-0">
+                                <div className="flex items-center gap-2 mb-1">
+                                    <h3 className="font-semibold text-foreground text-base truncate">
+                                        {comment.listing}
+                                    </h3>
+                                    <Link
+                                        href={`/item/${comment.slug}`}
+                                        target="_blank"
+                                        className="shrink-0"
+                                    >
+                                        <ExternalLink className="w-3.5 h-3.5 text-muted-foreground hover:text-primary transition-colors" />
+                                    </Link>
+                                </div>
+                                <p className="text-xs text-muted-foreground">
+                                    Posted on {comment.date}
+                                </p>
+                            </div>
+
+                            {/* Desktop Actions */}
+                            <div className="hidden sm:flex items-center gap-1">
+                                <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    onClick={() => console.log('Edit', comment.id)}
+                                    title="Edit Comment"
+                                    className="h-8 w-8 text-muted-foreground hover:text-primary"
+                                >
+                                    <Edit3 className="w-4 h-4" />
+                                </Button>
+                                <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    onClick={() => onDelete(comment.id)}
+                                    title="Delete Comment"
+                                    className="h-8 w-8 text-muted-foreground hover:text-destructive"
+                                >
+                                    <Trash2 className="w-4 h-4" />
+                                </Button>
+                            </div>
+
+                            {/* Mobile Actions */}
+                            <div className="sm:hidden">
+                                <DropdownMenu>
+                                    <DropdownMenuTrigger asChild>
+                                        <Button variant="ghost" size="icon" className="h-8 w-8">
+                                            <MoreVertical className="w-4 h-4" />
+                                        </Button>
+                                    </DropdownMenuTrigger>
+                                    <DropdownMenuContent align="end" className="border-0">
+                                        <DropdownMenuItem onClick={() => console.log('Edit', comment.id)}>
+                                            <Edit3 className="w-4 h-4 mr-2" />
+                                            Edit
+                                        </DropdownMenuItem>
+                                        <DropdownMenuItem
+                                            onClick={() => onDelete(comment.id)}
+                                            className="text-destructive focus:text-destructive"
+                                        >
+                                            <Trash2 className="w-4 h-4 mr-2" />
+                                            Delete
+                                        </DropdownMenuItem>
+                                    </DropdownMenuContent>
+                                </DropdownMenu>
+                            </div>
+                        </div>
+
+                        {/* Comment Text */}
+                        <div className="relative pl-3 border-l-2 border-primary/10">
+                            <p className="text-sm text-muted-foreground leading-relaxed italic">
+                                "{comment.text}"
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </CardContent>
+        </Card>
+    );
+}
+
 export default function MyCommentsPage() {
     const [comments, setComments] = useState(initialComments);
     const [search, setSearch] = useState('');
@@ -69,101 +173,69 @@ export default function MyCommentsPage() {
     );
 
     return (
-        <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
+        <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
             {/* Header */}
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
-                    <h1 className="text-3xl font-clash font-bold text-gray-900">My Comments</h1>
-                    <p className="text-gray-500 mt-1">Manage and edit your feedback on various listings.</p>
+                    <h1 className="text-3xl font-bold text-foreground">My Comments</h1>
+                    <p className="text-muted-foreground mt-1">
+                        Manage and edit your feedback on various listings
+                    </p>
                 </div>
 
-                <div className="flex items-center gap-2">
-                    <div className="relative">
-                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-                        <input
-                            type="text"
-                            placeholder="Search comments..."
-                            value={search}
-                            onChange={(e) => setSearch(e.target.value)}
-                            className="pl-10 pr-4 py-2 bg-white border border-gray-200 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 w-full md:w-64"
-                        />
-                    </div>
-                    <button className="p-2 bg-white border border-gray-200 rounded-full hover:bg-gray-50 text-gray-600">
-                        <Filter className="w-4 h-4" />
-                    </button>
+                {/* Search */}
+                <div className="relative w-full md:w-64">
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
+                    <Input
+                        type="text"
+                        placeholder="Search comments..."
+                        value={search}
+                        onChange={(e) => setSearch(e.target.value)}
+                        className="pl-10"
+                    />
                 </div>
             </div>
 
-            {/* Grid */}
-            <div className="grid grid-cols-1 gap-4">
+            {/* Stats Badge */}
+            {filteredComments.length > 0 && (
+                <div className="flex items-center gap-2">
+                    <Badge variant="secondary" className="border-0">
+                        {filteredComments.length} {filteredComments.length === 1 ? 'Comment' : 'Comments'}
+                    </Badge>
+                    {search && (
+                        <span className="text-sm text-muted-foreground">
+                            matching "{search}"
+                        </span>
+                    )}
+                </div>
+            )}
+
+            {/* Comments List */}
+            <div className="space-y-3">
                 {filteredComments.length > 0 ? (
                     filteredComments.map((comment) => (
-                        <div key={comment.id} className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm flex gap-6 relative group hover:border-primary/20 transition-all">
-                            <div className="hidden sm:block w-20 h-20 rounded-xl overflow-hidden flex-shrink-0 border border-gray-50">
-                                <img src={comment.avatar} alt={comment.listing} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
-                            </div>
-
-                            <div className="flex-1 min-w-0">
-                                <div className="flex justify-between items-start mb-2">
-                                    <div>
-                                        <div className="flex items-center gap-2">
-                                            <h3 className="font-bold text-gray-900 text-lg">{comment.listing}</h3>
-                                            <Link href={`/listing/${comment.slug}`} target="_blank">
-                                                <ExternalLink className="w-4 h-4 text-gray-400 hover:text-primary transition-colors" />
-                                            </Link>
-                                        </div>
-                                        <p className="text-xs text-gray-400 font-medium">Posted on {comment.date}</p>
-                                    </div>
-
-                                    <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                                        <button
-                                            onClick={() => console.log('Edit', comment.id)}
-                                            className="p-2 text-gray-400 hover:text-blue-500 hover:bg-blue-50 rounded-lg transition-colors"
-                                            title="Edit Comment"
-                                        >
-                                            <Edit3 className="w-4 h-4" />
-                                        </button>
-                                        <button
-                                            onClick={() => handleDelete(comment.id)}
-                                            className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
-                                            title="Delete Comment"
-                                        >
-                                            <Trash2 className="w-4 h-4" />
-                                        </button>
-                                    </div>
-
-                                    <div className="sm:hidden">
-                                        <DropdownMenu>
-                                            <DropdownMenuTrigger asChild>
-                                                <button className="p-1 hover:bg-gray-100 rounded-md">
-                                                    <MoreVertical className="w-5 h-5 text-gray-400" />
-                                                </button>
-                                            </DropdownMenuTrigger>
-                                            <DropdownMenuContent align="end">
-                                                <DropdownMenuItem onClick={() => console.log('Edit')}>Edit</DropdownMenuItem>
-                                                <DropdownMenuItem onClick={() => handleDelete(comment.id)} className="text-red-600">Delete</DropdownMenuItem>
-                                            </DropdownMenuContent>
-                                        </DropdownMenu>
-                                    </div>
-                                </div>
-
-                                <div className="relative">
-                                    <div className="absolute -left-3 top-0 bottom-0 w-1 bg-primary/10 rounded-full" />
-                                    <p className="text-gray-600 italic leading-relaxed text-sm md:text-base">
-                                        "{comment.text}"
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
+                        <CommentCard
+                            key={comment.id}
+                            comment={comment}
+                            onDelete={handleDelete}
+                        />
                     ))
                 ) : (
-                    <div className="text-center py-20 bg-white rounded-3xl border-2 border-dashed border-gray-100">
-                        <div className="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-4">
-                            <MessageSquare className="w-8 h-8 text-gray-300" />
-                        </div>
-                        <h3 className="text-lg font-semibold text-gray-900">No comments found</h3>
-                        <p className="text-gray-500 max-w-xs mx-auto mt-2">Try searching for something else or explore listings to share your thoughts.</p>
-                    </div>
+                    <Card className="border-0">
+                        <CardContent className="text-center py-16">
+                            <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mx-auto mb-4">
+                                <MessageSquare className="w-8 h-8 text-muted-foreground" />
+                            </div>
+                            <h3 className="text-lg font-semibold text-foreground mb-2">
+                                {search ? 'No comments found' : 'No comments yet'}
+                            </h3>
+                            <p className="text-muted-foreground max-w-sm mx-auto">
+                                {search
+                                    ? 'Try searching for something else or clear your search.'
+                                    : 'Start exploring listings and share your thoughts with the community.'}
+                            </p>
+                        </CardContent>
+                    </Card>
                 )}
             </div>
         </div>

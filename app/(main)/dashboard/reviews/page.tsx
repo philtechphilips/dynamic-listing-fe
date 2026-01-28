@@ -7,9 +7,13 @@ import {
     Trash2,
     Edit3,
     ExternalLink,
-    Search,
-    MessageSquare
+    Search
 } from 'lucide-react';
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Separator } from "@/components/ui/separator";
 
 const initialReviews = [
     {
@@ -41,6 +45,89 @@ const initialReviews = [
     }
 ];
 
+interface ReviewCardProps {
+    review: typeof initialReviews[0];
+    onDelete: (id: string) => void;
+}
+
+function ReviewCard({ review, onDelete }: ReviewCardProps) {
+    return (
+        <Card className="group hover:shadow-md transition-all duration-300 border-0 overflow-hidden flex flex-col">
+            {/* Review Card Header with Image */}
+            <div className="h-36 relative">
+                <img
+                    src={review.image}
+                    alt={review.listing}
+                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+                <div className="absolute bottom-4 left-4 right-4 flex justify-between items-end">
+                    <div className="flex-1 min-w-0">
+                        <h3 className="text-white font-semibold text-base leading-tight truncate">
+                            {review.listing}
+                        </h3>
+                        <div className="flex items-center gap-0.5 mt-1.5">
+                            {[1, 2, 3, 4, 5].map((s) => (
+                                <Star
+                                    key={s}
+                                    className={`w-3.5 h-3.5 ${s <= review.rating
+                                            ? 'text-yellow-400 fill-yellow-400'
+                                            : 'text-white/30 fill-white/10'
+                                        }`}
+                                />
+                            ))}
+                        </div>
+                    </div>
+                    <Link
+                        href={`/item/${review.slug}`}
+                        target="_blank"
+                        className="p-2 bg-white/10 backdrop-blur-sm rounded-lg text-white hover:bg-white/20 transition-all shrink-0"
+                    >
+                        <ExternalLink className="w-3.5 h-3.5" />
+                    </Link>
+                </div>
+            </div>
+
+            {/* Review Content */}
+            <CardContent className="p-5 flex-1 flex flex-col">
+                <div className="flex-1">
+                    <p className="text-sm text-muted-foreground leading-relaxed italic">
+                        "{review.text}"
+                    </p>
+                </div>
+
+                <Separator className="my-4" />
+
+                <div className="flex items-center justify-between">
+                    <span className="text-xs text-muted-foreground/80">
+                        {review.date}
+                    </span>
+                    <div className="flex items-center gap-1">
+                        <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => console.log('Edit', review.id)}
+                            title="Edit Review"
+                            className="h-8 w-8 text-muted-foreground hover:text-primary"
+                        >
+                            <Edit3 className="w-4 h-4" />
+                        </Button>
+                        <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => onDelete(review.id)}
+                            title="Delete Review"
+                            className="h-8 w-8 text-muted-foreground hover:text-destructive"
+                        >
+                            <Trash2 className="w-4 h-4" />
+                        </Button>
+                    </div>
+                </div>
+            </CardContent>
+        </Card>
+    );
+}
+
 export default function MyReviewsPage() {
     const [reviews, setReviews] = useState(initialReviews);
     const [search, setSearch] = useState('');
@@ -57,84 +144,69 @@ export default function MyReviewsPage() {
     );
 
     return (
-        <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
+        <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
             {/* Header */}
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
-                    <h1 className="text-3xl font-clash font-bold text-gray-900">My Reviews</h1>
-                    <p className="text-gray-500 mt-1">Reflect on your ratings and detailed reviews of local businesses.</p>
+                    <h1 className="text-3xl font-bold text-foreground">My Reviews</h1>
+                    <p className="text-muted-foreground mt-1">
+                        Manage your ratings and detailed reviews of local businesses
+                    </p>
                 </div>
 
-                <div className="relative">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-                    <input
+                {/* Search */}
+                <div className="relative w-full md:w-64">
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
+                    <Input
                         type="text"
                         placeholder="Search reviews..."
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
-                        className="pl-10 pr-4 py-2 bg-white border border-gray-200 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 w-full md:w-64"
+                        className="pl-10"
                     />
                 </div>
             </div>
 
-            {/* Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Stats Badge */}
+            {filteredReviews.length > 0 && (
+                <div className="flex items-center gap-2">
+                    <Badge variant="secondary" className="border-0">
+                        {filteredReviews.length} {filteredReviews.length === 1 ? 'Review' : 'Reviews'}
+                    </Badge>
+                    {search && (
+                        <span className="text-sm text-muted-foreground">
+                            matching "{search}"
+                        </span>
+                    )}
+                </div>
+            )}
+
+            {/* Reviews Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {filteredReviews.length > 0 ? (
                     filteredReviews.map((review) => (
-                        <div key={review.id} className="bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden flex flex-col group hover:shadow-md transition-all duration-300">
-                            {/* Review Card Header with Image */}
-                            <div className="h-32 relative">
-                                <img src={review.image} alt={review.listing} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
-                                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-                                <div className="absolute bottom-4 left-4 right-4 flex justify-between items-end">
-                                    <div>
-                                        <h3 className="text-white font-bold text-lg leading-tight">{review.listing}</h3>
-                                        <div className="flex items-center gap-1 mt-1">
-                                            {[1, 2, 3, 4, 5].map((s) => (
-                                                <Star key={s} className={`w-3 h-3 ${s <= review.rating ? 'text-yellow-400 fill-yellow-400' : 'text-white/40 fill-white/20'}`} />
-                                            ))}
-                                        </div>
-                                    </div>
-                                    <Link href={`/listing/${review.slug}`} target="_blank" className="p-2 bg-white/20 backdrop-blur-md rounded-full text-white hover:bg-white/40 transition-colors">
-                                        <ExternalLink className="w-4 h-4" />
-                                    </Link>
-                                </div>
-                            </div>
-
-                            {/* Review Content */}
-                            <div className="p-6 flex-1 flex flex-col">
-                                <div className="flex-1">
-                                    <p className="text-gray-600 text-sm italic leading-relaxed">"{review.text}"</p>
-                                </div>
-
-                                <div className="flex items-center justify-between mt-6 pt-4 border-t border-gray-50">
-                                    <span className="text-xs text-gray-400 font-medium">{review.date}</span>
-                                    <div className="flex items-center gap-2">
-                                        <button
-                                            className="p-2 text-gray-400 hover:text-blue-500 hover:bg-blue-50 rounded-lg transition-colors"
-                                            onClick={() => console.log('Edit')}
-                                        >
-                                            <Edit3 className="w-4 h-4" />
-                                        </button>
-                                        <button
-                                            className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
-                                            onClick={() => handleDelete(review.id)}
-                                        >
-                                            <Trash2 className="w-4 h-4" />
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                        <ReviewCard
+                            key={review.id}
+                            review={review}
+                            onDelete={handleDelete}
+                        />
                     ))
                 ) : (
-                    <div className="col-span-full text-center py-20 bg-white rounded-3xl border-2 border-dashed border-gray-100">
-                        <div className="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-4">
-                            <Star className="w-8 h-8 text-gray-300" />
-                        </div>
-                        <h3 className="text-lg font-semibold text-gray-900">No reviews yet</h3>
-                        <p className="text-gray-500 max-w-xs mx-auto mt-2">Go out and explore! Your ratings help others discover the best places.</p>
-                    </div>
+                    <Card className="col-span-full border-0">
+                        <CardContent className="text-center py-16">
+                            <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mx-auto mb-4">
+                                <Star className="w-8 h-8 text-muted-foreground" />
+                            </div>
+                            <h3 className="text-lg font-semibold text-foreground mb-2">
+                                {search ? 'No reviews found' : 'No reviews yet'}
+                            </h3>
+                            <p className="text-muted-foreground max-w-sm mx-auto">
+                                {search
+                                    ? 'Try searching for something else or clear your search.'
+                                    : 'Start exploring listings and share your experience with the community.'}
+                            </p>
+                        </CardContent>
+                    </Card>
                 )}
             </div>
         </div>
