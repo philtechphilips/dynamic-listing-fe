@@ -1,27 +1,110 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Input from '@/components/Input';
 import Button from '@/components/Button';
 import Checkbox from '@/components/Checkbox';
+import { useRouter } from 'next/navigation';
+import { useAuth } from '@/contexts/AuthContext';
 
 type LoginMethod = 'password' | 'otp';
 
 export default function LoginPage() {
   const [loginMethod, setLoginMethod] = useState<LoginMethod>('password');
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [message, setMessage] = useState<string | null>(null);
+  const [step, setStep] = useState<'initial' | 'otp_sent'>('initial');
+  const [email, setEmail] = useState('');
+  const [otp, setOtp] = useState('');
+  const router = useRouter();
+  const { login, isAuthenticated, isLoading: authLoading } = useAuth();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  // Redirect if already authenticated
+  useEffect(() => {
+    if (!authLoading && isAuthenticated) {
+      router.push('/dashboard');
+    }
+  }, [isAuthenticated, authLoading, router]);
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (loginMethod === 'password') {
-      console.log('Login submitted with password');
-    } else {
-      console.log('Login submitted with OTP');
+    setIsLoading(true);
+    setError(null);
+    setMessage(null);
+
+    const formData = new FormData(e.currentTarget);
+    const formEmail = formData.get('email') as string;
+    const password = formData.get('password') as string;
+
+    try {
+      if (loginMethod === 'password') {
+        const res = await fetch('http://localhost:8007/api/v1/auth/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: formEmail, password }),
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.message || 'Login failed');
+
+        // Use auth context login function to store token and user
+        login(data.token, data.user);
+        setMessage('Login successful! Redirecting...');
+        setTimeout(() => router.push('/dashboard'), 1500);
+      } else {
+        if (step === 'initial') {
+          // Request OTP
+          setEmail(formEmail);
+          const res = await fetch('http://localhost:8007/api/v1/auth/request-otp', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email: formEmail }),
+          });
+          const data = await res.json();
+          if (!res.ok) throw new Error(data.message || 'OTP request failed');
+          setMessage('OTP sent to your email.');
+          setStep('otp_sent');
+        } else {
+          // Verify OTP
+          const res = await fetch('http://localhost:8007/api/v1/auth/verify-otp', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, otp }),
+          });
+          const data = await res.json();
+          if (!res.ok) throw new Error(data.message || 'OTP verification failed');
+
+          // Use auth context login function to store token and user
+          login(data.token, data.user);
+          setMessage('Login successful! Redirecting...');
+          setTimeout(() => router.push('/dashboard'), 1500);
+        }
+      }
+    } catch (err: any) {
+      setError(err.message);
+    } finally {
+      setIsLoading(false);
     }
   };
 
+  // Show nothing while checking auth status
+  if (authLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
+
+  // Don't render if authenticated (will redirect)
+  if (isAuthenticated) {
+    return null;
+  }
+
   const handleGoogleLogin = () => {
     console.log('Google login clicked');
+    // Implement Google Auth flow here
   };
 
   return (
@@ -74,10 +157,10 @@ export default function LoginPage() {
           </div>
 
           {/* Login Method Tabs */}
-          <div className="bg-gray-400 p-1 rounded-xl flex">
+          <div className="bg-gray-100 p-1 rounded-xl flex">
             <button
               type="button"
-              onClick={() => setLoginMethod('password')}
+              onClick={() => { setLoginMethod('password'); setStep('initial'); }}
               className={`flex-1 py-2 text-sm font-medium rounded-lg transition-all duration-200 ${loginMethod === 'password'
                 ? 'bg-white text-gray-900 shadow-sm'
                 : 'text-gray-500 hover:text-gray-900'
@@ -97,16 +180,33 @@ export default function LoginPage() {
             </button>
           </div>
 
+          {error && <p className="text-red-500 text-sm text-center">{error}</p>}
+          {message && <p className="text-green-500 text-sm text-center">{message}</p>}
+
           <form className="space-y-6" onSubmit={handleSubmit}>
             <div className="space-y-4">
-              <Input
-                id="email"
-                name="email"
-                type="email"
-                label="Email address"
-                placeholder="you@example.com"
-                required
-              />
+              {loginMethod === 'otp' && step === 'otp_sent' ? (
+                <Input
+                  id="otp"
+                  name="otp"
+                  type="text"
+                  label="Enter Code"
+                  placeholder="123456"
+                  value={otp}
+                  onChange={(e) => setOtp(e.target.value)}
+                  required
+                />
+              ) : (
+                <Input
+                  id="email"
+                  name="email"
+                  type="email"
+                  label="Email address"
+                  placeholder="you@example.com"
+                  required
+                  defaultValue={email}
+                />
+              )}
 
               {loginMethod === 'password' && (
                 <div className="animate-in fade-in slide-in-from-top-2 duration-300">
@@ -147,8 +247,13 @@ export default function LoginPage() {
                 variant="primary"
                 size="lg"
                 className="w-full justify-center bg-primary hover:bg-red-700 focus:ring-red-500 rounded-xl py-3"
+                disabled={isLoading}
               >
-                {loginMethod === 'password' ? 'Sign in' : 'Send Login Code'}
+                {isLoading ? 'Processing...' : (
+                  loginMethod === 'password'
+                    ? 'Sign in'
+                    : (step === 'initial' ? 'Send Login Code' : 'Verify Code')
+                )}
               </Button>
             </div>
           </form>

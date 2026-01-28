@@ -11,6 +11,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useAuth } from "@/contexts/AuthContext";
 
 
 export default function Navbar() {
@@ -21,6 +22,7 @@ export default function Navbar() {
   const mobileMenuButtonRef = useRef<HTMLImageElement>(null);
   const router = useRouter();
   const [searchQuery, setSearchQuery] = useState("");
+  const { isAuthenticated, user, logout } = useAuth();
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -195,40 +197,57 @@ export default function Navbar() {
             </div>
 
             <div className="">
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <button
-                    className="bg-primary hover:bg-red-700 text-white px-6 py-2.5 rounded-full font-semibold transition-all duration-300 flex items-center gap-2 text-sm shadow-md shadow-primary/20 active:scale-95"
-                  >
-                    <User className="w-4 h-4" />
-                    Account
-                  </button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-[200px] p-2 rounded-2xl border-gray-100 shadow-xl z-[1001]">
-                  <div className="px-4 py-3 border-b border-gray-50 mb-1">
-                    <p className="text-xs text-gray-400 font-medium">Signed in as</p>
-                    <p className="text-sm font-semibold text-gray-900 truncate">John Doe</p>
-                  </div>
-                  <DropdownMenuItem asChild className="rounded-xl focus:bg-primary/5 cursor-pointer">
-                    <Link href="/dashboard" className="flex items-center gap-2 w-full py-2">
-                      <LayoutDashboard className="w-4 h-4 text-primary" />
-                      <span>Dashboard</span>
-                    </Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem asChild className="rounded-xl focus:bg-primary/5 cursor-pointer">
-                    <Link href="/dashboard/comments" className="flex items-center gap-2 w-full py-2">
-                      <MessageSquare className="w-4 h-4 text-primary" />
-                      <span>My Comments</span>
-                    </Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem asChild className="rounded-xl focus:bg-primary/5 cursor-pointer border-t border-gray-50 mt-1">
-                    <button className="flex items-center gap-2 w-full py-2 text-red-600">
-                      <LogOut className="w-4 h-4" />
-                      <span>Sign Out</span>
+              {isAuthenticated ? (
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <button
+                      className="bg-primary hover:bg-red-700 text-white px-6 py-2.5 rounded-full font-semibold transition-all duration-300 flex items-center gap-2 text-sm shadow-md shadow-primary/20 active:scale-95"
+                    >
+                      <User className="w-4 h-4" />
+                      Account
                     </button>
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="w-[200px] p-2 rounded-2xl border-gray-100 shadow-xl z-[1001]">
+                    <div className="px-4 py-3 border-b border-gray-50 mb-1">
+                      <p className="text-xs text-gray-400 font-medium">Signed in as</p>
+                      <p className="text-sm font-semibold text-gray-900 truncate">{user?.name || 'User'}</p>
+                    </div>
+                    <DropdownMenuItem asChild className="rounded-xl focus:bg-primary/5 cursor-pointer">
+                      <Link href="/dashboard" className="flex items-center gap-2 w-full py-2">
+                        <LayoutDashboard className="w-4 h-4 text-primary" />
+                        <span>Dashboard</span>
+                      </Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild className="rounded-xl focus:bg-primary/5 cursor-pointer">
+                      <Link href="/dashboard/comments" className="flex items-center gap-2 w-full py-2">
+                        <MessageSquare className="w-4 h-4 text-primary" />
+                        <span>My Comments</span>
+                      </Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild className="rounded-xl focus:bg-primary/5 cursor-pointer border-t border-gray-50 mt-1">
+                      <button onClick={logout} className="flex items-center gap-2 w-full py-2 text-red-600">
+                        <LogOut className="w-4 h-4" />
+                        <span>Sign Out</span>
+                      </button>
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              ) : (
+                <div className="flex items-center gap-3">
+                  <Link
+                    href="/login"
+                    className="text-gray-100 hover:text-primary font-semibold text-sm transition-colors"
+                  >
+                    Login
+                  </Link>
+                  <Link
+                    href="/register"
+                    className="bg-primary hover:bg-red-700 text-white px-6 py-2.5 rounded-full font-semibold transition-all duration-300 text-sm shadow-md shadow-primary/20 active:scale-95"
+                  >
+                    Sign Up
+                  </Link>
+                </div>
+              )}
             </div>
           </div>
 

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geom, Lato } from "next/font/google";
 import "./fonts.css";
 import "./globals.css";
+import { AuthProvider } from "@/contexts/AuthContext";
 
 const geom = Geom({
     variable: "--font-geom",
@@ -37,7 +38,9 @@ export default function RootLayout({
             <body
                 className={`${geom.variable} ${lato.variable} antialiased`}
             >
-                {children}
+                <AuthProvider>
+                    {children}
+                </AuthProvider>
             </body>
         </html>
     );
