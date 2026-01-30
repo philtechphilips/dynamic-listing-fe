@@ -3,15 +3,15 @@
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { 
-  ChevronDown, 
-  X, 
-  User, 
-  Search, 
-  LayoutDashboard, 
-  MessageSquare, 
+import {
+  ChevronDown,
+  X,
+  User,
+  Search,
+  LayoutDashboard,
+  MessageSquare,
   LogOut,
-  Menu 
+  Menu
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -25,25 +25,54 @@ import { Input } from "@/components/ui/input";
 import { useAuth } from "@/contexts/AuthContext";
 import { cn } from "@/lib/utils";
 
-const navLinks = [
-  { href: "/category/restaurants", label: "Restaurants" },
-  { href: "/category/movies", label: "Movies" },
-  { href: "/category/hotels", label: "Hotels" },
-  { href: "/category/gyms", label: "Gyms" },
-];
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8007/api/v1";
 
-const moreLinks = [
-  { href: "/category/salons", label: "Salons" },
-  { href: "/category/podcasts", label: "Podcasts" },
-];
+interface Category {
+  id: string;
+  name: string;
+  slug: string;
+}
 
 export default function Navbar() {
+  const [categories, setCategories] = useState<Category[]>([]);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const pathname = usePathname();
   const router = useRouter();
   const mobileMenuRef = useRef<HTMLDivElement>(null);
   const { isAuthenticated, user, logout } = useAuth();
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await fetch(`${API_URL}/categories`);
+        if (response.ok) {
+          const data = await response.json();
+          setCategories(data.categories || []);
+        }
+      } catch (error) {
+        console.error("Error fetching categories:", error);
+      }
+    };
+
+    fetchCategories();
+  }, []);
+
+  const navLinks = categories.length > 0
+    ? categories.slice(0, 4).map(cat => ({ href: `/category/${cat.slug}`, label: cat.name }))
+    : [
+      { href: "/category/restaurants", label: "Restaurants" },
+      { href: "/category/movies", label: "Movies" },
+      { href: "/category/hotels", label: "Hotels" },
+      { href: "/category/gyms", label: "Gyms" },
+    ];
+
+  const moreLinks = categories.length > 0
+    ? categories.slice(4).map(cat => ({ href: `/category/${cat.slug}`, label: cat.name }))
+    : [
+      { href: "/category/salons", label: "Salons" },
+      { href: "/category/podcasts", label: "Podcasts" },
+    ];
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -120,24 +149,26 @@ export default function Navbar() {
               ))}
 
               {/* More Dropdown */}
-              <li className="relative group">
-                <button className="font-semibold text-sm text-foreground hover:text-primary flex items-center gap-1 transition-colors">
-                  More 
-                  <ChevronDown className="w-4 h-4 transition-transform duration-200 group-hover:rotate-180" />
-                </button>
+              {moreLinks.length > 0 && (
+                <li className="relative group">
+                  <button className="font-semibold text-sm text-foreground hover:text-primary flex items-center gap-1 transition-colors">
+                    More
+                    <ChevronDown className="w-4 h-4 transition-transform duration-200 group-hover:rotate-180" />
+                  </button>
 
-                <div className="absolute top-full mt-2 left-1/2 -translate-x-1/2 w-48 bg-white rounded-xl shadow-lg border border-border/40 p-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
-                  {moreLinks.map((link) => (
-                    <Link
-                      key={link.href}
-                      href={link.href}
-                      className="block px-4 py-2 rounded-lg text-sm font-medium text-foreground hover:bg-muted hover:text-primary transition-colors"
-                    >
-                      {link.label}
-                    </Link>
-                  ))}
-                </div>
-              </li>
+                  <div className="absolute top-full mt-2 left-1/2 -translate-x-1/2 w-48 bg-white rounded-xl shadow-lg border border-border/40 p-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
+                    {moreLinks.map((link) => (
+                      <Link
+                        key={link.href}
+                        href={link.href}
+                        className="block px-4 py-2 rounded-lg text-sm font-medium text-foreground hover:bg-muted hover:text-primary transition-colors"
+                      >
+                        {link.label}
+                      </Link>
+                    ))}
+                  </div>
+                </li>
+              )}
             </ul>
 
             {/* Desktop Search */}

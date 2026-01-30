@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
+import { useGoogleLogin } from '@react-oauth/google';
 import { Mail, Lock, LogIn } from 'lucide-react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -34,6 +35,50 @@ export default function LoginPage() {
     }
   }, [isAuthenticated, authLoading, router]);
 
+  // Google Sign-In handler using authorization code flow
+  // MUST be called before any conditional returns (Rules of Hooks)
+  const handleGoogleLogin = useGoogleLogin({
+    onSuccess: async (tokenResponse) => {
+      try {
+        setIsLoading(true);
+        setError(null);
+
+        // Get user info from Google using the access token
+        const userInfoRes = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
+          headers: { Authorization: `Bearer ${tokenResponse.access_token}` }
+        });
+        const userInfo = await userInfoRes.json();
+
+        // Send to our backend for authentication
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/google`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            credential: tokenResponse.access_token,
+            email: userInfo.email,
+            name: userInfo.name,
+            googleId: userInfo.sub
+          }),
+        });
+
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.message || 'Google login failed');
+
+        login(data.token, data.user);
+        setMessage('Login successful! Redirecting...');
+        setTimeout(() => router.push('/dashboard'), 1500);
+      } catch (err: any) {
+        setError(err.message || 'Google login failed');
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    onError: (error) => {
+      console.error('Google Login Error:', error);
+      setError('Google login failed. Please try again.');
+    },
+  });
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsLoading(true);
@@ -42,7 +87,7 @@ export default function LoginPage() {
 
     try {
       if (loginMethod === 'password') {
-        const res = await fetch('http://localhost:8007/api/v1/auth/login', {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/login`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ email, password }),
@@ -55,7 +100,7 @@ export default function LoginPage() {
         setTimeout(() => router.push('/dashboard'), 1500);
       } else {
         if (step === 'initial') {
-          const res = await fetch('http://localhost:8007/api/v1/auth/request-otp', {
+          const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/request-otp`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ email }),
@@ -65,7 +110,7 @@ export default function LoginPage() {
           setMessage('OTP sent to your email.');
           setStep('otp_sent');
         } else {
-          const res = await fetch('http://localhost:8007/api/v1/auth/verify-otp', {
+          const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/verify-otp`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ email, otp }),
@@ -97,10 +142,6 @@ export default function LoginPage() {
     return null;
   }
 
-  const handleGoogleLogin = () => {
-    console.log('Google login clicked');
-  };
-
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50/50 py-12 px-4 sm:px-6 lg:px-8">
       <Card className="max-w-md w-full border-0 shadow-lg">
@@ -117,7 +158,7 @@ export default function LoginPage() {
           <div className="space-y-6">
             <Button
               type="button"
-              onClick={handleGoogleLogin}
+              onClick={() => handleGoogleLogin()}
               variant="outline"
               className="w-full gap-3 h-11"
             >
@@ -146,11 +187,10 @@ export default function LoginPage() {
                   setError(null);
                   setMessage(null);
                 }}
-                className={`flex-1 py-2 px-3 text-sm font-medium rounded-md transition-all ${
-                  loginMethod === 'password'
-                    ? 'bg-background text-foreground shadow-sm'
-                    : 'text-muted-foreground hover:text-foreground'
-                }`}
+                className={`flex-1 py-2 px-3 text-sm font-medium rounded-md transition-all ${loginMethod === 'password'
+                  ? 'bg-background text-foreground shadow-sm'
+                  : 'text-muted-foreground hover:text-foreground'
+                  }`}
               >
                 Password
               </button>
@@ -162,11 +202,10 @@ export default function LoginPage() {
                   setError(null);
                   setMessage(null);
                 }}
-                className={`flex-1 py-2 px-3 text-sm font-medium rounded-md transition-all ${
-                  loginMethod === 'otp'
-                    ? 'bg-background text-foreground shadow-sm'
-                    : 'text-muted-foreground hover:text-foreground'
-                }`}
+                className={`flex-1 py-2 px-3 text-sm font-medium rounded-md transition-all ${loginMethod === 'otp'
+                  ? 'bg-background text-foreground shadow-sm'
+                  : 'text-muted-foreground hover:text-foreground'
+                  }`}
               >
                 Email OTP
               </button>
@@ -277,8 +316,8 @@ export default function LoginPage() {
                     {loginMethod === 'password'
                       ? 'Sign in'
                       : step === 'initial'
-                      ? 'Send Login Code'
-                      : 'Verify Code'}
+                        ? 'Send Login Code'
+                        : 'Verify Code'}
                   </>
                 )}
               </Button>

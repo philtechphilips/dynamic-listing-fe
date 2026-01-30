@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import {
     Table,
@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import { Search, Plus, Pencil, Trash2, Power } from "lucide-react";
+import { Search, Plus, Pencil, Trash2, Loader2 } from "lucide-react";
 import {
     Dialog,
     DialogContent,
@@ -22,76 +22,164 @@ import {
     DialogTitle,
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { useToast } from "@/hooks/use-toast";
 
-const initialCategories = [
-    {
-        id: "1",
-        name: "Real Estate",
-        slug: "real-estate",
-        count: 24,
-        status: "Active",
-    },
-    {
-        id: "2",
-        name: "Restaurants",
-        slug: "restaurants",
-        count: 156,
-        status: "Active",
-    },
-    {
-        id: "3",
-        name: "Automotive",
-        slug: "automotive",
-        count: 42,
-        status: "Inactive",
-    },
-];
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8007";
+
+interface Category {
+    id: string;
+    name: string;
+    slug: string;
+    description: string | null;
+    createdAt: string;
+    updatedAt: string;
+}
 
 const CategoriesPage = () => {
-    const [items, setItems] = useState(initialCategories);
+    const [categories, setCategories] = useState<Category[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
+    const [isSubmitting, setIsSubmitting] = useState(false);
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [editingItem, setEditingItem] = useState<any>(null);
-    const [formData, setFormData] = useState({ name: "", slug: "", status: "Active" });
+    const [editingCategory, setEditingCategory] = useState<Category | null>(null);
+    const [formData, setFormData] = useState({ name: "", description: "" });
+    const [searchQuery, setSearchQuery] = useState("");
+    const { toast } = useToast();
 
-    const handleOpenModal = (item: any = null) => {
-        if (item) {
-            setEditingItem(item);
-            setFormData({ name: item.name, slug: item.slug, status: item.status });
+    const getAuthHeaders = () => {
+        const token = localStorage.getItem("token");
+        return {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+        };
+    };
+
+    const fetchCategories = useCallback(async () => {
+        try {
+            setIsLoading(true);
+            const response = await fetch(`${API_URL}/categories`);
+            if (!response.ok) throw new Error("Failed to fetch categories");
+            const data = await response.json();
+            setCategories(data.categories || []);
+        } catch (error) {
+            console.error("Error fetching categories:", error);
+            toast({
+                title: "Error",
+                description: "Failed to load categories",
+                variant: "destructive",
+            });
+        } finally {
+            setIsLoading(false);
+        }
+    }, [toast]);
+
+    useEffect(() => {
+        fetchCategories();
+    }, [fetchCategories]);
+
+    const handleOpenModal = (category: Category | null = null) => {
+        if (category) {
+            setEditingCategory(category);
+            setFormData({
+                name: category.name,
+                description: category.description || "",
+            });
         } else {
-            setEditingItem(null);
-            setFormData({ name: "", slug: "", status: "Active" });
+            setEditingCategory(null);
+            setFormData({ name: "", description: "" });
         }
         setIsModalOpen(true);
     };
 
-    const handleSave = () => {
-        if (editingItem) {
-            setItems(items.map(i => i.id === editingItem.id ? { ...i, ...formData } : i));
-        } else {
-            const newItem = {
-                id: Math.random().toString(36).substr(2, 9),
-                count: 0,
-                ...formData
-            };
-            setItems([...items, newItem]);
+    const handleSave = async () => {
+        if (!formData.name.trim()) {
+            toast({
+                title: "Validation Error",
+                description: "Category name is required",
+                variant: "destructive",
+            });
+            return;
         }
-        setIsModalOpen(false);
-    };
 
-    const handleDelete = (id: string) => {
-        if (confirm("Are you sure you want to delete this category?")) {
-            setItems(items.filter(i => i.id !== id));
-        }
-    };
+        setIsSubmitting(true);
+        try {
+            const url = editingCategory
+                ? `${API_URL}/admin/categories/${editingCategory.id}`
+                : `${API_URL}/admin/categories`;
 
-    const handleStatusToggle = (id: string) => {
-        setItems(items.map(i => {
-            if (i.id === id) {
-                return { ...i, status: i.status === "Active" ? "Inactive" : "Active" };
+            const method = editingCategory ? "PUT" : "POST";
+
+            const response = await fetch(url, {
+                method,
+                headers: getAuthHeaders(),
+                body: JSON.stringify(formData),
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(data.message || "Failed to save category");
             }
-            return i;
-        }));
+
+            toast({
+                title: "Success",
+                description: editingCategory
+                    ? "Category updated successfully"
+                    : "Category created successfully",
+            });
+
+            setIsModalOpen(false);
+            fetchCategories();
+        } catch (error: any) {
+            console.error("Error saving category:", error);
+            toast({
+                title: "Error",
+                description: error.message || "Failed to save category",
+                variant: "destructive",
+            });
+        } finally {
+            setIsSubmitting(false);
+        }
     };
+
+    const handleDelete = async (category: Category) => {
+        if (!confirm(`Are you sure you want to delete the category "${category.name}"? This may affect listings in this category.`)) {
+            return;
+        }
+
+        try {
+            const response = await fetch(`${API_URL}/admin/categories/${category.id}`, {
+                method: "DELETE",
+                headers: getAuthHeaders(),
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(data.message || "Failed to delete category");
+            }
+
+            toast({
+                title: "Success",
+                description: "Category deleted successfully",
+            });
+
+            fetchCategories();
+        } catch (error: any) {
+            console.error("Error deleting category:", error);
+            toast({
+                title: "Error",
+                description: error.message || "Failed to delete category",
+                variant: "destructive",
+            });
+        }
+    };
+
+    const filteredCategories = categories.filter(
+        (cat) =>
+            cat.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            (cat.description && cat.description.toLowerCase().includes(searchQuery.toLowerCase()))
+    );
 
     return (
         <div className="space-y-6 flex flex-col">
@@ -99,7 +187,7 @@ const CategoriesPage = () => {
                 <div>
                     <h1 className="text-3xl font-bold tracking-tight">Categories</h1>
                     <p className="text-muted-foreground">
-                        Organize your listings with categories and subcategories.
+                        Manage product/service categories for your listings.
                     </p>
                 </div>
                 <Button onClick={() => handleOpenModal()}>
@@ -110,7 +198,12 @@ const CategoriesPage = () => {
             <div className="flex items-center gap-4">
                 <div className="relative flex-1 max-w-sm">
                     <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-                    <Input placeholder="Search categories..." className="pl-8" />
+                    <Input
+                        placeholder="Search categories..."
+                        className="pl-8"
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                    />
                 </div>
             </div>
 
@@ -118,65 +211,78 @@ const CategoriesPage = () => {
                 <Table>
                     <TableHeader>
                         <TableRow>
+
                             <TableHead>Name</TableHead>
                             <TableHead>Slug</TableHead>
-                            <TableHead>Listing Count</TableHead>
-                            <TableHead>Status</TableHead>
+                            <TableHead className="max-w-[300px]">Description</TableHead>
                             <TableHead className="text-right">Actions</TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
-                        {items.map((category) => (
-                            <TableRow key={category.id}>
-                                <TableCell className="font-medium">{category.name}</TableCell>
-                                <TableCell>{category.slug}</TableCell>
-                                <TableCell>{category.count}</TableCell>
-                                <TableCell>
-                                    <Badge variant={category.status === "Active" ? "default" : "secondary"}>
-                                        {category.status}
-                                    </Badge>
-                                </TableCell>
-                                <TableCell className="text-right">
-                                    <div className="flex justify-end gap-2">
-                                        <Button
-                                            variant="ghost"
-                                            size="icon"
-                                            onClick={() => handleStatusToggle(category.id)}
-                                            title="Toggle Status"
-                                        >
-                                            <Power className={`h-4 w-4 ${category.status === 'Active' ? 'text-green-500' : 'text-gray-400'}`} />
-                                        </Button>
-                                        <Button
-                                            variant="ghost"
-                                            size="icon"
-                                            onClick={() => handleOpenModal(category)}
-                                            title="Edit"
-                                        >
-                                            <Pencil className="h-4 w-4" />
-                                        </Button>
-                                        <Button
-                                            variant="ghost"
-                                            size="icon"
-                                            className="text-destructive hover:text-destructive"
-                                            onClick={() => handleDelete(category.id)}
-                                            title="Delete"
-                                        >
-                                            <Trash2 className="h-4 w-4" />
-                                        </Button>
+                        {isLoading ? (
+                            <TableRow>
+                                <TableCell colSpan={5} className="text-center py-10">
+                                    <div className="flex items-center justify-center gap-2">
+                                        <Loader2 className="h-5 w-5 animate-spin" />
+                                        <span>Loading categories...</span>
                                     </div>
                                 </TableCell>
                             </TableRow>
-                        ))}
+                        ) : filteredCategories.length === 0 ? (
+                            <TableRow>
+                                <TableCell colSpan={5} className="text-center py-10 text-muted-foreground">
+                                    {searchQuery ? "No categories found matching your search" : "No categories yet. Create your first one!"}
+                                </TableCell>
+                            </TableRow>
+                        ) : (
+                            filteredCategories.map((category) => (
+                                <TableRow key={category.id}>
+
+                                    <TableCell className="font-medium">{category.name}</TableCell>
+                                    <TableCell>
+                                        <Badge variant="outline" className="font-mono text-[10px]">
+                                            {category.slug}
+                                        </Badge>
+                                    </TableCell>
+                                    <TableCell className="max-w-[300px] truncate text-muted-foreground">
+                                        {category.description || "No description"}
+                                    </TableCell>
+                                    <TableCell className="text-right">
+                                        <div className="flex justify-end gap-2">
+                                            <Button
+                                                variant="ghost"
+                                                size="icon"
+                                                onClick={() => handleOpenModal(category)}
+                                                title="Edit"
+                                            >
+                                                <Pencil className="h-4 w-4" />
+                                            </Button>
+                                            <Button
+                                                variant="ghost"
+                                                size="icon"
+                                                className="text-destructive hover:text-destructive"
+                                                onClick={() => handleDelete(category)}
+                                                title="Delete"
+                                            >
+                                                <Trash2 className="h-4 w-4" />
+                                            </Button>
+                                        </div>
+                                    </TableCell>
+                                </TableRow>
+                            ))
+                        )}
                     </TableBody>
                 </Table>
             </div>
 
             <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-                <DialogContent>
+                <DialogContent className="sm:max-w-[500px]">
                     <DialogHeader>
-                        <DialogTitle>{editingItem ? "Edit Category" : "Add Category"}</DialogTitle>
+                        <DialogTitle>{editingCategory ? "Edit Category" : "Add New Category"}</DialogTitle>
                         <DialogDescription>
-                            {editingItem ? "Update the name and slug for this category." : "Fill in the details to create a new category."}
+                            {editingCategory
+                                ? "Update the details for this category."
+                                : "Create a new category for the listings."}
                         </DialogDescription>
                     </DialogHeader>
                     <div className="grid gap-4 py-4">
@@ -186,34 +292,39 @@ const CategoriesPage = () => {
                                 id="name"
                                 value={formData.name}
                                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                                placeholder="Category Name"
+                                placeholder="e.g. Electronics, Real Estate"
+                                disabled={isSubmitting}
                             />
                         </div>
+
                         <div className="grid gap-2">
-                            <Label htmlFor="slug">Slug</Label>
-                            <Input
-                                id="slug"
-                                value={formData.slug}
-                                onChange={(e) => setFormData({ ...formData, slug: e.target.value.toLowerCase().replace(/\s+/g, '-') })}
-                                placeholder="category-slug"
+                            <Label htmlFor="description">Description (Optional)</Label>
+                            <Textarea
+                                id="description"
+                                value={formData.description}
+                                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                                placeholder="Briefly describe what this category includes..."
+                                disabled={isSubmitting}
+                                rows={4}
                             />
-                        </div>
-                        <div className="grid gap-2">
-                            <Label htmlFor="status">Status</Label>
-                            <select
-                                id="status"
-                                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
-                                value={formData.status}
-                                onChange={(e) => setFormData({ ...formData, status: e.target.value })}
-                            >
-                                <option value="Active">Active</option>
-                                <option value="Inactive">Inactive</option>
-                            </select>
                         </div>
                     </div>
                     <DialogFooter>
-                        <Button variant="outline" onClick={() => setIsModalOpen(false)}>Cancel</Button>
-                        <Button onClick={handleSave}>Save Category</Button>
+                        <Button variant="outline" onClick={() => setIsModalOpen(false)} disabled={isSubmitting}>
+                            Cancel
+                        </Button>
+                        <Button onClick={handleSave} disabled={isSubmitting}>
+                            {isSubmitting ? (
+                                <>
+                                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                    {editingCategory ? "Saving..." : "Creating..."}
+                                </>
+                            ) : editingCategory ? (
+                                "Save Changes"
+                            ) : (
+                                "Create Category"
+                            )}
+                        </Button>
                     </DialogFooter>
                 </DialogContent>
             </Dialog>

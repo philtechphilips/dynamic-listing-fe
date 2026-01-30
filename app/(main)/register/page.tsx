@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
+import { useGoogleLogin } from '@react-oauth/google';
 import { Mail, Lock, User as UserIcon, UserPlus } from 'lucide-react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -33,6 +34,50 @@ export default function RegisterPage() {
         }
     }, [isAuthenticated, authLoading, router]);
 
+    // Google Sign-Up handler using authorization code flow
+    // MUST be called before any conditional returns (Rules of Hooks)
+    const handleGoogleSignup = useGoogleLogin({
+        onSuccess: async (tokenResponse) => {
+            try {
+                setIsLoading(true);
+                setError(null);
+
+                // Get user info from Google using the access token
+                const userInfoRes = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
+                    headers: { Authorization: `Bearer ${tokenResponse.access_token}` }
+                });
+                const userInfo = await userInfoRes.json();
+
+                // Send to our backend for authentication
+                const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/google`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        credential: tokenResponse.access_token,
+                        email: userInfo.email,
+                        name: userInfo.name,
+                        googleId: userInfo.sub
+                    }),
+                });
+
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.message || 'Google signup failed');
+
+                login(data.token, data.user);
+                setMessage('Account created successfully! Redirecting...');
+                setTimeout(() => router.push('/dashboard'), 1500);
+            } catch (err: any) {
+                setError(err.message || 'Google signup failed');
+            } finally {
+                setIsLoading(false);
+            }
+        },
+        onError: (error) => {
+            console.error('Google Signup Error:', error);
+            setError('Google signup failed. Please try again.');
+        },
+    });
+
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         setIsLoading(true);
@@ -41,7 +86,7 @@ export default function RegisterPage() {
 
         try {
             if (signupMethod === 'password') {
-                const res = await fetch('http://localhost:8007/api/v1/auth/signup', {
+                const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/signup`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ name, email, password }),
@@ -51,7 +96,7 @@ export default function RegisterPage() {
                 setMessage(data.message);
             } else {
                 if (step === 'initial') {
-                    const res = await fetch('http://localhost:8007/api/v1/auth/request-otp', {
+                    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/request-otp`, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ email }),
@@ -61,7 +106,7 @@ export default function RegisterPage() {
                     setMessage('OTP sent to your email.');
                     setStep('otp_sent');
                 } else {
-                    const res = await fetch('http://localhost:8007/api/v1/auth/verify-otp', {
+                    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/verify-otp`, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ email, otp }),
@@ -93,10 +138,6 @@ export default function RegisterPage() {
         return null;
     }
 
-    const handleGoogleSignup = () => {
-        console.log('Google signup clicked');
-    };
-
     return (
         <div className="min-h-screen flex items-center justify-center bg-gray-50/50 py-12 px-4 sm:px-6 lg:px-8">
             <Card className="max-w-md w-full border-0 shadow-lg">
@@ -113,7 +154,7 @@ export default function RegisterPage() {
                     <div className="space-y-6">
                         <Button
                             type="button"
-                            onClick={handleGoogleSignup}
+                            onClick={() => handleGoogleSignup()}
                             variant="outline"
                             className="w-full gap-3 h-11"
                         >
@@ -142,11 +183,10 @@ export default function RegisterPage() {
                                     setError(null);
                                     setMessage(null);
                                 }}
-                                className={`flex-1 py-2 px-3 text-sm font-medium rounded-md transition-all ${
-                                    signupMethod === 'password'
-                                        ? 'bg-background text-foreground shadow-sm'
-                                        : 'text-muted-foreground hover:text-foreground'
-                                }`}
+                                className={`flex-1 py-2 px-3 text-sm font-medium rounded-md transition-all ${signupMethod === 'password'
+                                    ? 'bg-background text-foreground shadow-sm'
+                                    : 'text-muted-foreground hover:text-foreground'
+                                    }`}
                             >
                                 Password
                             </button>
@@ -158,11 +198,10 @@ export default function RegisterPage() {
                                     setError(null);
                                     setMessage(null);
                                 }}
-                                className={`flex-1 py-2 px-3 text-sm font-medium rounded-md transition-all ${
-                                    signupMethod === 'otp'
-                                        ? 'bg-background text-foreground shadow-sm'
-                                        : 'text-muted-foreground hover:text-foreground'
-                                }`}
+                                className={`flex-1 py-2 px-3 text-sm font-medium rounded-md transition-all ${signupMethod === 'otp'
+                                    ? 'bg-background text-foreground shadow-sm'
+                                    : 'text-muted-foreground hover:text-foreground'
+                                    }`}
                             >
                                 Email OTP
                             </button>
@@ -266,8 +305,8 @@ export default function RegisterPage() {
                                         {signupMethod === 'password'
                                             ? 'Create Account'
                                             : step === 'initial'
-                                            ? 'Send Verification Code'
-                                            : 'Verify Code'}
+                                                ? 'Send Verification Code'
+                                                : 'Verify Code'}
                                     </>
                                 )}
                             </Button>

@@ -95,6 +95,32 @@ const getDate = (item: ContentItem): string => {
   return '';
 };
 
+// Helper to format date for display
+const formatDate = (date?: string | Date): string => {
+  if (!date) return '';
+  const d = typeof date === 'string' ? new Date(date) : date;
+  return d.toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' });
+};
+
+// Helper to get related content
+const getRelatedContent = (currentSlug: string, type: 'listing' | 'post' | 'podcast' | 'resource' | 'event'): (Post | Podcast | Resource)[] => {
+  if (type === 'listing') return [];
+
+  let allContent: (Post | Podcast | Resource)[] = [];
+  
+  if (type === 'post') {
+    allContent = [...latestPosts, ...newsPosts, ...trendingPosts];
+  } else if (type === 'podcast') {
+    allContent = [...latestPodcasts, ...topVideos];
+  } else if (type === 'resource') {
+    allContent = [...latestResources];
+  }
+
+  return allContent
+    .filter(item => item.slug !== currentSlug)
+    .slice(0, 3);
+};
+
 // Star Rating Component
 function StarRating({ rating = 0, reviewCount }: { rating?: number; reviewCount?: number }) {
   const fullStars = Math.floor(rating);
@@ -407,17 +433,19 @@ export default async function UnifiedDetailPage({ params }: { params: Promise<{ 
             </div>
 
             {/* Featured Image */}
-            <Card className="border-0 shadow-lg mb-10 overflow-hidden">
-              <div className="w-full h-[300px] md:h-[500px] relative">
+            <div className="relative rounded-2xl overflow-hidden shadow-2xl shadow-black/10 mb-10 group">
+              <div className="relative w-full aspect-[16/9] md:aspect-[21/9] bg-muted">
                 <Image
                   src={image}
                   alt={title}
                   fill
-                  className="object-cover"
+                  className="object-cover transition-transform duration-700 group-hover:scale-105"
                   priority
                 />
+                {/* Subtle gradient overlay for depth */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/5 via-transparent to-transparent pointer-events-none" />
               </div>
-            </Card>
+            </div>
 
             {/* Share Buttons */}
             <div className="flex justify-center mb-10">
@@ -432,6 +460,67 @@ export default async function UnifiedDetailPage({ params }: { params: Promise<{ 
                 </div>
               </CardContent>
             </Card>
+
+            {/* Related Content */}
+            {(() => {
+              const relatedItems = getRelatedContent(slug, type);
+              if (relatedItems.length > 0) {
+                return (
+                  <div className="mt-16 pt-12 border-t border-border/40">
+                    <div className="mb-8">
+                      <h2 className="text-2xl md:text-3xl font-clash font-bold text-foreground">
+                        {type === 'post' ? 'Related Articles' : type === 'podcast' ? 'More Podcasts' : 'More Resources'}
+                      </h2>
+                      <p className="text-muted-foreground mt-2">Discover more content you might enjoy</p>
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                      {relatedItems.map((relatedItem) => {
+                        // @ts-ignore
+                        const imageUrl = relatedItem.featured_image_webp || relatedItem.featured_image || '/images/music.svg';
+                        // @ts-ignore
+                        const excerpt = relatedItem.excerpt || '';
+                        // @ts-ignore
+                        const publishDate = relatedItem.published_at || relatedItem.created_at;
+                        
+                        return (
+                          <Link key={relatedItem.id} href={`/item/${relatedItem.slug}`} className="group">
+                            <Card className="border-0 shadow-sm hover:shadow-md transition-all overflow-hidden h-full">
+                              <div className="relative h-48 w-full overflow-hidden bg-muted">
+                                <Image
+                                  src={imageUrl}
+                                  alt={relatedItem.title}
+                                  fill
+                                  className="object-cover transition-transform duration-500 group-hover:scale-110"
+                                />
+                              </div>
+                              <CardContent className="p-5 space-y-3">
+                                <Badge variant="secondary" className="border-0">
+                                  {/* @ts-ignore */}
+                                  {relatedItem.category?.name || type}
+                                </Badge>
+                                <h3 className="font-clash font-semibold text-lg text-foreground line-clamp-2 group-hover:text-primary transition-colors">
+                                  {relatedItem.title}
+                                </h3>
+                                {excerpt && (
+                                  <p className="text-sm text-muted-foreground line-clamp-2 leading-relaxed">
+                                    {excerpt}
+                                  </p>
+                                )}
+                                <div className="flex items-center gap-2 text-xs text-muted-foreground pt-2">
+                                  <Calendar className="w-3 h-3" />
+                                  <span>{formatDate(publishDate)}</span>
+                                </div>
+                              </CardContent>
+                            </Card>
+                          </Link>
+                        );
+                      })}
+                    </div>
+                  </div>
+                );
+              }
+              return null;
+            })()}
 
             <div className="mt-10">
               <Comments />

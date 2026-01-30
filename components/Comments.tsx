@@ -59,9 +59,9 @@ export default function Comments() {
 
     return (
         <div className="mt-12 space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
-            <div className="flex items-center gap-2 border-b border-gray-100 pb-4">
+            <div className="flex items-center gap-2 border-b border-border/40 pb-4">
                 <MessageSquare className="w-5 h-5 text-primary" />
-                <h2 className="text-2xl font-clash font-semibold text-gray-900">
+                <h2 className="text-2xl font-clash font-semibold text-foreground">
                     Comments ({comments.length})
                 </h2>
             </div>
@@ -69,31 +69,30 @@ export default function Comments() {
             {/* Comment Form */}
             <form onSubmit={handleSubmit} className="space-y-4">
                 <div className="flex gap-4">
-                    <Avatar className="w-10 h-10 border-2 border-primary-100">
-                        <AvatarFallback className="bg-primary-50 text-primary font-semibold">U</AvatarFallback>
+                    <Avatar className="w-10 h-10">
+                        <AvatarFallback className="bg-primary/10 text-primary font-semibold">U</AvatarFallback>
                     </Avatar>
-                    <div className="flex-1 space-y-3">
+                        <div className="flex-1 space-y-3">
                         <Textarea
                             placeholder="Share your thoughts..."
                             value={newComment}
                             onChange={(e) => setNewComment(e.target.value)}
-                            className="min-h-[100px] resize-none border-gray-200 focus:border-primary focus:ring-primary rounded-xl transition-all"
+                            className="min-h-[100px] resize-none border-0 bg-muted focus:bg-background focus:ring-2 focus:ring-primary/20 rounded-xl transition-all"
                         />
                         <div className="flex justify-end">
                             <Button
                                 type="submit"
                                 disabled={isSubmitting || !newComment.trim()}
-                                className="rounded-full px-6 flex items-center gap-2 group"
+                                className="rounded-full px-6 py-2.5 h-auto flex items-center gap-2.5 group text-white shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/30 transition-all duration-300 hover:scale-105 disabled:opacity-50 disabled:hover:scale-100 disabled:shadow-md"
                             >
                                 {isSubmitting ? (
                                     <span className="flex items-center gap-2">
                                         <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                                        Posting...
+                                        <span className="font-semibold">Posting...</span>
                                     </span>
                                 ) : (
                                     <>
-                                        <span>Post Comment</span>
-                                        <Send className="w-4 h-4 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
+                                        <span className="font-semibold">Post Comment</span>
                                     </>
                                 )}
                             </Button>
@@ -106,18 +105,18 @@ export default function Comments() {
             <div className="space-y-6 pt-4">
                 {comments.map((comment) => (
                     <div key={comment.id} className="flex gap-4 group">
-                        <Avatar className="w-10 h-10 border border-gray-100">
+                        <Avatar className="w-10 h-10">
                             <AvatarImage src={comment.avatar} alt={comment.author} className="object-cover" />
-                            <AvatarFallback className="bg-gray-100 text-gray-400 font-medium">
+                            <AvatarFallback className="bg-muted text-muted-foreground font-medium">
                                 {comment.author.charAt(0)}
                             </AvatarFallback>
                         </Avatar>
-                        <div className="flex-1 bg-gray-50/50 p-4 rounded-2xl border border-gray-100 group-hover:bg-gray-50 transition-colors">
+                        <div className="flex-1 bg-muted/30 p-4 rounded-2xl group-hover:bg-muted/50 transition-colors">
                             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 mb-2">
-                                <h4 className="font-semibold text-gray-950">{comment.author}</h4>
-                                <span className="text-xs text-gray-400 font-medium">{comment.date}</span>
+                                <h4 className="font-semibold text-foreground">{comment.author}</h4>
+                                <span className="text-xs text-muted-foreground font-medium">{comment.date}</span>
                             </div>
-                            <p className="text-gray-700 leading-relaxed text-sm md:text-base">
+                            <p className="text-muted-foreground leading-relaxed text-sm md:text-base">
                                 {comment.text}
                             </p>
                         </div>

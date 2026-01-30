@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from 'react';
-import { Share2, Check } from 'lucide-react';
+import { Share2, Check, Link2, Copy } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
 export default function ShareActions({ title }: { title: string }) {
   const [showTooltip, setShowTooltip] = useState(false);
@@ -31,16 +32,34 @@ export default function ShareActions({ title }: { title: string }) {
 
   return (
     <div className="relative inline-block">
-      <button
+      <Button
         onClick={handleShare}
-        className="flex items-center gap-2 px-6 py-3 bg-gray-100 rounded-full hover:bg-gray-200 transition-colors text-gray-900 font-medium"
+        variant="outline"
+        className="group relative overflow-hidden rounded-full px-6 py-2.5 h-auto border-2 hover:border-primary/50 transition-all duration-300 hover:shadow-lg hover:shadow-primary/10 hover:scale-105"
       >
-        {showTooltip ? <Check className="w-5 h-5 text-green-600" /> : <Share2 className="w-5 h-5" />}
-        {showTooltip ? "Link Copied" : "Share"}
-      </button>
-      
-      {/* Tooltip for Copy Feedback (Alternative position if needed) */}
-      {/* Using simple state toggle on button text for better UX here */}
+        <span className="relative flex items-center gap-2.5 z-10">
+          {showTooltip ? (
+            <>
+              <div className="w-6 h-6 rounded-full bg-green-100 flex items-center justify-center">
+                <Check className="w-3.5 h-3.5 text-green-600" />
+              </div>
+              <span className="font-semibold text-green-600">Link Copied!</span>
+            </>
+          ) : (
+            <>
+              <div className="w-6 h-6 rounded-full bg-primary/10 group-hover:bg-primary/20 flex items-center justify-center transition-colors">
+                <Share2 className="w-3.5 h-3.5 text-primary group-hover:scale-110 transition-transform" />
+              </div>
+              <span className="font-semibold text-foreground group-hover:text-primary transition-colors">
+                Share Article
+              </span>
+            </>
+          )}
+        </span>
+        
+        {/* Animated background on hover */}
+        <div className="absolute inset-0 bg-gradient-to-r from-primary/5 to-primary/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+      </Button>
     </div>
   );
 }

@@ -169,7 +169,7 @@ function TagsList({ tags, category, showTags, showCategory }: {
     return (
       <div className="flex items-center gap-2 flex-wrap">
         {tags.map((tag) => (
-          <div key={tag.id} className="flex items-center py-1 px-2 bg-primary-300 rounded-md w-fit">
+          <div key={tag.id} className="flex items-center py-1 px-2 bg-primary/10 rounded-md w-fit">
             <p className="text-primary text-sm font-medium">{tag.name}</p>
           </div>
         ))}
@@ -179,7 +179,7 @@ function TagsList({ tags, category, showTags, showCategory }: {
 
   if (showCategory) {
     return (
-      <div className="flex items-center py-1 px-2 bg-primary-300 rounded-md w-fit">
+      <div className="flex items-center py-1 px-2 bg-primary/10 rounded-md w-fit">
         <p className="text-primary text-sm font-medium">{category}</p>
       </div>
     );
@@ -305,19 +305,19 @@ export default function BlogCard({
           </div>
 
           {showReadTime && (
-            <div className="flex items-center gap-2 text-sm font-medium text-gray-200 mt-4 md:mt-4">
+            <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground mt-4 md:mt-4">
               <p>{date}</p>
               <span className="w-1 h-1 rounded-full bg-current" />
               <p>{readTime}</p>
             </div>
           )}
 
-          <h5 className="font-clash text-gray-100 font-semibold text-2xl md:mt-6 mt-4">
+          <h5 className="font-clash text-foreground font-semibold text-2xl md:mt-6 mt-4">
             {limitString(title, 52)}
           </h5>
 
           {excerpt && (
-            <p className="text-gray-200 text-sm md:mt-3 mt-2 leading-relaxed line-clamp-2">
+            <p className="text-muted-foreground text-sm md:mt-3 mt-2 leading-relaxed line-clamp-2">
               {limitString(excerpt, 120)}
             </p>
           )}
@@ -325,7 +325,7 @@ export default function BlogCard({
           {showAuthor && (
             <div className="flex items-center gap-2 mt-6">
               <AuthorAvatar user={post?.user} authorImage={authorImage} author={author} />
-              <p className="font-medium text-sm text-gray-100">{author}</p>
+              <p className="font-medium text-sm text-foreground">{author}</p>
             </div>
           )}
         </div>
@@ -352,12 +352,12 @@ export default function BlogCard({
           <TagsList tags={post?.tags} category={category} showTags={showTags} showCategory={showCategory} />
         </div>
 
-        <h5 className="font-clash text-gray-100 font-semibold text-lg mt-4">
+        <h5 className="font-clash text-foreground font-semibold text-lg mt-4">
           {limitString(title, 50)}
         </h5>
 
         {showReadTime && (
-          <div className="flex items-center gap-2 text-sm font-medium text-gray-200 mt-2">
+          <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground mt-2">
             <p>{date}</p>
             <span className="w-1 h-1 rounded-full bg-current" />
             <p>{readTime}</p>
@@ -367,7 +367,7 @@ export default function BlogCard({
         {showAuthor && (
           <div className="flex items-center gap-2 mt-4">
             <AuthorAvatar user={post?.user} authorImage={authorImage} author={author} size="sm" />
-            <p className="font-medium text-sm text-gray-100">{author}</p>
+            <p className="font-medium text-sm text-foreground">{author}</p>
           </div>
         )}
       </Link>
@@ -389,7 +389,7 @@ export default function BlogCard({
 
       <div className="flex md:flex-row flex-col-reverse md:items-center items-start justify-between mt-7">
         {showReadTime && (
-          <div className="flex items-center gap-2 text-sm font-medium text-gray-200 mt-4 md:mt-0">
+          <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground mt-4 md:mt-0">
             <p>{date}</p>
             <span className="w-1 h-1 rounded-full bg-current" />
             <p>{readTime}</p>
@@ -398,12 +398,12 @@ export default function BlogCard({
         <TagsList tags={post?.tags} category={category} showTags={showTags} showCategory={showCategory} />
       </div>
 
-      <h5 className="font-clash text-gray-100 font-semibold text-2xl mt-4">
+      <h5 className="font-clash text-foreground font-semibold text-2xl mt-4">
         {limitString(title, 50)}
       </h5>
 
       {excerpt && (
-        <p className="text-gray-200 text-sm mt-3 leading-relaxed line-clamp-3">
+        <p className="text-muted-foreground text-sm mt-3 leading-relaxed line-clamp-3">
           {limitString(excerpt, 150)}
         </p>
       )}
@@ -411,7 +411,7 @@ export default function BlogCard({
       {showAuthor && (
         <div className="flex items-center gap-2 mt-6">
           <AuthorAvatar user={post?.user} authorImage={authorImage} author={author} />
-          <p className="font-medium text-sm text-gray-100">{author}</p>
+          <p className="font-medium text-sm text-foreground">{author}</p>
         </div>
       )}
     </Link>

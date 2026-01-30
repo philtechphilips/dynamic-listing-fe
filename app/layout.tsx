@@ -3,6 +3,8 @@ import { Geom, Lato } from "next/font/google";
 import "./fonts.css";
 import "./globals.css";
 import { AuthProvider } from "@/contexts/AuthContext";
+import GoogleAuthProviderWrapper from "@/components/GoogleAuthProvider";
+import { Toaster } from "@/components/ui/toaster";
 
 const geom = Geom({
     variable: "--font-geom",
@@ -38,9 +40,12 @@ export default function RootLayout({
             <body
                 className={`${geom.variable} ${lato.variable} antialiased`}
             >
-                <AuthProvider>
-                    {children}
-                </AuthProvider>
+                <GoogleAuthProviderWrapper>
+                    <AuthProvider>
+                        {children}
+                        <Toaster />
+                    </AuthProvider>
+                </GoogleAuthProviderWrapper>
             </body>
         </html>
     );

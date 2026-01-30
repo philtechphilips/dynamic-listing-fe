@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Table,
@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import { Search, UserPlus, Pencil, Trash2, ShieldCheck } from "lucide-react";
+import { Search, UserPlus, Pencil, Trash2, Mail, Loader2 } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -22,94 +22,226 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
+import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/contexts/AuthContext";
 
-const initialUsers = [
-  {
-    id: "1",
-    name: "John Doe",
-    email: "john@example.com",
-    role: "Admin",
-    status: "Active",
-  },
-  {
-    id: "2",
-    name: "Jane Smith",
-    email: "jane@example.com",
-    role: "Editor",
-    status: "Active",
-  },
-  {
-    id: "3",
-    name: "Bob Johnson",
-    email: "bob@example.com",
-    role: "User",
-    status: "Inactive",
-  },
-];
+
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8007";
+
+interface AdminUser {
+  id: string;
+  name: string;
+  email: string;
+  role: string;
+  status: string;
+  isVerified: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
 
 const UsersPage = () => {
-  const [users, setUsers] = useState(initialUsers);
+  const [users, setUsers] = useState<AdminUser[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [editingUser, setEditingUser] = useState<any>(null);
-  const [formData, setFormData] = useState({ name: "", email: "", role: "User", status: "Active" });
+  const [editingUser, setEditingUser] = useState<AdminUser | null>(null);
+  const [formData, setFormData] = useState({ name: "", email: "" });
+  const [searchQuery, setSearchQuery] = useState("");
+  const { toast } = useToast();
+  const { user: currentUser } = useAuth();
 
-  const handleOpenModal = (user: any = null) => {
+
+  const getAuthHeaders = () => {
+    const token = localStorage.getItem("token");
+    return {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    };
+  };
+
+  const fetchUsers = useCallback(async () => {
+    try {
+      setIsLoading(true);
+      const response = await fetch(`${API_URL}/admin/users`, {
+        headers: getAuthHeaders(),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch users");
+      }
+
+      const data = await response.json();
+      setUsers(data.users || []);
+    } catch (error) {
+      console.error("Error fetching users:", error);
+      toast({
+        title: "Error",
+        description: "Failed to load admin users",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  }, [toast]);
+
+  useEffect(() => {
+    fetchUsers();
+  }, [fetchUsers]);
+
+  const handleOpenModal = (user: AdminUser | null = null) => {
     if (user) {
       setEditingUser(user);
-      setFormData({ name: user.name, email: user.email, role: user.role, status: user.status });
+      setFormData({ name: user.name, email: user.email });
     } else {
       setEditingUser(null);
-      setFormData({ name: "", email: "", role: "User", status: "Active" });
+      setFormData({ name: "", email: "" });
     }
     setIsModalOpen(true);
   };
 
-  const handleSave = () => {
-    if (editingUser) {
-      setUsers(users.map(u => u.id === editingUser.id ? { ...u, ...formData } : u));
-    } else {
-      const newUser = {
-        id: Math.random().toString(36).substr(2, 9),
-        ...formData
-      };
-      setUsers([...users, newUser]);
+  const handleSave = async () => {
+    if (!formData.name.trim() || !formData.email.trim()) {
+      toast({
+        title: "Validation Error",
+        description: "Name and email are required",
+        variant: "destructive",
+      });
+      return;
     }
-    setIsModalOpen(false);
-  };
 
-  const handleDelete = (id: string) => {
-    if (confirm("Are you sure you want to delete this user?")) {
-      setUsers(users.filter(u => u.id !== id));
-    }
-  };
+    setIsSubmitting(true);
+    try {
+      const url = editingUser
+        ? `${API_URL}/admin/users/${editingUser.id}`
+        : `${API_URL}/admin/users`;
 
-  const handleStatusToggle = (id: string) => {
-    setUsers(users.map(u => {
-      if (u.id === id) {
-        return { ...u, status: u.status === "Active" ? "Inactive" : "Active" };
+      const method = editingUser ? "PUT" : "POST";
+
+      const response = await fetch(url, {
+        method,
+        headers: getAuthHeaders(),
+        body: JSON.stringify(formData),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || "Failed to save user");
       }
-      return u;
-    }));
+
+      toast({
+        title: "Success",
+        description: editingUser
+          ? "Admin user updated successfully"
+          : "Admin user created. An invitation email has been sent.",
+      });
+
+      setIsModalOpen(false);
+      fetchUsers();
+    } catch (error: any) {
+      console.error("Error saving user:", error);
+      toast({
+        title: "Error",
+        description: error.message || "Failed to save user",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
+
+  const handleDelete = async (user: AdminUser) => {
+    if (!confirm(`Are you sure you want to delete ${user.name}?`)) {
+      return;
+    }
+
+    try {
+      const response = await fetch(`${API_URL}/admin/users/${user.id}`, {
+        method: "DELETE",
+        headers: getAuthHeaders(),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || "Failed to delete user");
+      }
+
+      toast({
+        title: "Success",
+        description: "Admin user deleted successfully",
+      });
+
+      fetchUsers();
+    } catch (error: any) {
+      console.error("Error deleting user:", error);
+      toast({
+        title: "Error",
+        description: error.message || "Failed to delete user",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleResendInvitation = async (user: AdminUser) => {
+    try {
+      const response = await fetch(
+        `${API_URL}/admin/users/${user.id}/resend-invitation`,
+        {
+          method: "POST",
+          headers: getAuthHeaders(),
+        }
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || "Failed to resend invitation");
+      }
+
+      toast({
+        title: "Success",
+        description: `Invitation email sent to ${user.email}`,
+      });
+    } catch (error: any) {
+      console.error("Error resending invitation:", error);
+      toast({
+        title: "Error",
+        description: error.message || "Failed to resend invitation",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const filteredUsers = users.filter(
+    (user) =>
+      user.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      user.email.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   return (
     <div className="space-y-6 flex flex-col">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Users</h1>
+          <h1 className="text-3xl font-bold tracking-tight">Admin Users</h1>
           <p className="text-muted-foreground">
-            Manage your application users and their roles.
+            Manage administrator accounts. New admins will receive an invitation email to set their password.
           </p>
         </div>
         <Button onClick={() => handleOpenModal()}>
-          <UserPlus className="mr-2 h-4 w-4" /> Add User
+          <UserPlus className="mr-2 h-4 w-4" /> Add Admin
         </Button>
       </div>
 
       <div className="flex items-center gap-4">
         <div className="relative flex-1 max-w-sm">
           <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-          <Input placeholder="Search users..." className="pl-8" />
+          <Input
+            placeholder="Search admins..."
+            className="pl-8"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
         </div>
       </div>
 
@@ -119,53 +251,76 @@ const UsersPage = () => {
             <TableRow>
               <TableHead>Name</TableHead>
               <TableHead>Email</TableHead>
-              <TableHead>Role</TableHead>
               <TableHead>Status</TableHead>
+              <TableHead>Created</TableHead>
               <TableHead className="text-right">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {users.map((user) => (
-              <TableRow key={user.id}>
-                <TableCell className="font-medium">{user.name}</TableCell>
-                <TableCell>{user.email}</TableCell>
-                <TableCell>{user.role}</TableCell>
-                <TableCell>
-                  <Badge variant={user.status === "Active" ? "default" : "secondary"}>
-                    {user.status}
-                  </Badge>
-                </TableCell>
-                <TableCell className="text-right">
-                  <div className="flex justify-end gap-2">
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => handleStatusToggle(user.id)}
-                      title="Toggle Status"
-                    >
-                      <ShieldCheck className="h-4 w-4" />
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => handleOpenModal(user)}
-                      title="Edit"
-                    >
-                      <Pencil className="h-4 w-4" />
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="text-destructive hover:text-destructive"
-                      onClick={() => handleDelete(user.id)}
-                      title="Delete"
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
+            {isLoading ? (
+              <TableRow>
+                <TableCell colSpan={5} className="text-center py-10">
+                  <div className="flex items-center justify-center gap-2">
+                    <Loader2 className="h-5 w-5 animate-spin" />
+                    <span>Loading admin users...</span>
                   </div>
                 </TableCell>
               </TableRow>
-            ))}
+            ) : filteredUsers.length === 0 ? (
+              <TableRow>
+                <TableCell colSpan={5} className="text-center py-10 text-muted-foreground">
+                  {searchQuery ? "No admins found matching your search" : "No admin users yet. Add your first admin!"}
+                </TableCell>
+              </TableRow>
+            ) : (
+              filteredUsers.map((user) => (
+                <TableRow key={user.id}>
+                  <TableCell className="font-medium">{user.name}</TableCell>
+                  <TableCell>{user.email}</TableCell>
+                  <TableCell>
+                    <Badge variant={user.status === "Active" ? "default" : "secondary"}>
+                      {user.status}
+                    </Badge>
+                  </TableCell>
+                  <TableCell>
+                    {new Date(user.createdAt).toLocaleDateString()}
+                  </TableCell>
+                  <TableCell className="text-right">
+                    <div className="flex justify-end gap-2">
+                      {user.status === "Pending" && (
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => handleResendInvitation(user)}
+                          title="Resend Invitation"
+                        >
+                          <Mail className="h-4 w-4" />
+                        </Button>
+                      )}
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => handleOpenModal(user)}
+                        title="Edit"
+                      >
+                        <Pencil className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="text-destructive hover:text-destructive"
+                        onClick={() => handleDelete(user)}
+                        title="Delete"
+                        disabled={currentUser?.id === user.id}
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ))
+            )}
           </TableBody>
         </Table>
       </div>
@@ -173,9 +328,11 @@ const UsersPage = () => {
       <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>{editingUser ? "Edit User" : "Add New User"}</DialogTitle>
+            <DialogTitle>{editingUser ? "Edit Admin" : "Add New Admin"}</DialogTitle>
             <DialogDescription>
-              {editingUser ? "Modify the user's information below." : "Enter the details for the new user account."}
+              {editingUser
+                ? "Modify the admin's information below."
+                : "Enter the details for the new admin. They will receive an email invitation to set their password."}
             </DialogDescription>
           </DialogHeader>
           <div className="grid gap-4 py-4">
@@ -186,6 +343,7 @@ const UsersPage = () => {
                 value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                 placeholder="John Doe"
+                disabled={isSubmitting}
               />
             </div>
             <div className="grid gap-2">
@@ -196,25 +354,31 @@ const UsersPage = () => {
                 value={formData.email}
                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                 placeholder="john@example.com"
+                disabled={isSubmitting}
               />
             </div>
-            <div className="grid gap-2">
-              <Label htmlFor="role">Role</Label>
-              <select
-                id="role"
-                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
-                value={formData.role}
-                onChange={(e) => setFormData({ ...formData, role: e.target.value })}
-              >
-                <option value="User">User</option>
-                <option value="Editor">Editor</option>
-                <option value="Admin">Admin</option>
-              </select>
-            </div>
+            {!editingUser && (
+              <p className="text-sm text-muted-foreground bg-muted p-3 rounded-md">
+                📧 An invitation email will be sent to this address with instructions to set their password.
+              </p>
+            )}
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setIsModalOpen(false)}>Cancel</Button>
-            <Button onClick={handleSave}>Save changes</Button>
+            <Button variant="outline" onClick={() => setIsModalOpen(false)} disabled={isSubmitting}>
+              Cancel
+            </Button>
+            <Button onClick={handleSave} disabled={isSubmitting}>
+              {isSubmitting ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  {editingUser ? "Saving..." : "Creating..."}
+                </>
+              ) : editingUser ? (
+                "Save Changes"
+              ) : (
+                "Create & Send Invitation"
+              )}
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
