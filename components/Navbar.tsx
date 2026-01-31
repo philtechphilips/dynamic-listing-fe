@@ -62,9 +62,9 @@ export default function Navbar() {
     ? categories.slice(0, 4).map(cat => ({ href: `/category/${cat.slug}`, label: cat.name }))
     : [
       { href: "/category/restaurants", label: "Restaurants" },
-      { href: "/category/movies", label: "Movies" },
+      { href: "/category/videos", label: "Videos" },
+      { href: "/category/news", label: "News" },
       { href: "/category/hotels", label: "Hotels" },
-      { href: "/category/gyms", label: "Gyms" },
     ];
 
   const moreLinks = categories.length > 0

@@ -182,9 +182,9 @@ function StarRating({ rating = 0, reviewCount }: { rating?: number; reviewCount?
         ))}
       </div>
       {rating > 0 && (
-        <span className="text-sm font-semibold text-foreground">
+        <span className="text-sm font-semibold text-white">
           {rating.toFixed(1)}
-          {reviewCount && <span className="text-muted-foreground font-normal"> ({reviewCount})</span>}
+          {reviewCount && <span className="text-white/80 font-normal"> ({reviewCount})</span>}
         </span>
       )}
     </div>
@@ -319,8 +319,17 @@ export default async function UnifiedDetailPage({ params }: { params: Promise<{ 
               )}
 
               <div className="space-y-6">
-                <ListingInteractions listingTitle={title} />
-                <Comments />
+                <ListingInteractions
+                  listingTitle={title}
+                  listingId={String(item.id)}
+                  initialRating={item.rating || 0}
+                  // @ts-ignore
+                  initialReviewCount={item.reviewCount || item.review_count || 0}
+                />
+                <Comments
+                  listingId={(type as string) === 'listing' ? String(item.id) : undefined}
+                  newsId={(type as string) === 'post' ? String(item.id) : undefined}
+                />
               </div>
 
               {/* Related Content for Listings */}
@@ -610,10 +619,6 @@ export default async function UnifiedDetailPage({ params }: { params: Promise<{ 
               return null;
             })()}
 
-            <div className="mt-10">
-              <Comments />
-            </div>
-
             {/* Video Embed */}
             {(() => {
               const videoUrl = 'video_url' in item ? item.video_url : null;
@@ -643,6 +648,14 @@ export default async function UnifiedDetailPage({ params }: { params: Promise<{ 
                 </Card>
               );
             })()}
+
+            {/* Comments for Posts/Videos/Resources */}
+            <div className="mt-12">
+              <Comments
+                listingId={(type as string) === 'listing' ? String(item.id) : undefined}
+                newsId={(type as string) === 'post' ? String(item.id) : undefined}
+              />
+            </div>
 
             {/* Navigation */}
             <div className="mt-12 flex justify-center">

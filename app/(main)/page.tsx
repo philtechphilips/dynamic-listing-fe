@@ -140,7 +140,7 @@ export default function Home() {
       {/* Videos Section */}
       {listings.filter(l => l.is_video).length > 0 && (
         <section className="w-full bg-background 2xl:px-[120px] md:px-10 px-5 py-16">
-          <SectionHeader title="Videos" viewAllHref="/all-post/videos" />
+          <SectionHeader title="Videos" viewAllHref="/category/videos" />
 
           <div className="mt-12 w-full flex md:flex-row flex-col gap-8">
             {listings.filter(l => l.is_video).slice(0, 3).map((video) => (

@@ -11,18 +11,6 @@ import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
-import {
-  newsPosts,
-  topRestaurants,
-  topMovies,
-  topElectricians,
-  topHotels,
-  topGyms,
-  topSalons,
-  topPlumbers,
-  topVideos,
-  latestPodcasts,
-} from '@/lib/mockData';
 import { Post, Listing, Podcast } from '@/types';
 
 function SearchContent() {
@@ -32,63 +20,59 @@ function SearchContent() {
   const [query, setQuery] = useState(initialQuery);
   const [activeTab, setActiveTab] = useState<'all' | 'news' | 'listings' | 'videos'>('all');
 
-  // Combine listings
-  const allListings = [
-    ...topRestaurants,
-    ...topMovies,
-    ...topElectricians,
-    ...topHotels,
-    ...topGyms,
-    ...topSalons,
-    ...topPlumbers,
-  ];
-
-  // Combine videos/podcasts
-  const allVideos = [...topVideos, ...latestPodcasts];
-
   // Search Results State
   const [newsResults, setNewsResults] = useState<Post[]>([]);
   const [listingResults, setListingResults] = useState<Listing[]>([]);
   const [videoResults, setVideoResults] = useState<Podcast[]>([]);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     setQuery(initialQuery);
   }, [initialQuery]);
 
   useEffect(() => {
-    if (!query) {
-      setNewsResults([]);
-      setListingResults([]);
-      setVideoResults([]);
-      return;
-    }
+    const fetchSearchResults = async () => {
+      if (!query) {
+        setNewsResults([]);
+        setListingResults([]);
+        setVideoResults([]);
+        return;
+      }
 
-    const lowerQuery = query.toLowerCase();
+      setLoading(true);
+      try {
+        const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8007/api/v1';
 
-    // Filter News
-    const filteredNews = newsPosts.filter((post) =>
-      post.title.toLowerCase().includes(lowerQuery) ||
-      (post.excerpt?.toLowerCase() || '').includes(lowerQuery) ||
-      post.tags?.some(tag => tag.name.toLowerCase().includes(lowerQuery))
-    );
-    setNewsResults(filteredNews);
+        // Fetch listings and news in parallel
+        const [listingsRes, newsRes] = await Promise.all([
+          fetch(`${API_URL}/listings?search=${encodeURIComponent(query)}`),
+          fetch(`${API_URL}/news?search=${encodeURIComponent(query)}`)
+        ]);
 
-    // Filter Listings
-    const filteredListings = allListings.filter((listing) =>
-      listing.title.toLowerCase().includes(lowerQuery) ||
-      (listing.excerpt?.toLowerCase() || '').includes(lowerQuery) ||
-      listing.tags?.some(tag => tag.name.toLowerCase().includes(lowerQuery)) ||
-      (listing.category?.toLowerCase() || '').includes(lowerQuery)
-    );
-    setListingResults(filteredListings);
+        if (listingsRes.ok) {
+          const data = await listingsRes.json();
+          // Filter out videos from listings if is_video is true (assuming videos are handled separately or displayed in listings tab)
+          // For now, let's separate them if your API distinguishes videos
+          const allListings: Listing[] = data.listings || [];
 
-    // Filter Videos
-    const filteredVideos = allVideos.filter((video) =>
-      video.title.toLowerCase().includes(lowerQuery) ||
-      (video.content?.toLowerCase() || '').includes(lowerQuery)
-    );
-    setVideoResults(filteredVideos);
+          setListingResults(allListings.filter(l => !l.is_video));
+          // @ts-ignore
+          setVideoResults(allListings.filter(l => l.is_video));
+        }
 
+        if (newsRes.ok) {
+          const data = await newsRes.json();
+          setNewsResults(data.news || []);
+        }
+
+      } catch (error) {
+        console.error("Error fetching search results:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchSearchResults();
   }, [query]);
 
   const handleSearchSubmit = (e: React.FormEvent) => {
@@ -200,7 +184,11 @@ function SearchContent() {
         )}
 
         {/* Results */}
-        {!query ? (
+        {loading ? (
+          <div className="flex items-center justify-center py-20">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+          </div>
+        ) : !query ? (
           <Card className="border-0 shadow-sm">
             <CardContent className="text-center py-20">
               <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">

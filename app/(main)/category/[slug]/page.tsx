@@ -1,27 +1,11 @@
 'use client';
 
-import { useParams, useRouter } from 'next/navigation';
+import { useParams } from 'next/navigation';
 import Link from 'next/link';
-import Image from 'next/image';
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import ListingCard from '@/components/ListingCard';
 import BlogCard from '@/components/BlogCard';
-import { ChevronDown, Filter, Search } from 'lucide-react';
-import {
-  topRestaurants,
-  topMovies,
-  topElectricians,
-  topHotels,
-  topGyms,
-  topSalons,
-  topPlumbers,
-  latestPosts,
-  newsPosts,
-  latestPodcasts,
-  topVideos,
-  latestResources
-} from '@/lib/mockData';
-import { Listing, Post, Podcast, Resource } from '@/types';
+import { Filter, Search } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -32,6 +16,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import PodcastCard from '@/components/PodcastCard';
+import PodcastPlayerModal from '@/components/PodcastPlayerModal';
+
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8007/api/v1";
 
 // Helper to normalize slugs for comparison (e.g., "Restaurants" -> "restaurants")
 const normalizeSlug = (slug: string) => slug.toLowerCase();
@@ -41,91 +29,99 @@ export default function CategoryPage() {
   const slug = params.slug as string;
   const normalizedSlug = normalizeSlug(slug);
 
-  // Determine Category Name and Content
-  const [sortBy, setSortBy] = useState<'top_rated' | 'latest' | 'most_viewed'>('top_rated');
+  const [category, setCategory] = useState<any>(null);
+  const [items, setItems] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [sortBy, setSortBy] = useState<'top_rated' | 'latest' | 'most_viewed'>('latest');
   const [filterLocation, setFilterLocation] = useState<string>('all');
-  const [filterPrice, setFilterPrice] = useState<string>('all'); // e.g., "$", "$$", "$$$"
-  const [visibleCount, setVisibleCount] = useState(6);
-  const [isFilterOpen, setIsFilterOpen] = useState(false); // Mobile filter toggle
+  const [filterPrice, setFilterPrice] = useState<string>('all');
+  const [visibleCount, setVisibleCount] = useState(9);
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const [selectedPodcast, setSelectedPodcast] = useState<any>(null);
+  const [isPlayerOpen, setIsPlayerOpen] = useState(false);
 
-  let categoryName = slug.charAt(0).toUpperCase() + slug.slice(1).replace(/-/g, ' ');
-  let items: (Listing | Post | Podcast | Resource)[] = [];
-  let isListing = true; // Flag to determine which card to use
+  useEffect(() => {
+    const fetchData = async () => {
+      setLoading(true);
+      try {
+        // 1. Fetch Category
+        const catRes = await fetch(`${API_URL}/categories/${slug}`);
+        if (!catRes.ok) throw new Error('Category not found');
+        const catData = await catRes.json();
+        const categoryObj = catData.category;
+        setCategory(categoryObj);
 
-  // Filter Logic
-  switch (normalizedSlug) {
-    case 'restaurants':
-      items = topRestaurants;
-      break;
-    case 'movies':
-      items = topMovies;
-      break;
-    case 'hotels':
-      items = topHotels;
-      break;
-    case 'gyms':
-      items = topGyms;
-      break;
-    case 'salons':
-      items = topSalons;
-      break;
-    case 'plumbers':
-      items = topPlumbers;
-      break;
-    case 'electricians':
-      items = topElectricians;
-      break;
-    case 'podcasts':
-      items = [...latestPodcasts, ...topVideos];
-      isListing = false;
-      categoryName = "Podcasts & Videos";
-      break;
-    case 'news':
-      items = [...latestPosts, ...newsPosts];
-      isListing = false;
-      break;
-    case 'resources':
-      items = latestResources;
-      isListing = false;
-      break;
-    default:
-      // Fallback or generic search if needed, currently empty to show "Not Found" logic
-      items = [];
-  }
+        // 2. Fetch Content
+        let contentItems: any[] = [];
+        if (normalizedSlug === 'news') {
+          const res = await fetch(`${API_URL}/news?category=${categoryObj.id}`);
+          if (res.ok) {
+            const data = await res.json();
+            contentItems = data.news || [];
+          }
+        } else {
+          const res = await fetch(`${API_URL}/listings?category=${categoryObj.id}`);
+          if (res.ok) {
+            const data = await res.json();
+            contentItems = data.listings || [];
+          }
+        }
+
+        setItems(contentItems);
+      } catch (error) {
+        console.error("Error fetching category data:", error);
+        setItems([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [slug, normalizedSlug]);
+
+  const categoryName = category?.name || slug.charAt(0).toUpperCase() + slug.slice(1).replace(/-/g, ' ');
+  const isNews = normalizedSlug === 'news';
+  const isVideos = normalizedSlug === 'podcasts' || normalizedSlug === 'videos' || normalizedSlug === 'podcast';
+  const isListing = !isNews && !isVideos;
+
+  const handleVideoPlay = (podcast: any) => {
+    setSelectedPodcast(podcast);
+    setIsPlayerOpen(true);
+  };
 
   // Filtering and Sorting Logic
   const processedItems = useMemo(() => {
     let result = [...items];
 
-    // 1. Filter by Location (Mock)
+    // 1. Filter by Location
     if (filterLocation && filterLocation !== 'all') {
-      result = result.filter(item =>
-        // @ts-ignore
-        item.location?.toLowerCase().includes(filterLocation.toLowerCase())
-      );
+      result = result.filter(item => {
+        const loc = item.location || item.address;
+        return loc?.toLowerCase().includes(filterLocation.toLowerCase());
+      });
     }
 
-    // 2. Filter by Price (Mock - exact match length for simplicity or just check string)
+    // 2. Filter by Price
     if (filterPrice && filterPrice !== 'all') {
       result = result.filter(item =>
-        // @ts-ignore
-        item.price_range === filterPrice
+        (item.priceRange || item.price_range) === filterPrice
       );
     }
 
     // 3. Sort
     switch (sortBy) {
       case 'top_rated':
-        // @ts-ignore
         result.sort((a, b) => (b.rating || 0) - (a.rating || 0));
         break;
       case 'latest':
-        // Mock: reverse generic order or assume ID/date
-        // @ts-ignore
-        result.sort((a, b) => new Date(b.created_at || 0).getTime() - new Date(a.created_at || 0).getTime());
+        result.sort((a, b) => {
+          const dateA = new Date(a.createdAt || a.created_at || a.published_at || 0).getTime();
+          const dateB = new Date(b.createdAt || b.created_at || b.published_at || 0).getTime();
+          return dateB - dateA;
+        });
         break;
       case 'most_viewed':
-        // Mock: random shuffle or specific field if available
+        // Random as mock for views
         break;
     }
 
@@ -139,6 +135,16 @@ export default function CategoryPage() {
     setVisibleCount(prev => prev + 6);
   };
 
+  if (loading) {
+    return (
+      <main className="min-h-screen bg-gray-50/50 pt-32 pb-20">
+        <div className="max-w-7xl mx-auto px-5 md:px-12 flex flex-col items-center justify-center py-20">
+          <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin mb-4"></div>
+          <p className="text-muted-foreground font-medium">Loading {categoryName}...</p>
+        </div>
+      </main>
+    );
+  }
 
   return (
     <main className="min-h-screen bg-gray-50/50 pt-32 pb-20">
@@ -153,8 +159,6 @@ export default function CategoryPage() {
             Explore our top picks and latest updates for {categoryName}.
           </p>
         </div>
-
-
 
         {/* Filters and Sorting Controls */}
         <div className="mb-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
@@ -221,21 +225,50 @@ export default function CategoryPage() {
         {/* Content Grid */}
         {visibleItems.length > 0 ? (
           <>
-            <div className={`grid grid-cols-1 ${isListing ? 'md:grid-cols-2 lg:grid-cols-3' : 'md:grid-cols-2 lg:grid-cols-3'} gap-6`}>
-              {visibleItems.map((item: any) => (
-                isListing ? (
+            <div className={`grid grid-cols-1 ${isVideos ? 'md:grid-cols-2 lg:grid-cols-3' : 'md:grid-cols-2 lg:grid-cols-3'} gap-6 md:gap-8`}>
+              {visibleItems.map((item: any) => {
+                if (isVideos || item.is_video) {
+                  return (
+                    <div key={item.id} className="h-full">
+                      <PodcastCard
+                        podcast={{
+                          id: item.id,
+                          title: item.title,
+                          slug: item.slug,
+                          featured_image: item.featuredImage || item.featured_image_webp || item.featured_image,
+                          published_at: item.createdAt || item.created_at || item.published_at,
+                          video_url: item.video_url,
+                          content: item.excerpt || item.content,
+                          author_name: item.author?.name || item.author_name || item.user?.name,
+                        } as any}
+                        variant="sidebar"
+                        onPlay={handleVideoPlay}
+                      />
+                    </div>
+                  );
+                }
+
+                if (isNews) {
+                  return (
+                    <div key={item.id} className="h-full">
+                      <BlogCard
+                        post={{
+                          ...item,
+                          featured_image: item.featuredImage || item.featured_image,
+                          created_at: item.createdAt || item.created_at
+                        }}
+                        imageHeight="h-[250px]"
+                      />
+                    </div>
+                  );
+                }
+
+                return (
                   <div key={item.id} className="h-full">
-                    <ListingCard listing={item as Listing} imageHeight="h-[260px]" />
+                    <ListingCard listing={item} imageHeight="h-[260px]" />
                   </div>
-                ) : (
-                  <div key={item.id} className="h-full">
-                    <BlogCard
-                      post={item}
-                      imageHeight={normalizedSlug === 'podcasts' || normalizedSlug === 'videos' ? 'h-[300px]' : 'h-[250px]'}
-                    />
-                  </div>
-                )
-              ))}
+                );
+              })}
             </div>
 
             {/* Load More Button */}
@@ -269,6 +302,12 @@ export default function CategoryPage() {
           </Card>
         )}
       </div>
+
+      <PodcastPlayerModal
+        isOpen={isPlayerOpen}
+        onClose={() => setIsPlayerOpen(false)}
+        podcast={selectedPodcast}
+      />
     </main>
   );
 }
