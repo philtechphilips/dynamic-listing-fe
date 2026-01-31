@@ -17,6 +17,7 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
@@ -42,15 +43,18 @@ interface Comment {
     date: string;
     slug: string;
     avatar: string;
+    userImage?: string;
     type: 'listing' | 'news';
 }
 
 interface CommentCardProps {
     comment: Comment;
     onDelete: (id: string) => void;
+    currentUserImage?: string;
 }
 
-function CommentCard({ comment, onDelete }: CommentCardProps) {
+function CommentCard({ comment, onDelete, currentUserImage }: CommentCardProps) {
+    const avatarSrc = comment.userImage || currentUserImage;
     return (
         <Card className="group hover:shadow-md transition-all duration-200 border-0">
             <CardContent className="p-6">
@@ -70,6 +74,10 @@ function CommentCard({ comment, onDelete }: CommentCardProps) {
                         <div className="flex justify-between items-start gap-2">
                             <div className="flex-1 min-w-0">
                                 <div className="flex items-center gap-2 mb-1">
+                                    <Avatar className="h-6 w-6 shrink-0">
+                                        <AvatarImage src={avatarSrc} alt="You" />
+                                        <AvatarFallback className="text-[10px] bg-primary/10 text-primary">?</AvatarFallback>
+                                    </Avatar>
                                     <h3 className="font-semibold text-foreground text-base truncate">
                                         {comment.listing}
                                     </h3>
@@ -137,7 +145,7 @@ function CommentCard({ comment, onDelete }: CommentCardProps) {
 }
 
 export default function MyCommentsPage() {
-    const { token } = useAuth();
+    const { token, user } = useAuth();
     const { toast } = useToast();
     const [comments, setComments] = useState<Comment[]>([]);
     const [loading, setLoading] = useState(true);
@@ -262,6 +270,7 @@ export default function MyCommentsPage() {
                             key={comment.id}
                             comment={comment}
                             onDelete={setDeleteId}
+                            currentUserImage={user?.image}
                         />
                     ))
                 ) : (

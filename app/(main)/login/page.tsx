@@ -57,7 +57,8 @@ export default function LoginPage() {
             credential: tokenResponse.access_token,
             email: userInfo.email,
             name: userInfo.name,
-            googleId: userInfo.sub
+            googleId: userInfo.sub,
+            image: userInfo.picture
           }),
         });
 

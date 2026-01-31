@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Search, Loader2, User } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
@@ -22,6 +23,7 @@ interface AppUser {
     email: string;
     role: string;
     status: string;
+    image?: string;
     isVerified: boolean;
     createdAt: string;
     updatedAt: string;
@@ -128,10 +130,13 @@ const AppUsersPage = () => {
                             filteredUsers.map((user) => (
                                 <TableRow key={user.id}>
                                     <TableCell className="font-medium">
-                                        <div className="flex items-center gap-2">
-                                            <div className="bg-primary/10 p-1.5 rounded-full">
-                                                <User className="h-4 w-4 text-primary" />
-                                            </div>
+                                        <div className="flex items-center gap-3">
+                                            <Avatar className="h-8 w-8">
+                                                <AvatarImage src={user.image} alt={user.name} />
+                                                <AvatarFallback className="bg-primary/10 text-primary text-xs font-medium">
+                                                    {user.name?.charAt(0)?.toUpperCase() || "?"}
+                                                </AvatarFallback>
+                                            </Avatar>
                                             {user.name}
                                         </div>
                                     </TableCell>

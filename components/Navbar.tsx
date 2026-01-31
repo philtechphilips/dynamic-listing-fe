@@ -20,10 +20,16 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+} from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useAuth } from "@/contexts/AuthContext";
 import { cn } from "@/lib/utils";
+import { ProfileModal } from "./ProfileModal";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8007/api/v1";
 
@@ -41,6 +47,7 @@ export default function Navbar() {
   const router = useRouter();
   const mobileMenuRef = useRef<HTMLDivElement>(null);
   const { isAuthenticated, user, logout } = useAuth();
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -201,9 +208,11 @@ export default function Navbar() {
             {isAuthenticated ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button size="default" className="gap-2 text-white">
-                    <User className="w-4 h-4" />
-                    Account
+                  <Button variant="ghost" className="relative h-10 w-10 rounded-full">
+                    <Avatar className="h-10 w-10">
+                      <AvatarImage src={user?.image} alt={user?.name || "User"} />
+                      <AvatarFallback>{user?.name?.charAt(0).toUpperCase() || "U"}</AvatarFallback>
+                    </Avatar>
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-56 z-[1100] border-0 shadow-lg">
@@ -214,6 +223,13 @@ export default function Navbar() {
                     </p>
                   </div>
                   <DropdownMenuSeparator />
+                  <DropdownMenuItem
+                    onClick={() => setIsProfileOpen(true)}
+                    className="cursor-pointer"
+                  >
+                    <User className="w-4 h-4 mr-2" />
+                    <span>Profile</span>
+                  </DropdownMenuItem>
                   <DropdownMenuItem asChild>
                     <Link href="/dashboard" className="flex items-center gap-2 cursor-pointer">
                       <LayoutDashboard className="w-4 h-4" />
@@ -364,11 +380,17 @@ export default function Navbar() {
         <div className="p-4 border-t border-border/40">
           {isAuthenticated ? (
             <div className="space-y-2">
-              <div className="px-3 py-2 bg-muted rounded-lg">
-                <p className="text-xs text-muted-foreground">Signed in as</p>
-                <p className="text-sm font-semibold text-foreground truncate">
-                  {user?.name || "User"}
-                </p>
+              <div className="flex items-center gap-3 px-3 py-2 bg-muted rounded-lg">
+                <Avatar className="h-9 w-9">
+                  <AvatarImage src={user?.image} alt={user?.name || "User"} />
+                  <AvatarFallback>{user?.name?.charAt(0).toUpperCase() || "U"}</AvatarFallback>
+                </Avatar>
+                <div className="min-w-0 flex-1">
+                  <p className="text-xs text-muted-foreground">Signed in as</p>
+                  <p className="text-sm font-semibold text-foreground truncate">
+                    {user?.name || "User"}
+                  </p>
+                </div>
               </div>
               <Button
                 variant="destructive"
@@ -391,6 +413,7 @@ export default function Navbar() {
           )}
         </div>
       </div>
+      <ProfileModal isOpen={isProfileOpen} onClose={() => setIsProfileOpen(false)} />
     </>
   );
 }

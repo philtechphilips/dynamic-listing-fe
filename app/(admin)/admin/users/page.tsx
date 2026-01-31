@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Search, UserPlus, Pencil, Trash2, Mail, Loader2 } from "lucide-react";
 import {
   Dialog,
@@ -34,6 +35,7 @@ interface AdminUser {
   email: string;
   role: string;
   status: string;
+  image?: string;
   isVerified: boolean;
   createdAt: string;
   updatedAt: string;
@@ -275,7 +277,17 @@ const UsersPage = () => {
             ) : (
               filteredUsers.map((user) => (
                 <TableRow key={user.id}>
-                  <TableCell className="font-medium">{user.name}</TableCell>
+                  <TableCell className="font-medium">
+                    <div className="flex items-center gap-3">
+                      <Avatar className="h-8 w-8">
+                        <AvatarImage src={user.image} alt={user.name} />
+                        <AvatarFallback className="bg-primary/10 text-primary text-xs font-medium">
+                          {user.name?.charAt(0)?.toUpperCase() || "?"}
+                        </AvatarFallback>
+                      </Avatar>
+                      {user.name}
+                    </div>
+                  </TableCell>
                   <TableCell>{user.email}</TableCell>
                   <TableCell>
                     <Badge variant={user.status === "Active" ? "default" : "secondary"}>

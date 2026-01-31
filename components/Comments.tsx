@@ -17,6 +17,7 @@ interface BackendComment {
     user: {
         id: string;
         name: string;
+        image?: string;
     };
 }
 
@@ -110,6 +111,7 @@ export default function Comments({ listingId, newsId }: CommentsProps) {
                 <form onSubmit={handleSubmit} className="space-y-4">
                     <div className="flex gap-4">
                         <Avatar className="w-10 h-10">
+                            <AvatarImage src={user?.image} alt={user?.name || "User"} />
                             <AvatarFallback className="bg-primary/10 text-primary font-semibold">
                                 {user?.name?.charAt(0) || 'U'}
                             </AvatarFallback>
@@ -162,6 +164,7 @@ export default function Comments({ listingId, newsId }: CommentsProps) {
                         comments.map((comment) => (
                             <div key={comment.id} className="flex gap-4 group">
                                 <Avatar className="w-10 h-10">
+                                    <AvatarImage src={comment.user.image} alt={comment.user.name} />
                                     <AvatarFallback className="bg-muted text-muted-foreground font-medium">
                                         {comment.user.name.charAt(0)}
                                     </AvatarFallback>

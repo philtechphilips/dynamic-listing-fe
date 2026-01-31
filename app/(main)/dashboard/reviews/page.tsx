@@ -14,6 +14,7 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from "@/hooks/use-toast";
 import {
@@ -41,9 +42,11 @@ interface Review {
 interface ReviewCardProps {
     review: Review;
     onDelete: (id: string) => void;
+    userImage?: string;
+    userName?: string;
 }
 
-function ReviewCard({ review, onDelete }: ReviewCardProps) {
+function ReviewCard({ review, onDelete, userImage, userName }: ReviewCardProps) {
     return (
         <Card className="group hover:shadow-md transition-all duration-300 border-0 overflow-hidden flex flex-col">
             {/* Review Card Header with Image */}
@@ -91,10 +94,18 @@ function ReviewCard({ review, onDelete }: ReviewCardProps) {
 
                 <Separator className="my-4" />
 
-                <div className="flex items-center justify-between">
-                    <span className="text-xs text-muted-foreground/80">
-                        {format(new Date(review.date), 'MMM d, yyyy')}
-                    </span>
+                <div className="flex items-center justify-between gap-2">
+                    <div className="flex items-center gap-2 min-w-0">
+                        <Avatar className="h-6 w-6 shrink-0">
+                            <AvatarImage src={userImage} alt={userName || "You"} />
+                            <AvatarFallback className="text-[10px] bg-primary/10 text-primary">
+                                {userName?.charAt(0)?.toUpperCase() || "?"}
+                            </AvatarFallback>
+                        </Avatar>
+                        <span className="text-xs text-muted-foreground/80 truncate">
+                            {format(new Date(review.date), 'MMM d, yyyy')}
+                        </span>
+                    </div>
                     <div className="flex items-center gap-1">
                         {/* <Button
                             variant="ghost"
@@ -122,7 +133,7 @@ function ReviewCard({ review, onDelete }: ReviewCardProps) {
 }
 
 export default function MyReviewsPage() {
-    const { token } = useAuth();
+    const { token, user } = useAuth();
     const { toast } = useToast();
     const [reviews, setReviews] = useState<Review[]>([]);
     const [loading, setLoading] = useState(true);
@@ -248,6 +259,8 @@ export default function MyReviewsPage() {
                             key={review.id}
                             review={review}
                             onDelete={setDeleteId}
+                            userImage={user?.image}
+                            userName={user?.name}
                         />
                     ))
                 ) : (

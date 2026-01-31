@@ -14,11 +14,13 @@ import { Button } from "./ui/button";
 import { useTheme } from "next-themes";
 import { SidebarTrigger, useSidebar } from "./ui/sidebar";
 import { useAuth } from "@/contexts/AuthContext";
+import { ProfileModal } from "./ProfileModal";
+import { useState } from "react";
 
 const AdminNavbar = () => {
-  const { theme, setTheme } = useTheme();
   const { toggleSidebar } = useSidebar();
   const { user, logout } = useAuth();
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
 
   // Get initials from user name
   const getInitials = (name: string | undefined) => {
@@ -46,6 +48,7 @@ const AdminNavbar = () => {
               <span className="text-xs text-muted-foreground">{user?.email || ""}</span>
             </div>
             <Avatar className="border-2 border-primary/20">
+              {user?.image && <AvatarImage src={user.image} alt={user.name} />}
               <AvatarFallback className="bg-primary/10 text-primary font-semibold">
                 {getInitials(user?.name)}
               </AvatarFallback>
@@ -55,6 +58,7 @@ const AdminNavbar = () => {
             <div className="px-2 py-3 border-b border-gray-100">
               <div className="flex items-center gap-3">
                 <Avatar className="h-10 w-10 border-2 border-primary/20">
+                  {user?.image && <AvatarImage src={user.image} alt={user.name} />}
                   <AvatarFallback className="bg-primary/10 text-primary font-semibold">
                     {getInitials(user?.name)}
                   </AvatarFallback>
@@ -72,6 +76,10 @@ const AdminNavbar = () => {
               </div>
             </div>
             <div className="p-1">
+              <DropdownMenuItem onClick={() => setIsProfileOpen(true)} className="cursor-pointer">
+                <User className="h-[1.2rem] w-[1.2rem] mr-2" />
+                Profile
+              </DropdownMenuItem>
               <DropdownMenuItem variant="destructive" onClick={logout} className="cursor-pointer">
                 <LogOut className="h-[1.2rem] w-[1.2rem] mr-2" />
                 Logout
@@ -79,6 +87,7 @@ const AdminNavbar = () => {
             </div>
           </DropdownMenuContent>
         </DropdownMenu>
+        <ProfileModal isOpen={isProfileOpen} onClose={() => setIsProfileOpen(false)} />
       </div>
     </nav>
   );

@@ -19,6 +19,7 @@ interface User {
   name: string;
   initials?: string;
   profile_image_url?: string;
+  image?: string; // Backend API uses "image"
 }
 
 interface Post {
@@ -128,10 +129,11 @@ function AuthorAvatar({
   const sizeClasses = size === 'md' ? 'w-10 h-10' : 'w-8 h-8';
   const textSize = size === 'md' ? 'text-sm' : 'text-xs';
 
-  if (user?.profile_image_url) {
+  const imageSrc = user?.profile_image_url || user?.image;
+  if (imageSrc) {
     return (
       <Image
-        src={user.profile_image_url}
+        src={imageSrc}
         alt={author}
         width={size === 'md' ? 40 : 32}
         height={size === 'md' ? 40 : 32}
@@ -236,7 +238,7 @@ export default function BlogCard({
       case 'post':
         date = formatDate(post.published_at || post.createdAt);
         author = post.author?.name || post.user?.name || post.author_name || 'Anonymous';
-        authorImage = post.author_profile_image || '/images/profile-img.svg';
+        authorImage = post.author_profile_image || post.author?.image || post.user?.image || '/images/profile-img.svg';
         category = post.category?.name || 'Blog';
         href = getContentRoute('post', post.slug);
         readTime = calculateReadTime(post.content);
@@ -330,7 +332,7 @@ export default function BlogCard({
 
           {showAuthor && (
             <div className="flex items-center gap-2 mt-6">
-              <AuthorAvatar user={post?.user} authorImage={authorImage} author={author} />
+              <AuthorAvatar user={post?.author || post?.user} authorImage={authorImage} author={author} />
               <p className="font-medium text-sm text-foreground">{author}</p>
             </div>
           )}
@@ -372,7 +374,7 @@ export default function BlogCard({
 
         {showAuthor && (
           <div className="flex items-center gap-2 mt-4">
-            <AuthorAvatar user={post?.user} authorImage={authorImage} author={author} size="sm" />
+            <AuthorAvatar user={post?.author || post?.user} authorImage={authorImage} author={author} size="sm" />
             <p className="font-medium text-sm text-foreground">{author}</p>
           </div>
         )}
@@ -416,7 +418,7 @@ export default function BlogCard({
 
       {showAuthor && (
         <div className="flex items-center gap-2 mt-6">
-          <AuthorAvatar user={post?.user} authorImage={authorImage} author={author} />
+          <AuthorAvatar user={post?.author || post?.user} authorImage={authorImage} author={author} />
           <p className="font-medium text-sm text-foreground">{author}</p>
         </div>
       )}

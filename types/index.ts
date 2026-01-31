@@ -4,6 +4,7 @@ export interface User {
   name: string;
   initials?: string;
   profile_image_url?: string;
+  image?: string; // Backend API uses "image"
 }
 
 // Tag type
@@ -44,6 +45,7 @@ export interface Post {
   author_name?: string;
   author_profile_image?: string;
   user?: User;
+  author?: User;
   category?: Category;
   categories?: Category[];
   tags?: Tag[];
