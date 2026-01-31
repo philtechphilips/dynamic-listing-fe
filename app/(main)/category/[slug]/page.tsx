@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { useState, useMemo, useEffect } from 'react';
 import ListingCard from '@/components/ListingCard';
 import BlogCard from '@/components/BlogCard';
-import { Filter, Search } from 'lucide-react';
+import { Search } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -33,10 +33,7 @@ export default function CategoryPage() {
   const [items, setItems] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [sortBy, setSortBy] = useState<'top_rated' | 'latest' | 'most_viewed'>('latest');
-  const [filterLocation, setFilterLocation] = useState<string>('all');
-  const [filterPrice, setFilterPrice] = useState<string>('all');
   const [visibleCount, setVisibleCount] = useState(9);
-  const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [selectedPodcast, setSelectedPodcast] = useState<any>(null);
   const [isPlayerOpen, setIsPlayerOpen] = useState(false);
 
@@ -82,33 +79,16 @@ export default function CategoryPage() {
   const categoryName = category?.name || slug.charAt(0).toUpperCase() + slug.slice(1).replace(/-/g, ' ');
   const isNews = normalizedSlug === 'news';
   const isVideos = normalizedSlug === 'podcasts' || normalizedSlug === 'videos' || normalizedSlug === 'podcast';
-  const isListing = !isNews && !isVideos;
 
   const handleVideoPlay = (podcast: any) => {
     setSelectedPodcast(podcast);
     setIsPlayerOpen(true);
   };
 
-  // Filtering and Sorting Logic
+  // Sorting Logic
   const processedItems = useMemo(() => {
-    let result = [...items];
+    const result = [...items];
 
-    // 1. Filter by Location
-    if (filterLocation && filterLocation !== 'all') {
-      result = result.filter(item => {
-        const loc = item.location || item.address;
-        return loc?.toLowerCase().includes(filterLocation.toLowerCase());
-      });
-    }
-
-    // 2. Filter by Price
-    if (filterPrice && filterPrice !== 'all') {
-      result = result.filter(item =>
-        (item.priceRange || item.price_range) === filterPrice
-      );
-    }
-
-    // 3. Sort
     switch (sortBy) {
       case 'top_rated':
         result.sort((a, b) => (b.rating || 0) - (a.rating || 0));
@@ -121,12 +101,16 @@ export default function CategoryPage() {
         });
         break;
       case 'most_viewed':
-        // Random as mock for views
+        result.sort((a, b) => {
+          const viewsA = a.viewCount ?? a.view_count ?? a.reviewCount ?? a.review_count ?? 0;
+          const viewsB = b.viewCount ?? b.view_count ?? b.reviewCount ?? b.review_count ?? 0;
+          return viewsB - viewsA;
+        });
         break;
     }
 
     return result;
-  }, [items, filterLocation, filterPrice, sortBy]);
+  }, [items, sortBy]);
 
   const visibleItems = processedItems.slice(0, visibleCount);
   const hasMore = visibleCount < processedItems.length;
@@ -160,53 +144,8 @@ export default function CategoryPage() {
           </p>
         </div>
 
-        {/* Filters and Sorting Controls */}
-        <div className="mb-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-
-          {/* Mobile Filter Toggle */}
-          <Button
-            variant="outline"
-            className="md:hidden gap-2"
-            onClick={() => setIsFilterOpen(!isFilterOpen)}
-          >
-            <Filter className="w-4 h-4" />
-            Filters
-          </Button>
-
-          {/* Filters (Desktop: Always visible, Mobile: Conditional) */}
-          <div className={`${isFilterOpen ? 'flex' : 'hidden'} md:flex flex-col md:flex-row gap-3 w-full md:w-auto`}>
-            {isListing && (
-              <>
-                {/* Location Filter */}
-                <Select value={filterLocation} onValueChange={setFilterLocation}>
-                  <SelectTrigger className="w-full md:w-[180px] border-0 bg-muted/50 hover:bg-muted transition-colors">
-                    <SelectValue placeholder="All Locations" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">All Locations</SelectItem>
-                    <SelectItem value="Lagos">Lagos</SelectItem>
-                    <SelectItem value="Abuja">Abuja</SelectItem>
-                    <SelectItem value="London">London</SelectItem>
-                  </SelectContent>
-                </Select>
-
-                {/* Price Filter */}
-                <Select value={filterPrice} onValueChange={setFilterPrice}>
-                  <SelectTrigger className="w-full md:w-[180px] border-0 bg-muted/50 hover:bg-muted transition-colors">
-                    <SelectValue placeholder="Any Price" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">Any Price</SelectItem>
-                    <SelectItem value="$">$ (Budget)</SelectItem>
-                    <SelectItem value="$$">$$ (Moderate)</SelectItem>
-                    <SelectItem value="$$$">$$$ (Expensive)</SelectItem>
-                  </SelectContent>
-                </Select>
-              </>
-            )}
-          </div>
-
-          {/* Sort Dropdown */}
+        {/* Sorting Controls */}
+        <div className="mb-8 flex justify-end items-center">
           <div className="flex items-center gap-2">
             <span className="text-muted-foreground text-sm">Sort by:</span>
             <Select value={sortBy} onValueChange={(value: any) => setSortBy(value)}>

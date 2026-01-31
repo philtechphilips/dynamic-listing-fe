@@ -152,6 +152,7 @@ const getRelatedContent = async (
         const data = await res.json();
         if (data.news) apiContent = [...apiContent, ...data.news];
       }
+
     }
   } catch (e) { }
 
