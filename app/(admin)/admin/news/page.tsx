@@ -17,7 +17,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Search, Plus, Pencil, Trash2, Eye, EyeOff, Loader2, Image as ImageIcon, Newspaper } from "lucide-react";
+import { Search, Plus, Pencil, Trash2, Eye, EyeOff, Loader2, Image as ImageIcon, Newspaper, Star, StarOff } from "lucide-react";
 import {
     Dialog,
     DialogContent,
@@ -48,6 +48,8 @@ interface NewsItem {
     seoTitle?: string;
     seoDescription?: string;
     seoKeywords?: string;
+    isHeadline?: boolean;
+    headlineUntil?: string | null;
     createdAt: string;
 }
 
@@ -96,6 +98,8 @@ const NewsPage = () => {
         seoTitle: "",
         seoDescription: "",
         seoKeywords: "",
+        isHeadline: false,
+        headlineUntil: "",
     });
 
     const { toast } = useToast();
@@ -160,6 +164,8 @@ const NewsPage = () => {
                 seoTitle: item.seoTitle || "",
                 seoDescription: item.seoDescription || "",
                 seoKeywords: item.seoKeywords || "",
+                isHeadline: !!item.isHeadline,
+                headlineUntil: item.headlineUntil ? item.headlineUntil.toString().slice(0, 10) : "",
             });
         } else {
             setEditingItem(null);
@@ -174,6 +180,8 @@ const NewsPage = () => {
                 seoTitle: "",
                 seoDescription: "",
                 seoKeywords: "",
+                isHeadline: false,
+                headlineUntil: "",
             });
         }
         setImageFile(null);
@@ -295,6 +303,61 @@ const NewsPage = () => {
         }
     };
 
+    const isEffectiveHeadline = (item: NewsItem) => {
+        if (!item.isHeadline) return false;
+        if (!item.headlineUntil) return true;
+        return new Date(item.headlineUntil) >= new Date();
+    };
+
+    const handleSetHeadline = async (item: NewsItem, headlineUntil?: string) => {
+        try {
+            const response = await fetch(`${API_URL}/admin/news/${item.id}`, {
+                method: "PUT",
+                headers: getAuthHeaders(),
+                body: JSON.stringify({
+                    isHeadline: true,
+                    headlineUntil: headlineUntil || null,
+                }),
+            });
+            if (!response.ok) throw new Error("Failed to set headline");
+            toast({
+                title: "Success",
+                description: "Article set as headline. It will stay on top until you remove it or set an end date.",
+            });
+            fetchNews();
+        } catch (error) {
+            console.error("Error setting headline:", error);
+            toast({
+                title: "Error",
+                description: "Failed to set headline",
+                variant: "destructive",
+            });
+        }
+    };
+
+    const handleRemoveHeadline = async (item: NewsItem) => {
+        try {
+            const response = await fetch(`${API_URL}/admin/news/${item.id}`, {
+                method: "PUT",
+                headers: getAuthHeaders(),
+                body: JSON.stringify({ isHeadline: false }),
+            });
+            if (!response.ok) throw new Error("Failed to remove headline");
+            toast({
+                title: "Success",
+                description: "Headline removed.",
+            });
+            fetchNews();
+        } catch (error) {
+            console.error("Error removing headline:", error);
+            toast({
+                title: "Error",
+                description: "Failed to remove headline",
+                variant: "destructive",
+            });
+        }
+    };
+
     const updateTitle = (val: string) => {
         const slug = val.toLowerCase().replace(/\s+/g, '-').replace(/[^\w-]+/g, '');
         setFormData({ ...formData, title: val, slug });
@@ -329,6 +392,7 @@ const NewsPage = () => {
                             <TableHead>Title</TableHead>
                             <TableHead>Category</TableHead>
                             <TableHead>Status</TableHead>
+                            <TableHead>Headline</TableHead>
                             <TableHead>Created At</TableHead>
                             <TableHead className="text-right">Actions</TableHead>
                         </TableRow>
@@ -336,7 +400,7 @@ const NewsPage = () => {
                     <TableBody>
                         {isLoading ? (
                             <TableRow>
-                                <TableCell colSpan={6} className="text-center py-10">
+                                <TableCell colSpan={7} className="text-center py-10">
                                     <div className="flex items-center justify-center gap-2">
                                         <Loader2 className="h-5 w-5 animate-spin" />
                                         <span>Loading articles...</span>
@@ -345,7 +409,7 @@ const NewsPage = () => {
                             </TableRow>
                         ) : news.length === 0 ? (
                             <TableRow>
-                                <TableCell colSpan={6} className="text-center py-10 text-muted-foreground">
+                                <TableCell colSpan={7} className="text-center py-10 text-muted-foreground">
                                     No articles found. Create your first one!
                                 </TableCell>
                             </TableRow>
@@ -379,11 +443,45 @@ const NewsPage = () => {
                                             {item.status}
                                         </Badge>
                                     </TableCell>
+                                    <TableCell>
+                                        {isEffectiveHeadline(item) ? (
+                                            <Badge variant="secondary" className="gap-1">
+                                                <Star className="h-3 w-3 fill-current" />
+                                                Headline
+                                                {item.headlineUntil && (
+                                                    <span className="text-xs opacity-80">
+                                                        until {new Date(item.headlineUntil).toLocaleDateString()}
+                                                    </span>
+                                                )}
+                                            </Badge>
+                                        ) : (
+                                            <span className="text-muted-foreground text-sm">—</span>
+                                        )}
+                                    </TableCell>
                                     <TableCell className="text-black dark:text-white text-sm">
                                         {new Date(item.createdAt).toLocaleDateString()}
                                     </TableCell>
                                     <TableCell className="text-right">
                                         <div className="flex justify-end gap-2">
+                                            {isEffectiveHeadline(item) ? (
+                                                <Button
+                                                    variant="ghost"
+                                                    size="icon"
+                                                    onClick={() => handleRemoveHeadline(item)}
+                                                    title="Remove from headline"
+                                                >
+                                                    <StarOff className="h-4 w-4" />
+                                                </Button>
+                                            ) : (
+                                                <Button
+                                                    variant="ghost"
+                                                    size="icon"
+                                                    onClick={() => handleSetHeadline(item)}
+                                                    title="Set as headline (stays on top)"
+                                                >
+                                                    <Star className="h-4 w-4" />
+                                                </Button>
+                                            )}
                                             <Button
                                                 variant="ghost"
                                                 size="icon"
@@ -470,6 +568,34 @@ const NewsPage = () => {
                                             <option key={cat.id} value={cat.id}>{cat.name}</option>
                                         ))}
                                     </select>
+                                </div>
+                                <div className="flex flex-col gap-2">
+                                    <div className="flex items-center gap-2">
+                                        <input
+                                            type="checkbox"
+                                            id="isHeadline"
+                                            checked={formData.isHeadline}
+                                            onChange={(e) => setFormData({ ...formData, isHeadline: e.target.checked })}
+                                            className="h-4 w-4 rounded border-input"
+                                        />
+                                        <Label htmlFor="isHeadline" className="text-black dark:text-white cursor-pointer">
+                                            Feature as headline (keeps this article on top of the home page)
+                                        </Label>
+                                    </div>
+                                    {formData.isHeadline && (
+                                        <div className="grid gap-2 pl-6">
+                                            <Label htmlFor="headlineUntil" className="text-black dark:text-white text-sm">
+                                                Headline until (optional — leave empty to keep until you remove it)
+                                            </Label>
+                                            <Input
+                                                id="headlineUntil"
+                                                type="date"
+                                                value={formData.headlineUntil}
+                                                onChange={(e) => setFormData({ ...formData, headlineUntil: e.target.value })}
+                                                className="text-black dark:text-white max-w-xs"
+                                            />
+                                        </div>
+                                    )}
                                 </div>
                                 <div className="grid gap-2">
                                     <Label htmlFor="excerpt" className="text-black dark:text-white">Short Excerpt (Grid View)</Label>

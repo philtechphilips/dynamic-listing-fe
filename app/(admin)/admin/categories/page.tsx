@@ -25,13 +25,14 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8007";
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8007/api/v1";
 
 interface Category {
     id: string;
     name: string;
     slug: string;
     description: string | null;
+    sortOrder: number;
     createdAt: string;
     updatedAt: string;
 }
@@ -42,7 +43,7 @@ const CategoriesPage = () => {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingCategory, setEditingCategory] = useState<Category | null>(null);
-    const [formData, setFormData] = useState({ name: "", description: "" });
+    const [formData, setFormData] = useState({ name: "", description: "", sortOrder: 0 });
     const [searchQuery, setSearchQuery] = useState("");
     const { toast } = useToast();
 
@@ -83,10 +84,14 @@ const CategoriesPage = () => {
             setFormData({
                 name: category.name,
                 description: category.description || "",
+                sortOrder: category.sortOrder ?? 0,
             });
         } else {
             setEditingCategory(null);
-            setFormData({ name: "", description: "" });
+            const nextOrder = categories.length > 0
+                ? Math.max(...categories.map((c) => c.sortOrder ?? 0)) + 1
+                : 0;
+            setFormData({ name: "", description: "", sortOrder: nextOrder });
         }
         setIsModalOpen(true);
     };
@@ -109,10 +114,15 @@ const CategoriesPage = () => {
 
             const method = editingCategory ? "PUT" : "POST";
 
+            const payload = {
+                name: formData.name,
+                description: formData.description,
+                sortOrder: Number(formData.sortOrder) || 0,
+            };
             const response = await fetch(url, {
                 method,
                 headers: getAuthHeaders(),
-                body: JSON.stringify(formData),
+                body: JSON.stringify(payload),
             });
 
             const data = await response.json();
@@ -211,7 +221,7 @@ const CategoriesPage = () => {
                 <Table>
                     <TableHeader>
                         <TableRow>
-
+                            <TableHead className="w-24">Order</TableHead>
                             <TableHead>Name</TableHead>
                             <TableHead>Slug</TableHead>
                             <TableHead className="max-w-[300px]">Description</TableHead>
@@ -237,7 +247,9 @@ const CategoriesPage = () => {
                         ) : (
                             filteredCategories.map((category) => (
                                 <TableRow key={category.id}>
-
+                                    <TableCell className="font-mono text-muted-foreground">
+                                        {category.sortOrder ?? 0}
+                                    </TableCell>
                                     <TableCell className="font-medium">{category.name}</TableCell>
                                     <TableCell>
                                         <Badge variant="outline" className="font-mono text-[10px]">
@@ -295,6 +307,27 @@ const CategoriesPage = () => {
                                 placeholder="e.g. Electronics, Real Estate"
                                 disabled={isSubmitting}
                             />
+                        </div>
+
+                        <div className="grid gap-2">
+                            <Label htmlFor="sortOrder">Sort Order / Priority</Label>
+                            <Input
+                                id="sortOrder"
+                                type="number"
+                                min={0}
+                                value={formData.sortOrder}
+                                onChange={(e) =>
+                                    setFormData({
+                                        ...formData,
+                                        sortOrder: parseInt(e.target.value, 10) || 0,
+                                    })
+                                }
+                                placeholder="0"
+                                disabled={isSubmitting}
+                            />
+                            <p className="text-xs text-muted-foreground">
+                                Lower numbers appear first on the homepage and in the navigation menu.
+                            </p>
                         </div>
 
                         <div className="grid gap-2">

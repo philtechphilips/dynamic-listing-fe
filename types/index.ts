@@ -19,6 +19,7 @@ export interface Category {
   id: string | number;
   name: string;
   slug: string;
+  sortOrder?: number;
   children?: Category[];
   latest_posts?: Post[];
   latest_events?: Event[];
@@ -159,6 +160,8 @@ export interface NewsItem {
   seoTitle?: string;
   seoDescription?: string;
   seoKeywords?: string;
+  isHeadline?: boolean;
+  headlineUntil?: string | Date | null;
   createdAt: string | Date;
   updatedAt: string | Date;
 }

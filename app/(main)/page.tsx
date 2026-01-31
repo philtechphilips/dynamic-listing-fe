@@ -10,8 +10,9 @@ import PodcastCard from '@/components/PodcastCard';
 import PodcastPlayerModal from '@/components/PodcastPlayerModal';
 import FeaturedBanner from '@/components/FeaturedBanner';
 import ListingCard from '@/components/ListingCard';
+import { Skeleton } from '@/components/ui/skeleton';
 import { Podcast } from '@/types';
-import { Newspaper } from 'lucide-react';
+import { Newspaper, Loader2 } from 'lucide-react';
 
 // Import mock data
 import {
@@ -85,6 +86,55 @@ export default function Home() {
     setIsPodcastModalOpen(true);
   };
 
+  const isEffectiveHeadline = (item: NewsItem) => {
+    if (!item.isHeadline) return false;
+    if (!item.headlineUntil) return true;
+    return new Date(item.headlineUntil) >= new Date();
+  };
+
+  // Ensure headline (if any) is always first so it shows in the left/main slot
+  const displayNews = (() => {
+    if (!news.length) return [];
+    const headlineIdx = news.findIndex(isEffectiveHeadline);
+    if (headlineIdx <= 0) return news;
+    const rest = [...news];
+    const [headline] = rest.splice(headlineIdx, 1);
+    return [headline, ...rest];
+  })();
+
+  if (isLoading) {
+    return (
+      <main className="min-h-screen bg-gray-50/50 pt-20">
+        <div className="w-full 2xl:px-[120px] md:px-10 px-5 py-20">
+          <div className="flex flex-col items-center justify-center min-h-[50vh] gap-6">
+            <Loader2 className="w-12 h-12 text-primary animate-spin" strokeWidth={2} />
+            <p className="text-muted-foreground font-medium">Loading...</p>
+          </div>
+          <div className="mt-8 space-y-12 max-w-5xl mx-auto">
+            <div>
+              <Skeleton className="h-10 w-32 mb-6" />
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <Skeleton className="h-[280px] w-full rounded-lg" />
+                <div className="space-y-4">
+                  <Skeleton className="h-[120px] w-full rounded-lg" />
+                  <Skeleton className="h-[120px] w-full rounded-lg" />
+                </div>
+              </div>
+            </div>
+            <div>
+              <Skeleton className="h-8 w-40 mb-6" />
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <Skeleton className="h-[200px] w-full rounded-lg" />
+                <Skeleton className="h-[200px] w-full rounded-lg" />
+                <Skeleton className="h-[200px] w-full rounded-lg" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    );
+  }
+
   return (
     <main className="min-h-screen bg-gray-50/50 pt-20">
       {/* News Section */}
@@ -93,16 +143,28 @@ export default function Home() {
           News
         </h2>
 
-        {/* Desktop Layout */}
+        {/* Desktop Layout — headline (if set) is always the left/main card */}
         <div className="mt-12 w-full hidden md:flex md:flex-row flex-col gap-8">
-          {news.length > 0 ? (
+          {displayNews.length > 0 ? (
             <>
               <div className="md:w-1/2 w-full">
-                <BlogCard post={{ ...news[0], type: 'post' }} imageHeight="h-[450px]" showTags />
+                <BlogCard
+                  post={{ ...displayNews[0], type: 'post' }}
+                  imageHeight="h-[450px]"
+                  showTags
+                  showHeadlineBadge={isEffectiveHeadline(displayNews[0])}
+                />
               </div>
               <div className="md:w-1/2 w-full flex flex-col gap-6">
-                {news.slice(1, 4).map((post) => (
-                  <BlogCard key={post.id} post={{ ...post, type: 'post' }} layout="horizontal" imageHeight="h-[140px]" showTags />
+                {displayNews.slice(1, 3).map((post) => (
+                  <BlogCard
+                    key={post.id}
+                    post={{ ...post, type: 'post' }}
+                    layout="horizontal"
+                    imageHeight="h-full"
+                    showTags
+                    showHeadlineBadge={isEffectiveHeadline(post)}
+                  />
                 ))}
               </div>
             </>
@@ -115,9 +177,15 @@ export default function Home() {
 
         {/* Mobile Layout */}
         <div className="mt-12 w-full flex md:hidden flex-col gap-8">
-          {news.length > 0 ? (
-            news.map((post) => (
-              <BlogCard key={post.id} post={{ ...post, type: 'post' }} imageHeight="h-[300px]" showTags />
+          {displayNews.length > 0 ? (
+            displayNews.map((post) => (
+              <BlogCard
+                key={post.id}
+                post={{ ...post, type: 'post' }}
+                imageHeight="h-[300px]"
+                showTags
+                showHeadlineBadge={isEffectiveHeadline(post)}
+              />
             ))
           ) : (
             <div className="w-full flex flex-col items-center justify-center py-16 px-4">

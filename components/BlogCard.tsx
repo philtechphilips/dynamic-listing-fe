@@ -67,6 +67,7 @@ interface BlogCardProps {
   showReadTime?: boolean;
   imageHeight?: string;
   showTags?: boolean;
+  showHeadlineBadge?: boolean;
   onPodcastPlay?: (post: Post) => void;
 }
 
@@ -212,6 +213,7 @@ export default function BlogCard({
   showReadTime = true,
   imageHeight = 'h-full',
   showTags = false,
+  showHeadlineBadge = false,
   onPodcastPlay,
 }: BlogCardProps) {
   // Process post data if provided
@@ -292,22 +294,34 @@ export default function BlogCard({
 
   // Horizontal Layout
   if (layout === 'horizontal') {
+    const imageMatchesContent = imageHeight === 'h-full';
     return (
       <Link
         href={href}
-        className="w-full flex md:flex-row flex-col gap-6 hover:opacity-90 transition-opacity"
+        className="w-full flex md:flex-row flex-col gap-6 hover:opacity-90 transition-opacity md:items-stretch items-start"
       >
-        <div className={`md:w-1/2 w-full ${imageHeight || 'h-[200px]'} overflow-hidden rounded-lg relative`}>
+        <div
+          className={
+            imageMatchesContent
+              ? 'md:w-1/2 w-full min-h-[200px] md:min-h-0 overflow-hidden rounded-lg relative shrink-0'
+              : `md:w-1/2 w-full ${imageHeight || 'h-[200px]'} overflow-hidden rounded-lg relative`
+          }
+        >
           <Image
             src={image}
             alt={title}
             fill
-            className={`w-full ${imageHeight} object-cover scale-100 hover:scale-105 transition-all duration-500`}
+            className={`object-cover scale-100 hover:scale-105 transition-all duration-500 ${imageMatchesContent ? 'w-full h-full' : `w-full ${imageHeight}`}`}
           />
           {isPodcast && <PlayButton onClick={handlePodcastPlay} />}
+          {showHeadlineBadge && (
+            <span className="absolute top-3 left-3 px-2.5 py-1 bg-primary text-white text-xs font-semibold rounded-md shadow-sm">
+              Headline
+            </span>
+          )}
         </div>
 
-        <div className="flex flex-col md:w-1/2 w-full">
+        <div className="flex flex-col md:w-1/2 w-full md:min-w-0">
           <div className="md:mb-4 mb-0">
             <TagsList tags={post?.tags} category={category} showTags={showTags} showCategory={showCategory} />
           </div>
@@ -354,6 +368,11 @@ export default function BlogCard({
             className={`w-full ${imageHeight} object-cover scale-100 hover:scale-105 transition-all duration-500`}
           />
           {isPodcast && <PlayButton size="sm" onClick={handlePodcastPlay} />}
+          {showHeadlineBadge && (
+            <span className="absolute top-3 left-3 px-2.5 py-1 bg-primary text-white text-xs font-semibold rounded-md shadow-sm">
+              Headline
+            </span>
+          )}
         </div>
 
         <div className="mt-4">
@@ -393,6 +412,11 @@ export default function BlogCard({
           className="w-full h-full object-cover scale-100 hover:scale-105 transition-all duration-500"
         />
         {isPodcast && <PlayButton onClick={handlePodcastPlay} />}
+        {showHeadlineBadge && (
+          <span className="absolute top-3 left-3 px-2.5 py-1 bg-primary text-white text-xs font-semibold rounded-md shadow-sm">
+            Headline
+          </span>
+        )}
       </div>
 
       <div className="flex md:flex-row flex-col-reverse md:items-center items-start justify-between mt-7">
