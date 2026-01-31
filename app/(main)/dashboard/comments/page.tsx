@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import {
     MessageSquare,
@@ -8,7 +8,8 @@ import {
     Edit3,
     ExternalLink,
     Search,
-    MoreVertical
+    MoreVertical,
+    AlertTriangle
 } from 'lucide-react';
 import {
     DropdownMenu,
@@ -20,44 +21,32 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { useAuth } from '@/contexts/AuthContext';
+import { format } from 'date-fns';
+import { useToast } from "@/hooks/use-toast";
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
-const initialComments = [
-    {
-        id: '1',
-        listing: 'The Golden Fork',
-        text: 'Absolutely loved my experience here! The service was top-notch and the atmosphere was incredible. Definitely coming back soon.',
-        date: 'Jan 21, 2026',
-        slug: 'the-golden-fork',
-        avatar: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=100'
-    },
-    {
-        id: '2',
-        listing: 'Luxury Beachfront Villa',
-        text: 'Great place, slightly busy during peak hours but definitely worth the wait. The staff is very professional.',
-        date: 'Jan 15, 2026',
-        slug: 'luxury-beachfront-villa',
-        avatar: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=100'
-    },
-    {
-        id: '3',
-        listing: 'Zen Spa & Wellness',
-        text: 'Reasonable prices for such a central location. Highly recommend the massage therapy.',
-        date: 'Dec 28, 2025',
-        slug: 'zen-spa',
-        avatar: 'https://images.unsplash.com/photo-1544161515-4af6b1d462c2?w=100'
-    },
-    {
-        id: '4',
-        listing: 'Cozy Downtown Studio',
-        text: 'Perfect location, but the wifi was a bit slow during my stay.',
-        date: 'Nov 12, 2025',
-        slug: 'cozy-downtown-studio',
-        avatar: 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=100'
-    }
-];
+interface Comment {
+    id: string;
+    listing: string;
+    text: string;
+    date: string;
+    slug: string;
+    avatar: string;
+    type: 'listing' | 'news';
+}
 
 interface CommentCardProps {
-    comment: typeof initialComments[0];
+    comment: Comment;
     onDelete: (id: string) => void;
 }
 
@@ -69,7 +58,7 @@ function CommentCard({ comment, onDelete }: CommentCardProps) {
                     {/* Thumbnail */}
                     <div className="hidden sm:block w-20 h-20 rounded-lg overflow-hidden flex-shrink-0 bg-muted">
                         <img
-                            src={comment.avatar}
+                            src={comment.avatar || "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=100"}
                             alt={comment.listing}
                             className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
                         />
@@ -91,23 +80,17 @@ function CommentCard({ comment, onDelete }: CommentCardProps) {
                                     >
                                         <ExternalLink className="w-3.5 h-3.5 text-muted-foreground hover:text-primary transition-colors" />
                                     </Link>
+                                    {comment.type === 'news' && (
+                                        <Badge variant="outline" className="text-[10px] h-5 px-1.5">News</Badge>
+                                    )}
                                 </div>
                                 <p className="text-xs text-muted-foreground">
-                                    Posted on {comment.date}
+                                    Posted on {format(new Date(comment.date), 'MMM d, yyyy')}
                                 </p>
                             </div>
 
                             {/* Desktop Actions */}
                             <div className="hidden sm:flex items-center gap-1">
-                                <Button
-                                    variant="ghost"
-                                    size="icon"
-                                    onClick={() => console.log('Edit', comment.id)}
-                                    title="Edit Comment"
-                                    className="h-8 w-8 text-muted-foreground hover:text-primary"
-                                >
-                                    <Edit3 className="w-4 h-4" />
-                                </Button>
                                 <Button
                                     variant="ghost"
                                     size="icon"
@@ -128,10 +111,6 @@ function CommentCard({ comment, onDelete }: CommentCardProps) {
                                         </Button>
                                     </DropdownMenuTrigger>
                                     <DropdownMenuContent align="end" className="border-0">
-                                        <DropdownMenuItem onClick={() => console.log('Edit', comment.id)}>
-                                            <Edit3 className="w-4 h-4 mr-2" />
-                                            Edit
-                                        </DropdownMenuItem>
                                         <DropdownMenuItem
                                             onClick={() => onDelete(comment.id)}
                                             className="text-destructive focus:text-destructive"
@@ -158,12 +137,73 @@ function CommentCard({ comment, onDelete }: CommentCardProps) {
 }
 
 export default function MyCommentsPage() {
-    const [comments, setComments] = useState(initialComments);
+    const { token } = useAuth();
+    const { toast } = useToast();
+    const [comments, setComments] = useState<Comment[]>([]);
+    const [loading, setLoading] = useState(true);
     const [search, setSearch] = useState('');
+    const [deleteId, setDeleteId] = useState<string | null>(null);
 
-    const handleDelete = (id: string) => {
-        if (window.confirm('Are you sure you want to delete this comment?')) {
-            setComments(comments.filter(c => c.id !== id));
+    useEffect(() => {
+        const fetchComments = async () => {
+            if (!token) return;
+
+            try {
+                const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/user/comments`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    setComments(data);
+                } else {
+                    console.error("Failed to fetch comments");
+                }
+            } catch (error) {
+                console.error("Error loading comments:", error);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchComments();
+    }, [token]);
+
+    const confirmDelete = async () => {
+        if (!deleteId) return;
+
+        try {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/comments/${deleteId}`, {
+                method: 'DELETE',
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
+
+            if (response.ok) {
+                setComments(comments.filter(c => c.id !== deleteId));
+                toast({
+                    title: "Comment deleted",
+                    description: "Your comment has been successfully removed.",
+                });
+            } else {
+                toast({
+                    title: "Error",
+                    description: "Failed to delete comment. Please try again.",
+                    variant: "destructive"
+                });
+            }
+        } catch (error) {
+            console.error("Error deleting comment:", error);
+            toast({
+                title: "Error",
+                description: "An error occurred. Please try again.",
+                variant: "destructive"
+            });
+        } finally {
+            setDeleteId(null);
         }
     };
 
@@ -171,6 +211,10 @@ export default function MyCommentsPage() {
         c.listing.toLowerCase().includes(search.toLowerCase()) ||
         c.text.toLowerCase().includes(search.toLowerCase())
     );
+
+    if (loading) {
+        return <div className="p-8 text-center text-muted-foreground">Loading comments...</div>;
+    }
 
     return (
         <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
@@ -217,7 +261,7 @@ export default function MyCommentsPage() {
                         <CommentCard
                             key={comment.id}
                             comment={comment}
-                            onDelete={handleDelete}
+                            onDelete={setDeleteId}
                         />
                     ))
                 ) : (
@@ -238,6 +282,23 @@ export default function MyCommentsPage() {
                     </Card>
                 )}
             </div>
+
+            <AlertDialog open={!!deleteId} onOpenChange={(open) => !open && setDeleteId(null)}>
+                <AlertDialogContent>
+                    <AlertDialogHeader>
+                        <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                        <AlertDialogDescription>
+                            This will permanently delete your comment. This action cannot be undone.
+                        </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                        <AlertDialogAction onClick={confirmDelete} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+                            Delete
+                        </AlertDialogAction>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
         </div>
     );
 }

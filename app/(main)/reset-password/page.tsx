@@ -6,7 +6,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Lock, Eye, EyeOff, Loader2, CheckCircle, XCircle, ArrowLeft } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 
@@ -109,9 +109,9 @@ function ResetPasswordContent() {
 
     if (isValidating) {
         return (
-            <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100">
-                <Card className="w-full max-w-md">
-                    <CardContent className="py-10">
+            <div className="min-h-screen flex items-center justify-center bg-gray-50/50 py-12 px-4 sm:px-6 lg:px-8">
+                <Card className="max-w-md w-full border-0 shadow-lg">
+                    <CardContent className="p-8 sm:p-10">
                         <div className="flex flex-col items-center gap-4">
                             <Loader2 className="h-8 w-8 animate-spin text-primary" />
                             <p className="text-muted-foreground">Validating your link...</p>
@@ -124,27 +124,31 @@ function ResetPasswordContent() {
 
     if (!token || !isValid) {
         return (
-            <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100 p-4">
-                <Card className="w-full max-w-md">
-                    <CardHeader className="text-center">
-                        <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-destructive/10">
-                            <XCircle className="h-6 w-6 text-destructive" />
+            <div className="min-h-screen flex items-center justify-center bg-gray-50/50 py-12 px-4 sm:px-6 lg:px-8">
+                <Card className="max-w-md w-full border-0 shadow-lg">
+                    <CardContent className="p-8 sm:p-10">
+                        <div className="text-center mb-8">
+                            <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-destructive/10">
+                                <XCircle className="h-6 w-6 text-destructive" />
+                            </div>
+                            <h1 className="text-3xl font-bold tracking-tight text-foreground">
+                                Invalid or Expired Link
+                            </h1>
+                            <p className="mt-2 text-sm text-muted-foreground">
+                                {error || "This password reset link is invalid or has expired."}
+                            </p>
                         </div>
-                        <CardTitle>Invalid or Expired Link</CardTitle>
-                        <CardDescription>
-                            {error || "This password reset link is invalid or has expired."}
-                        </CardDescription>
-                    </CardHeader>
-                    <CardContent className="text-center">
-                        <p className="text-sm text-muted-foreground mb-4">
-                            Please contact your administrator to request a new invitation link.
-                        </p>
-                        <Link href="/login">
-                            <Button variant="outline">
-                                <ArrowLeft className="mr-2 h-4 w-4" />
-                                Back to Login
-                            </Button>
-                        </Link>
+                        <div className="space-y-4 text-center">
+                            <p className="text-sm text-muted-foreground">
+                                Please contact your administrator to request a new invitation link.
+                            </p>
+                            <Link href="/login" className="w-full block">
+                                <Button variant="outline" className="w-full h-11">
+                                    <ArrowLeft className="mr-2 h-4 w-4" />
+                                    Back to Login
+                                </Button>
+                            </Link>
+                        </div>
                     </CardContent>
                 </Card>
             </div>
@@ -153,19 +157,23 @@ function ResetPasswordContent() {
 
     if (isSuccess) {
         return (
-            <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100 p-4">
-                <Card className="w-full max-w-md">
-                    <CardHeader className="text-center">
-                        <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-green-100">
-                            <CheckCircle className="h-6 w-6 text-green-600" />
+            <div className="min-h-screen flex items-center justify-center bg-gray-50/50 py-12 px-4 sm:px-6 lg:px-8">
+                <Card className="max-w-md w-full border-0 shadow-lg">
+                    <CardContent className="p-8 sm:p-10">
+                        <div className="text-center mb-8">
+                            <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-green-100">
+                                <CheckCircle className="h-6 w-6 text-green-600" />
+                            </div>
+                            <h1 className="text-3xl font-bold tracking-tight text-foreground">
+                                Password Set Successfully!
+                            </h1>
+                            <p className="mt-2 text-sm text-muted-foreground">
+                                Your password has been set. Redirecting you to the dashboard...
+                            </p>
                         </div>
-                        <CardTitle>Password Set Successfully!</CardTitle>
-                        <CardDescription>
-                            Your password has been set. Redirecting you to the dashboard...
-                        </CardDescription>
-                    </CardHeader>
-                    <CardContent className="text-center">
-                        <Loader2 className="h-6 w-6 animate-spin mx-auto text-primary" />
+                        <div className="text-center">
+                            <Loader2 className="h-6 w-6 animate-spin mx-auto text-primary" />
+                        </div>
                     </CardContent>
                 </Card>
             </div>
@@ -173,25 +181,25 @@ function ResetPasswordContent() {
     }
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100 p-4">
-            <Card className="w-full max-w-md">
-                <CardHeader className="text-center">
-                    <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
-                        <Lock className="h-6 w-6 text-primary" />
+        <div className="min-h-screen flex items-center justify-center bg-gray-50/50 py-12 px-4 sm:px-6 lg:px-8">
+            <Card className="max-w-md w-full border-0 shadow-lg">
+                <CardContent className="p-8 sm:p-10">
+                    <div className="text-center mb-8">
+                        <h1 className="text-3xl font-bold tracking-tight text-foreground">
+                            Set Your Password
+                        </h1>
+                        <p className="mt-2 text-sm text-muted-foreground">
+                            {userInfo ? (
+                                <>
+                                    Welcome, <span className="font-medium">{userInfo.name}</span>! Create a password for your account.
+                                </>
+                            ) : (
+                                "Create a secure password for your account."
+                            )}
+                        </p>
                     </div>
-                    <CardTitle>Set Your Password</CardTitle>
-                    <CardDescription>
-                        {userInfo ? (
-                            <>
-                                Welcome, <span className="font-medium">{userInfo.name}</span>! Create a password for your account.
-                            </>
-                        ) : (
-                            "Create a secure password for your account."
-                        )}
-                    </CardDescription>
-                </CardHeader>
-                <CardContent>
-                    <form onSubmit={handleSubmit} className="space-y-4">
+
+                    <form onSubmit={handleSubmit} className="space-y-6">
                         {userInfo && (
                             <div className="bg-muted/50 p-3 rounded-lg text-center">
                                 <p className="text-sm text-muted-foreground">Setting password for</p>
@@ -202,6 +210,7 @@ function ResetPasswordContent() {
                         <div className="space-y-2">
                             <Label htmlFor="password">New Password</Label>
                             <div className="relative">
+                                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                                 <Input
                                     id="password"
                                     type={showPassword ? "text" : "password"}
@@ -209,7 +218,7 @@ function ResetPasswordContent() {
                                     onChange={(e) => setPassword(e.target.value)}
                                     placeholder="Enter your new password"
                                     disabled={isSubmitting}
-                                    className="pr-10"
+                                    className="pl-10 h-11"
                                 />
                                 <button
                                     type="button"
@@ -224,6 +233,7 @@ function ResetPasswordContent() {
                         <div className="space-y-2">
                             <Label htmlFor="confirmPassword">Confirm Password</Label>
                             <div className="relative">
+                                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                                 <Input
                                     id="confirmPassword"
                                     type={showConfirmPassword ? "text" : "password"}
@@ -231,7 +241,7 @@ function ResetPasswordContent() {
                                     onChange={(e) => setConfirmPassword(e.target.value)}
                                     placeholder="Confirm your new password"
                                     disabled={isSubmitting}
-                                    className="pr-10"
+                                    className="pl-10 h-11"
                                 />
                                 <button
                                     type="button"
@@ -244,12 +254,12 @@ function ResetPasswordContent() {
                         </div>
 
                         {error && (
-                            <div className="bg-destructive/10 text-destructive text-sm p-3 rounded-lg">
+                            <div className="bg-destructive/10 text-destructive text-sm p-3 rounded-lg text-center border border-destructive/20">
                                 {error}
                             </div>
                         )}
 
-                        <Button type="submit" className="w-full" disabled={isSubmitting}>
+                        <Button type="submit" className="w-full h-11 text-white" disabled={isSubmitting}>
                             {isSubmitting ? (
                                 <>
                                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />

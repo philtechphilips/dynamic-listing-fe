@@ -3,7 +3,6 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import AppSidebar from "@/components/AppSidebar";
 import AdminNavbar from "@/components/AdminNavbar";
-import { ThemeProvider } from "@/components/providers/ThemeProvider";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import AdminLayoutWrapper from "@/components/AdminLayoutWrapper";
 import { cookies } from "next/headers";
@@ -33,23 +32,16 @@ export default async function RootLayout({
   const defaultOpen = cookieStore.get("sidebar_state")?.value === "true"
 
   return (
-    <div className={`${geistSans.variable} ${geistMono.variable} antialiased flex min-h-screen w-full`}>
-      <ThemeProvider
-        attribute="class"
-        defaultTheme="system"
-        enableSystem
-        disableTransitionOnChange
-      >
-        <AdminLayoutWrapper>
-          <SidebarProvider defaultOpen={defaultOpen}>
-            <AppSidebar />
-            <main className="w-full">
-              <AdminNavbar />
-              <div className="px-4">{children}</div>
-            </main>
-          </SidebarProvider>
-        </AdminLayoutWrapper>
-      </ThemeProvider>
+    <div className={`${geistSans.variable} ${geistMono.variable} antialiased flex min-h-screen w-full admin-root`}>
+      <AdminLayoutWrapper>
+        <SidebarProvider defaultOpen={defaultOpen}>
+          <AppSidebar />
+          <main className="w-full">
+            <AdminNavbar />
+            <div className="px-4">{children}</div>
+          </main>
+        </SidebarProvider>
+      </AdminLayoutWrapper>
     </div>
   );
 }

@@ -5,6 +5,7 @@ import "./globals.css";
 import { AuthProvider } from "@/contexts/AuthContext";
 import GoogleAuthProviderWrapper from "@/components/GoogleAuthProvider";
 import { Toaster } from "@/components/ui/toaster";
+import { ThemeProvider } from "@/components/providers/ThemeProvider";
 
 const geom = Geom({
     variable: "--font-geom",
@@ -42,8 +43,15 @@ export default function RootLayout({
             >
                 <GoogleAuthProviderWrapper>
                     <AuthProvider>
-                        {children}
-                        <Toaster />
+                        <ThemeProvider
+                            attribute="class"
+                            defaultTheme="light"
+                            enableSystem={false}
+                            disableTransitionOnChange
+                        >
+                            {children}
+                            <Toaster />
+                        </ThemeProvider>
                     </AuthProvider>
                 </GoogleAuthProviderWrapper>
             </body>

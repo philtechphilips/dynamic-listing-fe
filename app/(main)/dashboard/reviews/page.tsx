@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import {
     Star,
@@ -14,39 +14,32 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
+import { useAuth } from '@/contexts/AuthContext';
+import { useToast } from "@/hooks/use-toast";
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import { format } from 'date-fns';
 
-const initialReviews = [
-    {
-        id: '1',
-        listing: 'The Golden Fork',
-        rating: 5,
-        text: 'Best fine dining experience in the city. The truffle pasta is a absolute must-try! The wine selection is also quite impressive.',
-        date: 'Jan 21, 2026',
-        slug: 'the-golden-fork',
-        image: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=400'
-    },
-    {
-        id: '2',
-        listing: 'Zen Spa & Wellness',
-        rating: 4,
-        text: 'Very relaxing atmosphere. The staff were professional. I would have given 5 stars but my session started 10 minutes late.',
-        date: 'Dec 28, 2025',
-        slug: 'zen-spa',
-        image: 'https://images.unsplash.com/photo-1544161515-4af6b1d462c2?w=400'
-    },
-    {
-        id: '3',
-        listing: 'Cozy Downtown Studio',
-        rating: 3,
-        text: 'Good location, but the neighbors were quite noisy during my stay. The apartment itself was clean and well-equipped.',
-        date: 'Nov 12, 2025',
-        slug: 'cozy-downtown-studio',
-        image: 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=400'
-    }
-];
+interface Review {
+    id: string;
+    listing: string;
+    rating: number;
+    text: string;
+    date: string;
+    slug: string;
+    image: string;
+}
 
 interface ReviewCardProps {
-    review: typeof initialReviews[0];
+    review: Review;
     onDelete: (id: string) => void;
 }
 
@@ -56,7 +49,7 @@ function ReviewCard({ review, onDelete }: ReviewCardProps) {
             {/* Review Card Header with Image */}
             <div className="h-36 relative">
                 <img
-                    src={review.image}
+                    src={review.image || "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=400"}
                     alt={review.listing}
                     className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                 />
@@ -71,8 +64,8 @@ function ReviewCard({ review, onDelete }: ReviewCardProps) {
                                 <Star
                                     key={s}
                                     className={`w-3.5 h-3.5 ${s <= review.rating
-                                            ? 'text-yellow-400 fill-yellow-400'
-                                            : 'text-white/30 fill-white/10'
+                                        ? 'text-yellow-400 fill-yellow-400'
+                                        : 'text-white/30 fill-white/10'
                                         }`}
                                 />
                             ))}
@@ -100,10 +93,10 @@ function ReviewCard({ review, onDelete }: ReviewCardProps) {
 
                 <div className="flex items-center justify-between">
                     <span className="text-xs text-muted-foreground/80">
-                        {review.date}
+                        {format(new Date(review.date), 'MMM d, yyyy')}
                     </span>
                     <div className="flex items-center gap-1">
-                        <Button
+                        {/* <Button
                             variant="ghost"
                             size="icon"
                             onClick={() => console.log('Edit', review.id)}
@@ -111,7 +104,7 @@ function ReviewCard({ review, onDelete }: ReviewCardProps) {
                             className="h-8 w-8 text-muted-foreground hover:text-primary"
                         >
                             <Edit3 className="w-4 h-4" />
-                        </Button>
+                        </Button> */}
                         <Button
                             variant="ghost"
                             size="icon"
@@ -129,12 +122,74 @@ function ReviewCard({ review, onDelete }: ReviewCardProps) {
 }
 
 export default function MyReviewsPage() {
-    const [reviews, setReviews] = useState(initialReviews);
+    const { token } = useAuth();
+    const { toast } = useToast();
+    const [reviews, setReviews] = useState<Review[]>([]);
+    const [loading, setLoading] = useState(true);
     const [search, setSearch] = useState('');
+    const [deleteId, setDeleteId] = useState<string | null>(null);
 
-    const handleDelete = (id: string) => {
-        if (window.confirm('Are you sure you want to delete this review?')) {
-            setReviews(reviews.filter(r => r.id !== id));
+    useEffect(() => {
+        const fetchReviews = async () => {
+            if (!token) return;
+
+            try {
+                const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/user/ratings`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    setReviews(data);
+                } else {
+                    console.error("Failed to fetch reviews");
+                }
+            } catch (error) {
+                console.error("Error loading reviews:", error);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchReviews();
+    }, [token]);
+
+
+    const confirmDelete = async () => {
+        if (!deleteId) return;
+
+        try {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/ratings/${deleteId}`, {
+                method: 'DELETE',
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
+
+            if (response.ok) {
+                setReviews(reviews.filter(r => r.id !== deleteId));
+                toast({
+                    title: "Review deleted",
+                    description: "Your review has been successfully removed.",
+                });
+            } else {
+                toast({
+                    title: "Error",
+                    description: "Failed to delete review. Please try again.",
+                    variant: "destructive"
+                });
+            }
+        } catch (error) {
+            console.error("Error deleting review:", error);
+            toast({
+                title: "Error",
+                description: "An error occurred. Please try again.",
+                variant: "destructive"
+            });
+        } finally {
+            setDeleteId(null);
         }
     };
 
@@ -142,6 +197,10 @@ export default function MyReviewsPage() {
         r.listing.toLowerCase().includes(search.toLowerCase()) ||
         r.text.toLowerCase().includes(search.toLowerCase())
     );
+
+    if (loading) {
+        return <div className="p-8 text-center text-muted-foreground">Loading reviews...</div>;
+    }
 
     return (
         <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
@@ -188,7 +247,7 @@ export default function MyReviewsPage() {
                         <ReviewCard
                             key={review.id}
                             review={review}
-                            onDelete={handleDelete}
+                            onDelete={setDeleteId}
                         />
                     ))
                 ) : (
@@ -209,6 +268,23 @@ export default function MyReviewsPage() {
                     </Card>
                 )}
             </div>
+
+            <AlertDialog open={!!deleteId} onOpenChange={(open) => !open && setDeleteId(null)}>
+                <AlertDialogContent>
+                    <AlertDialogHeader>
+                        <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                        <AlertDialogDescription>
+                            This will permanently delete your review. This action cannot be undone.
+                        </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                        <AlertDialogAction onClick={confirmDelete} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+                            Delete
+                        </AlertDialogAction>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
         </div>
     );
 }

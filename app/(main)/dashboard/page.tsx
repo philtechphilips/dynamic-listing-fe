@@ -1,6 +1,6 @@
 "use client";
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import {
     MessageSquare,
@@ -9,18 +9,17 @@ import {
     Clock,
     ArrowRight,
     TrendingUp,
-    Eye,
-    ThumbsUp,
-    Users
 } from 'lucide-react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
+import { useAuth } from '@/contexts/AuthContext';
+import { formatDistanceToNow } from 'date-fns';
 
 interface StatCardProps {
     label: string;
-    value: string;
+    value: string | number;
     icon: React.ElementType;
     iconProps?: Record<string, any>;
     trend?: string;
@@ -56,7 +55,7 @@ interface ActivityCardProps {
     id: string;
     listing: string;
     text: string;
-    date: string;
+    date: string | Date;
     slug: string;
     rating?: number;
 }
@@ -85,61 +84,83 @@ function ActivityCard({ listing, text, date, slug, rating }: ActivityCardProps) 
                 <p className="text-sm text-muted-foreground leading-relaxed mb-3">"{text}"</p>
                 <div className="flex items-center gap-1.5 text-xs text-muted-foreground/80">
                     <Clock className="w-3.5 h-3.5" />
-                    {date}
+                    {typeof date === 'string' ? date : formatDistanceToNow(new Date(date), { addSuffix: true })}
                 </div>
             </CardContent>
         </Card>
     );
 }
 
+interface DashboardData {
+    stats: {
+        totalReviews: number;
+        averageRating: number;
+        totalComments: number;
+    };
+    recentActivity: {
+        id: string;
+        listing: string;
+        slug: string;
+        text: string;
+        date: string;
+        rating?: number;
+    }[];
+}
+
 export default function UserDashboardPage() {
-    const stats = [
+    const { token } = useAuth();
+    const [data, setData] = useState<DashboardData | null>(null);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        const fetchDashboardData = async () => {
+            if (!token) return;
+
+            try {
+                const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/user/dashboard`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                });
+
+                if (response.ok) {
+                    const result = await response.json();
+                    setData(result);
+                }
+            } catch (error) {
+                console.error("Failed to fetch dashboard data", error);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchDashboardData();
+    }, [token]);
+
+    const statsConfig = [
         {
             label: 'Total Reviews',
-            value: '12',
+            key: 'totalReviews',
             icon: MessageSquare,
-            trend: '+2 this week'
+            // trend: '+2 this week' // Mock trend
         },
         {
             label: 'Average Rating',
-            value: '4.8',
+            key: 'averageRating',
             icon: Star,
             iconProps: { fill: "currentColor" },
-            trend: '+0.3'
+            // trend: '+0.3' // Mock trend
         },
         {
-            label: 'Saved Places',
-            value: '8',
-            icon: Star
+            label: 'Total Comments',
+            key: 'totalComments',
+            icon: MessageSquare
         },
     ];
 
-    const recentActivities = [
-        {
-            id: '1',
-            listing: 'The Golden Fork',
-            text: 'Absolutely loved my experience here! The service was top-notch.',
-            date: '2 days ago',
-            slug: 'the-golden-fork',
-            rating: 5.0
-        },
-        {
-            id: '2',
-            listing: 'Luxury Beachfront Villa',
-            text: 'Great experience, everything was as described in the listing.',
-            date: '1 week ago',
-            slug: 'luxury-beachfront-villa',
-            rating: 4.5
-        },
-        {
-            id: '3',
-            listing: 'Zen Spa & Wellness',
-            text: 'Reasonable prices for such a central location and great staff.',
-            date: '2 weeks ago',
-            slug: 'zen-spa',
-            rating: 4.8
-        }
-    ];
+    if (loading) {
+        return <div className="p-8 text-center">Loading dashboard...</div>;
+    }
 
     return (
         <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
@@ -151,65 +172,43 @@ export default function UserDashboardPage() {
 
             {/* Stats Grid */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                {stats.map((stat, i) => (
-                    <StatCard key={i} {...stat} />
+                {statsConfig.map((stat, i) => (
+                    <StatCard
+                        key={i}
+                        label={stat.label}
+                        value={data?.stats[stat.key as keyof typeof data.stats] ?? 0}
+                        icon={stat.icon}
+                        iconProps={stat.iconProps}
+                    // trend={stat.trend}
+                    />
                 ))}
             </div>
 
             <Separator className="my-8" />
 
             {/* Main Content Grid */}
-            <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
-                {/* Recent Activity */}
-                <div className="xl:col-span-2 space-y-4">
-                    <div className="flex items-center justify-between">
-                        <div>
-                            <h2 className="text-xl font-semibold text-foreground">Recent Activity</h2>
-                            <p className="text-sm text-muted-foreground mt-0.5">Your latest reviews and interactions</p>
-                        </div>
-                        <Link href="/dashboard/comments">
-                            <Button variant="ghost" size="sm" className="gap-1">
-                                View All
-                                <ArrowRight className="w-4 h-4" />
-                            </Button>
-                        </Link>
+            <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                    <div>
+                        <h2 className="text-xl font-semibold text-foreground">Recent Activity</h2>
+                        <p className="text-sm text-muted-foreground mt-0.5">Your latest reviews and interactions</p>
                     </div>
-
-                    <div className="space-y-3">
-                        {recentActivities.map((activity) => (
-                            <ActivityCard key={activity.id} {...activity} />
-                        ))}
-                    </div>
+                    <Link href="/dashboard/reviews">
+                        <Button variant="ghost" size="sm" className="gap-1">
+                            View All
+                            <ArrowRight className="w-4 h-4" />
+                        </Button>
+                    </Link>
                 </div>
 
-                {/* Quick Stats */}
-                <div className="space-y-4">
-                    <div>
-                        <h2 className="text-xl font-semibold text-foreground">Quick Stats</h2>
-                        <p className="text-sm text-muted-foreground mt-0.5">Your activity overview</p>
-                    </div>
-
-                    <Card className="border-0">
-                        <CardContent className="p-6 space-y-3">
-                            <h3 className="font-semibold text-foreground">Quick Stats</h3>
-                            <div className="space-y-3">
-                                <div className="flex items-center justify-between text-sm">
-                                    <span className="text-muted-foreground">Profile Views</span>
-                                    <span className="font-medium text-foreground">247</span>
-                                </div>
-                                <Separator />
-                                <div className="flex items-center justify-between text-sm">
-                                    <span className="text-muted-foreground">Helpful Votes</span>
-                                    <span className="font-medium text-foreground">89</span>
-                                </div>
-                                <Separator />
-                                <div className="flex items-center justify-between text-sm">
-                                    <span className="text-muted-foreground">Following</span>
-                                    <span className="font-medium text-foreground">23</span>
-                                </div>
-                            </div>
-                        </CardContent>
-                    </Card>
+                <div className="space-y-3">
+                    {data?.recentActivity.length === 0 ? (
+                        <p className="text-muted-foreground text-sm">No recent activity found.</p>
+                    ) : (
+                        data?.recentActivity.map((activity) => (
+                            <ActivityCard key={activity.id} {...activity} />
+                        ))
+                    )}
                 </div>
             </div>
         </div>

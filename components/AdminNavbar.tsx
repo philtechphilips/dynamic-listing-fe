@@ -1,6 +1,6 @@
 "use client";
 
-import { LogOut, Moon, Settings, Sun, User, Shield } from "lucide-react";
+import { LogOut, Settings, User, Shield } from "lucide-react";
 import Link from "next/link";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import {
@@ -8,7 +8,6 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
 import { Button } from "./ui/button";
@@ -38,27 +37,7 @@ const AdminNavbar = () => {
       {/* RIGHT */}
       <div className="flex items-center gap-4">
         <Link href="/admin">Dashboard</Link>
-        {/* THEME MENU */}
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="outline" size="icon">
-              <Sun className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
-              <Moon className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
-              <span className="sr-only">Toggle theme</span>
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuItem onClick={() => setTheme("light")}>
-              Light
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => setTheme("dark")}>
-              Dark
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => setTheme("system")}>
-              System
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+
         {/* USER MENU */}
         <DropdownMenu>
           <DropdownMenuTrigger className="flex items-center gap-2 outline-none">
@@ -72,8 +51,8 @@ const AdminNavbar = () => {
               </AvatarFallback>
             </Avatar>
           </DropdownMenuTrigger>
-          <DropdownMenuContent sideOffset={10} className="w-64">
-            <div className="px-2 py-3 border-b">
+          <DropdownMenuContent sideOffset={10} className="w-64 bg-white border border-gray-200 shadow-lg z-50">
+            <div className="px-2 py-3 border-b border-gray-100">
               <div className="flex items-center gap-3">
                 <Avatar className="h-10 w-10 border-2 border-primary/20">
                   <AvatarFallback className="bg-primary/10 text-primary font-semibold">
@@ -81,10 +60,10 @@ const AdminNavbar = () => {
                   </AvatarFallback>
                 </Avatar>
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-semibold truncate">{user?.name || "Admin User"}</p>
-                  <p className="text-xs text-muted-foreground truncate">{user?.email || "No email"}</p>
+                  <p className="text-sm font-semibold truncate text-gray-900">{user?.name || "Admin User"}</p>
+                  <p className="text-xs text-gray-500 truncate">{user?.email || "No email"}</p>
                   {user?.role === "admin" && (
-                    <span className="inline-flex items-center gap-1 mt-1 px-1.5 py-0.5 rounded text-[10px] font-medium bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400">
+                    <span className="inline-flex items-center gap-1 mt-1 px-1.5 py-0.5 rounded text-[10px] font-medium bg-amber-100 text-amber-700">
                       <Shield className="w-3 h-3" />
                       Admin
                     </span>
@@ -92,19 +71,12 @@ const AdminNavbar = () => {
                 </div>
               </div>
             </div>
-            <DropdownMenuItem className="mt-1">
-              <User className="h-[1.2rem] w-[1.2rem] mr-2" />
-              Profile
-            </DropdownMenuItem>
-            <DropdownMenuItem>
-              <Settings className="h-[1.2rem] w-[1.2rem] mr-2" />
-              Settings
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem variant="destructive" onClick={logout}>
-              <LogOut className="h-[1.2rem] w-[1.2rem] mr-2" />
-              Logout
-            </DropdownMenuItem>
+            <div className="p-1">
+              <DropdownMenuItem variant="destructive" onClick={logout} className="cursor-pointer">
+                <LogOut className="h-[1.2rem] w-[1.2rem] mr-2" />
+                Logout
+              </DropdownMenuItem>
+            </div>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
