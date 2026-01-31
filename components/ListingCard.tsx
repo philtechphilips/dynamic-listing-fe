@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import Image from 'next/image';
-import { Listing } from '@/types';
+import { Listing, Category } from '@/types';
 
 interface ListingCardProps {
   listing: Listing;
@@ -20,6 +20,13 @@ function formatDate(date?: string | Date): string {
 function limitString(str: string, limit: number): string {
   if (str.length <= limit) return str;
   return str.substring(0, limit) + '...';
+}
+
+// Helper function to extract category name
+function getCategoryName(category?: string | Category): string {
+  if (!category) return '';
+  if (typeof category === 'string') return category;
+  return category.name || '';
 }
 
 // Star rating component
@@ -77,17 +84,35 @@ export default function ListingCard({
       <Link href={href} className="w-full flex md:flex-row flex-col gap-6 hover:opacity-90 transition-opacity">
         <div className={`md:w-1/2 w-full overflow-hidden rounded-lg relative ${imageHeight || 'h-[200px]'}`}>
           <Image
-            src={listing.featured_image || '/images/music.svg'}
+            src={listing.featuredImage || listing.featured_image || '/images/music.svg'}
             alt={listing.title}
             fill
             className="w-full h-full object-cover scale-100 hover:scale-105 transition-all duration-500"
           />
+          {listing.is_video && (
+            <div className="absolute inset-0 flex items-center justify-center bg-black/20 group-hover:bg-black/40 transition-all">
+              <div className="w-12 h-12 bg-red-600 rounded-full flex items-center justify-center shadow-lg transform group-hover:scale-110 transition-transform">
+                <svg className="w-6 h-6 text-white ml-0.5" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M8 5v14l11-7z" />
+                </svg>
+              </div>
+            </div>
+          )}
         </div>
 
         <div className="flex flex-col md:w-1/2 w-full">
-          {listing.category && (
+          {(listing.category || listing.category_obj) && (
             <div className="flex items-center py-1 px-2 bg-primary-300 rounded-md w-fit mb-2">
-              <p className="text-primary text-sm font-medium">{listing.category}</p>
+              <p className="text-primary text-sm font-medium">
+                {listing.category_obj?.name || getCategoryName(listing.category)}
+              </p>
+            </div>
+          )}
+
+          {listing.is_video && (
+            <div className="flex items-center gap-1.5 py-0.5 px-2 bg-red-500/10 border border-red-500/20 rounded-full w-fit mb-2">
+              <div className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" />
+              <p className="text-red-500 text-[10px] uppercase font-bold tracking-wider">Video</p>
             </div>
           )}
 
@@ -111,11 +136,11 @@ export default function ListingCard({
           )}
 
           <div className="mt-4">
-            <StarRating rating={listing.rating} reviewCount={listing.review_count} />
+            <StarRating rating={listing.rating} reviewCount={listing.reviewCount || listing.review_count} />
           </div>
 
-          {listing.price_range && (
-            <p className="text-sm font-medium text-gray-200 mt-2">{listing.price_range}</p>
+          {(listing.priceRange || listing.price_range) && (
+            <p className="text-sm font-medium text-gray-200 mt-2">{listing.priceRange || listing.price_range}</p>
           )}
         </div>
       </Link>
@@ -128,18 +153,36 @@ export default function ListingCard({
       <Link href={href} className="w-full block hover:opacity-90 transition-opacity">
         <div className="w-full overflow-hidden rounded-lg relative">
           <Image
-            src={listing.featured_image || '/images/music.svg'}
+            src={listing.featuredImage || listing.featured_image || '/images/music.svg'}
             alt={listing.title}
             width={400}
             height={300}
             className={`w-full ${imageHeight} object-cover scale-100 hover:scale-105 transition-all duration-500`}
           />
+          {listing.is_video && (
+            <div className="absolute inset-0 flex items-center justify-center bg-black/20 transition-all">
+              <div className="w-10 h-10 bg-red-600 rounded-full flex items-center justify-center shadow-lg">
+                <svg className="w-5 h-5 text-white ml-0.5" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M8 5v14l11-7z" />
+                </svg>
+              </div>
+            </div>
+          )}
         </div>
 
         <div className="mt-4">
-          {listing.category && (
+          {(listing.category || listing.category_obj) && (
             <div className="flex items-center py-1 px-2 bg-primary-300 rounded-md w-fit mb-2">
-              <p className="text-primary text-sm font-medium">{listing.category}</p>
+              <p className="text-primary text-sm font-medium">
+                {listing.category_obj?.name || getCategoryName(listing.category)}
+              </p>
+            </div>
+          )}
+
+          {listing.is_video && (
+            <div className="flex items-center gap-1.5 py-0.5 px-2 bg-red-500/10 border border-red-500/20 rounded-full w-fit mb-2">
+              <div className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" />
+              <p className="text-red-500 text-[10px] uppercase font-bold tracking-wider">Video</p>
             </div>
           )}
 
@@ -157,7 +200,7 @@ export default function ListingCard({
           )}
 
           <div className="mt-2">
-            <StarRating rating={listing.rating} reviewCount={listing.review_count} />
+            <StarRating rating={listing.rating} reviewCount={listing.reviewCount || listing.review_count} />
           </div>
         </div>
       </Link>
@@ -169,19 +212,41 @@ export default function ListingCard({
     <Link href={href} className="w-full h-full flex flex-col hover:opacity-90 transition-opacity">
       <div className={`w-full overflow-hidden rounded-lg relative ${imageHeight}`}>
         <Image
-          src={listing.featured_image || '/images/music.svg'}
+          src={listing.featuredImage || listing.featured_image || '/images/music.svg'}
           alt={listing.title}
           fill
           className="w-full h-full object-cover scale-100 hover:scale-105 transition-all duration-500"
         />
+        {listing.is_video && (
+          <div className="absolute inset-0 flex items-center justify-center bg-black/20 transition-all">
+            <div className="w-14 h-14 bg-red-600 rounded-full flex items-center justify-center shadow-lg">
+              <svg className="w-7 h-7 text-white ml-0.5" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M8 5v14l11-7z" />
+              </svg>
+            </div>
+            <div className="absolute top-3 right-3 bg-red-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-tighter">
+              Video
+            </div>
+          </div>
+        )}
       </div>
 
       <div className="flex md:flex-row flex-col-reverse md:items-center items-start justify-between mt-4">
-        {listing.category && (
-          <div className="flex items-center py-1 px-2 bg-primary-300 rounded-md w-fit">
-            <p className="text-primary text-sm font-medium">{listing.category}</p>
-          </div>
-        )}
+        <div className="flex flex-col gap-2">
+          {listing.category && (
+            <div className="flex items-center py-1 px-2 bg-primary-300 rounded-md w-fit">
+              <p className="text-primary text-sm font-medium">
+                {listing.category_obj?.name || getCategoryName(listing.category)}
+              </p>
+            </div>
+          )}
+          {listing.is_video && (
+            <div className="flex items-center gap-1.5 py-0.5 px-2 bg-red-500/10 border border-red-500/20 rounded-full w-fit">
+              <div className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" />
+              <p className="text-red-500 text-[10px] uppercase font-bold tracking-wider">Video</p>
+            </div>
+          )}
+        </div>
         {listing.location && (
           <div className="flex items-center gap-2 text-sm font-medium text-gray-200">
             <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
@@ -203,11 +268,11 @@ export default function ListingCard({
       )}
 
       <div className="mt-4">
-        <StarRating rating={listing.rating} reviewCount={listing.review_count} />
+        <StarRating rating={listing.rating} reviewCount={listing.reviewCount || listing.review_count} />
       </div>
 
-      {listing.price_range && (
-        <p className="text-sm font-medium text-gray-200 mt-2">{listing.price_range}</p>
+      {(listing.priceRange || listing.price_range) && (
+        <p className="text-sm font-medium text-gray-200 mt-2">{listing.priceRange || listing.price_range}</p>
       )}
     </Link>
   );

@@ -47,6 +47,13 @@ export interface Post {
   category?: Category;
   categories?: Category[];
   tags?: Tag[];
+  // Backend fields
+  featuredImage?: string;
+  createdAt?: string | Date;
+  updatedAt?: string | Date;
+  seoTitle?: string;
+  seoDescription?: string;
+  seoKeywords?: string;
 }
 
 // Event type
@@ -102,7 +109,7 @@ export interface Listing {
   rating?: number;
   review_count?: number;
   location?: string;
-  category?: string;
+  category?: string | Category;
   price_range?: string;
   tags?: Tag[];
   created_at?: string | Date;
@@ -118,6 +125,40 @@ export interface Listing {
   email?: string;
   opening_hours?: string;
   google_map_url?: string;
+  // Backend fields
+  featuredImage?: string;
+  priceRange?: string;
+  reviewCount?: number;
+  seoTitle?: string;
+  seoDescription?: string;
+  seoKeywords?: string;
+  openingHours?: string;
+  googleMapUrl?: string;
+  categoryId?: string;
+  is_video?: boolean;
+  video_url?: string;
+  createdAt?: string | Date;
+  updatedAt?: string | Date;
+}
+
+// News Item type (specific to backend News model)
+export interface NewsItem {
+  id: string;
+  title: string;
+  slug: string;
+  content?: string;
+  excerpt?: string;
+  featuredImage?: string;
+  status: string;
+  authorId?: string;
+  categoryId?: string;
+  category?: Category;
+  author?: User;
+  seoTitle?: string;
+  seoDescription?: string;
+  seoKeywords?: string;
+  createdAt: string | Date;
+  updatedAt: string | Date;
 }
 
 // Helper function types

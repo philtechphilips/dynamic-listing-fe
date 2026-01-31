@@ -28,6 +28,8 @@ import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8007/api/v1';
+
 // Helper types
 type ContentItem = Listing | Post | Podcast | Resource | Event;
 
@@ -44,9 +46,27 @@ const getAllEvents = (): Event[] => {
   return events;
 };
 
-// Helper to find any item by slug
-const findItemBySlug = (slug: string): { item: ContentItem; type: 'listing' | 'post' | 'podcast' | 'resource' | 'event' } | undefined => {
-  // Check listings
+// Helper to find any item by slug (including API)
+const findItemBySlug = async (slug: string): Promise<{ item: any; type: 'listing' | 'post' | 'podcast' | 'resource' | 'event' } | undefined> => {
+  // 1. Try fetching from API Listings
+  try {
+    const listingRes = await fetch(`${API_URL}/listings/${slug}`, { next: { revalidate: 3600 } });
+    if (listingRes.ok) {
+      const data = await listingRes.json();
+      if (data.listing) return { item: data.listing, type: 'listing' };
+    }
+  } catch (e) { }
+
+  // 2. Try fetching from API News
+  try {
+    const newsRes = await fetch(`${API_URL}/news/${slug}`, { next: { revalidate: 3600 } });
+    if (newsRes.ok) {
+      const data = await newsRes.json();
+      if (data.news) return { item: data.news, type: 'post' };
+    }
+  } catch (e) { }
+
+  // 3. Check mock listings
   const allListings = [
     ...topRestaurants,
     ...topMovies,
@@ -59,21 +79,21 @@ const findItemBySlug = (slug: string): { item: ContentItem; type: 'listing' | 'p
   const listing = allListings.find(item => item.slug === slug);
   if (listing) return { item: listing, type: 'listing' };
 
-  // Check posts
+  // 4. Check mock posts
   const allPosts = [...latestPosts, ...newsPosts, ...trendingPosts];
   const post = allPosts.find(item => item.slug === slug);
   if (post) return { item: post, type: 'post' };
 
-  // Check podcasts/videos
+  // 5. Check mock podcasts/videos
   const allPodcasts = [...latestPodcasts, ...topVideos];
   const podcast = allPodcasts.find(item => item.slug === slug);
   if (podcast) return { item: podcast, type: 'podcast' };
 
-  // Check resources
+  // 6. Check mock resources
   const resource = latestResources.find(item => item.slug === slug);
   if (resource) return { item: resource, type: 'resource' };
 
-  // Check events
+  // 7. Check mock events
   const event = getAllEvents().find(item => item.slug === slug);
   if (event) return { item: event, type: 'event' };
 
@@ -102,22 +122,43 @@ const formatDate = (date?: string | Date): string => {
   return d.toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' });
 };
 
-// Helper to get related content
-const getRelatedContent = (currentSlug: string, type: 'listing' | 'post' | 'podcast' | 'resource' | 'event'): (Post | Podcast | Resource)[] => {
-  if (type === 'listing') return [];
+// Helper to get related content (including API)
+const getRelatedContent = async (
+  currentSlug: string,
+  type: 'listing' | 'post' | 'podcast' | 'resource' | 'event',
+  categoryId?: string
+): Promise<any[]> => {
+  let apiContent: any[] = [];
 
-  let allContent: (Post | Podcast | Resource)[] = [];
-  
-  if (type === 'post') {
-    allContent = [...latestPosts, ...newsPosts, ...trendingPosts];
-  } else if (type === 'podcast') {
-    allContent = [...latestPodcasts, ...topVideos];
-  } else if (type === 'resource') {
-    allContent = [...latestResources];
-  }
+  // 1. Try fetching from API based on type
+  try {
+    if (type === 'listing' || (type === 'post' && categoryId)) {
+      const url = categoryId
+        ? `${API_URL}/listings?category=${categoryId}`
+        : `${API_URL}/listings`;
+      const res = await fetch(url, { next: { revalidate: 3600 } });
+      if (res.ok) {
+        const data = await res.json();
+        if (data.listings) apiContent = [...apiContent, ...data.listings];
+      }
+    }
 
-  return allContent
+    if (type === 'post') {
+      const url = categoryId
+        ? `${API_URL}/news?category=${categoryId}`
+        : `${API_URL}/news`;
+      const res = await fetch(url, { next: { revalidate: 3600 } });
+      if (res.ok) {
+        const data = await res.json();
+        if (data.news) apiContent = [...apiContent, ...data.news];
+      }
+    }
+  } catch (e) { }
+
+  // 2. Filter and return
+  return apiContent
     .filter(item => item.slug !== currentSlug)
+    .filter((v, i, a) => a.findIndex(t => t.slug === v.slug) === i) // Deduplicate
     .slice(0, 3);
 };
 
@@ -153,7 +194,7 @@ function StarRating({ rating = 0, reviewCount }: { rating?: number; reviewCount?
 // Generate Metadata
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
-  const result = findItemBySlug(slug);
+  const result = await findItemBySlug(slug);
 
   if (!result) {
     return {
@@ -180,25 +221,26 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 
 export default async function UnifiedDetailPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const result = findItemBySlug(slug);
+  const result = await findItemBySlug(slug);
 
   if (!result) {
     notFound();
   }
 
   const { item, type } = result;
-  const isListing = type === 'listing';
-  const isContent = ['post', 'podcast', 'resource', 'event'].includes(type);
+  const isVideo = item.is_video === true;
+  const isListing = type === 'listing' && !isVideo;
+  const isContent = ['post', 'podcast', 'resource', 'event'].includes(type) || isVideo;
 
   const title = item.title;
-  const image = getImageUrl(item);
+  const image = item.featuredImage || item.featured_image || getImageUrl(item);
   const date = getDate(item);
   // @ts-ignore
-  const author = item.author_name || item.user?.name || '';
+  const author = item.author?.name || item.author_name || item.user?.name || '';
   // @ts-ignore
   const bodyContent = item.content || item.excerpt || 'No description available.';
   // @ts-ignore
-  const categoryName = item.category?.name || item.category || type;
+  const categoryName = item.category?.name || item.category_obj?.name || item.category || type;
 
   return (
     <main className="min-h-screen bg-gray-50/50 pt-24 pb-20">
@@ -235,13 +277,11 @@ export default async function UnifiedDetailPage({ params }: { params: Promise<{ 
                   )}
 
                   {/* @ts-ignore */}
-                  <StarRating rating={item.rating} reviewCount={item.review_count} />
+                  <StarRating rating={item.rating} reviewCount={item.reviewCount || item.review_count} />
 
-                  {/* @ts-ignore */}
-                  {item.price_range && (
+                  {(item.priceRange || item.price_range) && (
                     <div className="px-3 py-1 bg-white/10 backdrop-blur-sm rounded-lg border border-white/20">
-                      {/* @ts-ignore */}
-                      <span className="font-semibold">{item.price_range}</span>
+                      <span className="font-semibold">{item.priceRange || item.price_range}</span>
                     </div>
                   )}
                 </div>
@@ -252,11 +292,11 @@ export default async function UnifiedDetailPage({ params }: { params: Promise<{ 
           {/* Listing Content */}
           <div className="max-w-7xl mx-auto px-5 md:px-12 mt-12 grid grid-cols-1 lg:grid-cols-3 gap-8">
             <div className="lg:col-span-2 space-y-6">
-              <Card className="border-0 shadow-sm">
+              <Card className="border-0 shadow-sm overflow-hidden">
                 <CardContent className="p-6">
                   <h2 className="text-2xl font-clash font-bold text-foreground mb-4">About</h2>
-                  <div className="prose max-w-none text-muted-foreground leading-relaxed">
-                    <p>{bodyContent}</p>
+                  <div className="prose max-w-none text-muted-foreground leading-relaxed break-words overflow-hidden">
+                    <div dangerouslySetInnerHTML={{ __html: bodyContent.replace(/\n/g, '<br />') }} />
                   </div>
                 </CardContent>
               </Card>
@@ -282,6 +322,60 @@ export default async function UnifiedDetailPage({ params }: { params: Promise<{ 
                 <ListingInteractions listingTitle={title} />
                 <Comments />
               </div>
+
+              {/* Related Content for Listings */}
+              {await (async () => {
+                const relatedItems = await getRelatedContent(slug, type, item.categoryId);
+                if (relatedItems.length > 0) {
+                  return (
+                    <div className="mt-12 pt-10 border-t border-border/40">
+                      <div className="mb-8">
+                        <h2 className="text-2xl font-clash font-bold text-foreground">
+                          Related {categoryName}
+                        </h2>
+                        <p className="text-muted-foreground mt-2 text-sm">Discover more in this category</p>
+                      </div>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        {relatedItems.map((relatedItem) => {
+                          const imageUrl = relatedItem.featuredImage || relatedItem.featured_image_webp || relatedItem.featured_image || '/images/music.svg';
+                          const excerpt = relatedItem.excerpt || '';
+                          const publishDate = relatedItem.published_at || relatedItem.createdAt || relatedItem.created_at;
+
+                          return (
+                            <Link key={relatedItem.id} href={`/item/${relatedItem.slug}`} className="group">
+                              <Card className="border-0 shadow-sm hover:shadow-md transition-all overflow-hidden h-full">
+                                <div className="relative h-40 w-full overflow-hidden bg-muted">
+                                  <Image
+                                    src={imageUrl}
+                                    alt={relatedItem.title}
+                                    fill
+                                    className="object-cover transition-transform duration-500 group-hover:scale-110"
+                                  />
+                                </div>
+                                <CardContent className="p-4 space-y-2">
+                                  <h3 className="font-clash font-semibold text-base text-foreground line-clamp-1 group-hover:text-primary transition-colors">
+                                    {relatedItem.title}
+                                  </h3>
+                                  {excerpt && (
+                                    <p className="text-xs text-muted-foreground line-clamp-2 leading-relaxed">
+                                      {excerpt}
+                                    </p>
+                                  )}
+                                  <div className="flex items-center gap-2 text-[10px] text-muted-foreground pt-1">
+                                    <MapPin className="w-3 h-3" />
+                                    <span>{relatedItem.location || 'Location'}</span>
+                                  </div>
+                                </CardContent>
+                              </Card>
+                            </Link>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  );
+                }
+                return null;
+              })()}
             </div>
 
             {/* Sidebar */}
@@ -373,16 +467,14 @@ export default async function UnifiedDetailPage({ params }: { params: Promise<{ 
                       </>
                     )}
 
-                    {/* @ts-ignore */}
-                    {item.opening_hours && (
+                    {(item.openingHours || item.opening_hours) && (
                       <div className="flex gap-3">
                         <div className="w-9 h-9 rounded-lg bg-primary/5 flex items-center justify-center flex-shrink-0">
                           <Clock className="w-4 h-4 text-primary" />
                         </div>
                         <div className="flex-1 min-w-0">
                           <h4 className="font-semibold text-foreground text-sm">Opening Hours</h4>
-                          {/* @ts-ignore */}
-                          <p className="text-muted-foreground text-sm mt-0.5 whitespace-pre-line leading-relaxed">{item.opening_hours}</p>
+                          <p className="text-muted-foreground text-sm mt-0.5 whitespace-pre-line leading-relaxed">{item.openingHours || item.opening_hours}</p>
                         </div>
                       </div>
                     )}
@@ -453,17 +545,17 @@ export default async function UnifiedDetailPage({ params }: { params: Promise<{ 
             </div>
 
             {/* Content */}
-            <Card className="border-0 shadow-sm">
+            <Card className="border-0 shadow-sm overflow-hidden">
               <CardContent className="p-6 md:p-8">
-                <div className="prose prose-lg max-w-none text-muted-foreground leading-relaxed">
+                <div className="prose prose-lg max-w-none text-muted-foreground leading-relaxed break-words">
                   <div dangerouslySetInnerHTML={{ __html: bodyContent.replace(/\n/g, '<br />') }} />
                 </div>
               </CardContent>
             </Card>
 
             {/* Related Content */}
-            {(() => {
-              const relatedItems = getRelatedContent(slug, type);
+            {await (async () => {
+              const relatedItems = await getRelatedContent(slug, type, item.categoryId);
               if (relatedItems.length > 0) {
                 return (
                   <div className="mt-16 pt-12 border-t border-border/40">
@@ -475,13 +567,10 @@ export default async function UnifiedDetailPage({ params }: { params: Promise<{ 
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                       {relatedItems.map((relatedItem) => {
-                        // @ts-ignore
-                        const imageUrl = relatedItem.featured_image_webp || relatedItem.featured_image || '/images/music.svg';
-                        // @ts-ignore
+                        const imageUrl = relatedItem.featuredImage || relatedItem.featured_image_webp || relatedItem.featured_image || '/images/music.svg';
                         const excerpt = relatedItem.excerpt || '';
-                        // @ts-ignore
-                        const publishDate = relatedItem.published_at || relatedItem.created_at;
-                        
+                        const publishDate = relatedItem.published_at || relatedItem.createdAt || relatedItem.created_at;
+
                         return (
                           <Link key={relatedItem.id} href={`/item/${relatedItem.slug}`} className="group">
                             <Card className="border-0 shadow-sm hover:shadow-md transition-all overflow-hidden h-full">
@@ -495,8 +584,7 @@ export default async function UnifiedDetailPage({ params }: { params: Promise<{ 
                               </div>
                               <CardContent className="p-5 space-y-3">
                                 <Badge variant="secondary" className="border-0">
-                                  {/* @ts-ignore */}
-                                  {relatedItem.category?.name || type}
+                                  {relatedItem.category?.name || relatedItem.category || type}
                                 </Badge>
                                 <h3 className="font-clash font-semibold text-lg text-foreground line-clamp-2 group-hover:text-primary transition-colors">
                                   {relatedItem.title}
@@ -527,20 +615,34 @@ export default async function UnifiedDetailPage({ params }: { params: Promise<{ 
             </div>
 
             {/* Video Embed */}
-            {'video_url' in item && item.video_url && (
-              <Card className="mt-10 border-0 shadow-sm overflow-hidden">
-                <div className="aspect-w-16 aspect-h-9 bg-muted">
-                  <iframe
-                    src={`https://www.youtube.com/embed/${item.video_url.split('v=')[1]}`}
-                    title={title}
-                    frameBorder="0"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                    allowFullScreen
-                    className="w-full h-full min-h-[400px]"
-                  ></iframe>
-                </div>
-              </Card>
-            )}
+            {(() => {
+              const videoUrl = 'video_url' in item ? item.video_url : null;
+              if (!videoUrl) return null;
+
+              const getYouTubeId = (url: string) => {
+                const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
+                const match = url.match(regExp);
+                return (match && match[2].length === 11) ? match[2] : null;
+              };
+
+              const videoId = getYouTubeId(videoUrl);
+              if (!videoId) return null;
+
+              return (
+                <Card className="mt-10 border-0 shadow-sm overflow-hidden">
+                  <div className="aspect-video bg-muted">
+                    <iframe
+                      src={`https://www.youtube.com/embed/${videoId}`}
+                      title={title}
+                      frameBorder="0"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      allowFullScreen
+                      className="w-full h-full min-h-[400px]"
+                    ></iframe>
+                  </div>
+                </Card>
+              );
+            })()}
 
             {/* Navigation */}
             <div className="mt-12 flex justify-center">

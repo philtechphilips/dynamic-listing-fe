@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import SectionHeader, { MobileViewAllButton } from '@/components/SectionHeader';
 import BlogCard from '@/components/BlogCard';
 import TabSection from '@/components/TabSection';
@@ -21,7 +21,6 @@ import {
   eventsCategory,
   latestResources,
   latestPodcasts,
-  topVideos,
   topRestaurants,
   topMovies,
   topElectricians,
@@ -30,10 +29,46 @@ import {
   topSalons,
   topPlumbers,
 } from '@/lib/mockData';
+import { Listing, NewsItem, Category } from '@/types';
+
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8007/api/v1';
 
 export default function Home() {
   const [selectedPodcast, setSelectedPodcast] = useState<Podcast | null>(null);
   const [isPodcastModalOpen, setIsPodcastModalOpen] = useState(false);
+  const [news, setNews] = useState<NewsItem[]>([]);
+  const [listings, setListings] = useState<Listing[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  const fetchHomeData = useCallback(async () => {
+    try {
+      setIsLoading(true);
+      const [newsRes, listingsRes, categoriesRes] = await Promise.all([
+        fetch(`${API_URL}/news?status=Published`),
+        fetch(`${API_URL}/listings?status=Published`),
+        fetch(`${API_URL}/categories`)
+      ]);
+
+      const [newsData, listingsData, categoriesData] = await Promise.all([
+        newsRes.json(),
+        listingsRes.json(),
+        categoriesRes.json()
+      ]);
+
+      setNews(newsData.news || []);
+      setListings(listingsData.listings || []);
+      setCategories(categoriesData.categories || []);
+    } catch (error) {
+      console.error('Error fetching home data:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchHomeData();
+  }, [fetchHomeData]);
 
   const handlePodcastPlay = (podcast: Podcast) => {
     setSelectedPodcast(podcast);
@@ -60,14 +95,14 @@ export default function Home() {
 
         {/* Desktop Layout */}
         <div className="mt-12 w-full hidden md:flex md:flex-row flex-col gap-8">
-          {newsPosts.length > 0 ? (
+          {news.length > 0 ? (
             <>
               <div className="md:w-1/2 w-full">
-                <BlogCard post={newsPosts[0]} showTags />
+                <BlogCard post={{ ...news[0], type: 'post' }} imageHeight="h-[450px]" showTags />
               </div>
               <div className="md:w-1/2 w-full flex flex-col gap-6">
-                {newsPosts.slice(1, 4).map((post) => (
-                  <BlogCard key={post.id} post={post} layout="horizontal" showTags />
+                {news.slice(1, 4).map((post) => (
+                  <BlogCard key={post.id} post={{ ...post, type: 'post' }} layout="horizontal" imageHeight="h-[140px]" showTags />
                 ))}
               </div>
             </>
@@ -80,9 +115,9 @@ export default function Home() {
 
         {/* Mobile Layout */}
         <div className="mt-12 w-full flex md:hidden flex-col gap-8">
-          {newsPosts.length > 0 ? (
-            newsPosts.map((post) => (
-              <BlogCard key={post.id} post={post} imageHeight="h-[300px]" showTags />
+          {news.length > 0 ? (
+            news.map((post) => (
+              <BlogCard key={post.id} post={{ ...post, type: 'post' }} imageHeight="h-[300px]" showTags />
             ))
           ) : (
             <div className="w-full flex flex-col items-center justify-center py-16 px-4">
@@ -102,16 +137,24 @@ export default function Home() {
 
 
 
-      {/* Top Videos Section */}
-      {topVideos.length > 0 && (
+      {/* Videos Section */}
+      {listings.filter(l => l.is_video).length > 0 && (
         <section className="w-full bg-background 2xl:px-[120px] md:px-10 px-5 py-16">
-          <SectionHeader title="Top Videos" viewAllHref="/all-post/top-videos" />
+          <SectionHeader title="Videos" viewAllHref="/all-post/videos" />
 
           <div className="mt-12 w-full flex md:flex-row flex-col gap-8">
-            {topVideos.map((video) => (
+            {listings.filter(l => l.is_video).slice(0, 3).map((video) => (
               <div key={video.id} className="w-full">
                 <PodcastCard
-                  podcast={video}
+                  podcast={{
+                    id: video.id,
+                    title: video.title,
+                    slug: video.slug,
+                    featured_image: video.featuredImage || video.featured_image,
+                    published_at: video.published_at || video.createdAt,
+                    video_url: video.video_url,
+                    content: video.excerpt || video.content,
+                  } as any}
                   variant="sidebar"
                   onPlay={handleVideoPlay}
                 />
@@ -119,114 +162,28 @@ export default function Home() {
             ))}
           </div>
 
-          <MobileViewAllButton href="/all-post/top-videos" />
+          <MobileViewAllButton href="/all-post/videos" />
         </section>
       )}
 
-      {/* Top Restaurants Section */}
-      {topRestaurants.length > 0 && (
-        <section className="w-full bg-background 2xl:px-[120px] md:px-10 px-5 py-16">
-          <SectionHeader title="Top Restaurants" viewAllHref="/category/restaurants" />
+      {categories.map((cat) => {
+        const catListings = listings.filter(l => l.categoryId === cat.id && !l.is_video);
+        if (catListings.length === 0) return null;
 
-          <div className="mt-12 w-full flex md:flex-row flex-col gap-8">
-            {topRestaurants.map((restaurant) => (
-              <ListingCard key={restaurant.id} listing={restaurant} imageHeight="h-[300px]" />
-            ))}
-          </div>
+        return (
+          <section key={cat.id} className="w-full bg-background 2xl:px-[120px] md:px-10 px-5 py-16 border-t dark:border-stone-800">
+            <SectionHeader title={cat.name} viewAllHref={`/category/${cat.slug}`} />
 
-          <MobileViewAllButton href="/category/restaurants" />
-        </section>
-      )}
+            <div className="mt-12 w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {catListings.slice(0, 3).map((listing) => (
+                <ListingCard key={listing.id} listing={listing} imageHeight="h-[300px]" />
+              ))}
+            </div>
 
-      {/* Top Movies Section */}
-      {topMovies.length > 0 && (
-        <section className="w-full bg-background 2xl:px-[120px] md:px-10 px-5 py-16">
-          <SectionHeader title="Top Movies of the Week" viewAllHref="/category/movies" />
-
-          <div className="mt-12 w-full flex md:flex-row flex-col gap-8">
-            {topMovies.map((movie) => (
-              <ListingCard key={movie.id} listing={movie} imageHeight="h-[300px]" />
-            ))}
-          </div>
-
-          <MobileViewAllButton href="/category/movies" />
-        </section>
-      )}
-
-      {/* Top Electricians Section */}
-      {topElectricians.length > 0 && (
-        <section className="w-full bg-background 2xl:px-[120px] md:px-10 px-5 py-16">
-          <SectionHeader title="Top Electricians" viewAllHref="/category/electricians" />
-
-          <div className="mt-12 w-full flex md:flex-row flex-col gap-8">
-            {topElectricians.map((electrician) => (
-              <ListingCard key={electrician.id} listing={electrician} imageHeight="h-[300px]" />
-            ))}
-          </div>
-
-          <MobileViewAllButton href="/category/electricians" />
-        </section>
-      )}
-
-      {/* Top Hotels Section */}
-      {topHotels.length > 0 && (
-        <section className="w-full bg-background 2xl:px-[120px] md:px-10 px-5 py-16">
-          <SectionHeader title="Top Hotels" viewAllHref="/category/hotels" />
-
-          <div className="mt-12 w-full flex md:flex-row flex-col gap-8">
-            {topHotels.map((hotel) => (
-              <ListingCard key={hotel.id} listing={hotel} imageHeight="h-[300px]" />
-            ))}
-          </div>
-
-          <MobileViewAllButton href="/category/hotels" />
-        </section>
-      )}
-
-      {/* Top Gyms Section */}
-      {topGyms.length > 0 && (
-        <section className="w-full bg-background 2xl:px-[120px] md:px-10 px-5 py-16">
-          <SectionHeader title="Top Gyms & Fitness Centers" viewAllHref="/category/gyms" />
-
-          <div className="mt-12 w-full flex md:flex-row flex-col gap-8">
-            {topGyms.map((gym) => (
-              <ListingCard key={gym.id} listing={gym} imageHeight="h-[300px]" />
-            ))}
-          </div>
-
-          <MobileViewAllButton href="/category/gyms" />
-        </section>
-      )}
-
-      {/* Top Salons Section */}
-      {topSalons.length > 0 && (
-        <section className="w-full bg-background 2xl:px-[120px] md:px-10 px-5 py-16">
-          <SectionHeader title="Top Salons & Spas" viewAllHref="/category/salons" />
-
-          <div className="mt-12 w-full flex md:flex-row flex-col gap-8">
-            {topSalons.map((salon) => (
-              <ListingCard key={salon.id} listing={salon} imageHeight="h-[300px]" />
-            ))}
-          </div>
-
-          <MobileViewAllButton href="/category/salons" />
-        </section>
-      )}
-
-      {/* Top Plumbers Section */}
-      {topPlumbers.length > 0 && (
-        <section className="w-full bg-background 2xl:px-[120px] md:px-10 px-5 py-16">
-          <SectionHeader title="Top Plumbers" viewAllHref="/category/plumbers" />
-
-          <div className="mt-12 w-full flex md:flex-row flex-col gap-8">
-            {topPlumbers.map((plumber) => (
-              <ListingCard key={plumber.id} listing={plumber} imageHeight="h-[300px]" />
-            ))}
-          </div>
-
-          <MobileViewAllButton href="/category/plumbers" />
-        </section>
-      )}
+            <MobileViewAllButton href={`/category/${cat.slug}`} />
+          </section>
+        );
+      })}
     </main>
   );
 }

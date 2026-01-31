@@ -33,27 +33,23 @@ export default async function RootLayout({
   const defaultOpen = cookieStore.get("sidebar_state")?.value === "true"
 
   return (
-    <html lang="en" suppressHydrationWarning>
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased flex`}
+    <div className={`${geistSans.variable} ${geistMono.variable} antialiased flex min-h-screen w-full`}>
+      <ThemeProvider
+        attribute="class"
+        defaultTheme="system"
+        enableSystem
+        disableTransitionOnChange
       >
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-        >
-          <AdminLayoutWrapper>
-            <SidebarProvider defaultOpen={defaultOpen}>
-              <AppSidebar />
-              <main className="w-full">
-                <AdminNavbar />
-                <div className="px-4">{children}</div>
-              </main>
-            </SidebarProvider>
-          </AdminLayoutWrapper>
-        </ThemeProvider>
-      </body>
-    </html>
+        <AdminLayoutWrapper>
+          <SidebarProvider defaultOpen={defaultOpen}>
+            <AppSidebar />
+            <main className="w-full">
+              <AdminNavbar />
+              <div className="px-4">{children}</div>
+            </main>
+          </SidebarProvider>
+        </AdminLayoutWrapper>
+      </ThemeProvider>
+    </div>
   );
 }

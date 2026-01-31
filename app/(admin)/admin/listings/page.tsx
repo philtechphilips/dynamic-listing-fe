@@ -1,7 +1,11 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
+import dynamic from "next/dynamic";
 import { Button } from "@/components/ui/button";
+import "react-quill-new/dist/quill.snow.css";
+
+const ReactQuill = dynamic(() => import("react-quill-new"), { ssr: false });
 import {
     Table,
     TableBody,
@@ -13,7 +17,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Search, Plus, Pencil, Trash2, Eye, EyeOff, Loader2 } from "lucide-react";
+import { Search, Plus, Pencil, Trash2, Eye, EyeOff, Loader2, Image as ImageIcon, Video } from "lucide-react";
 import {
     Dialog,
     DialogContent,
@@ -57,7 +61,29 @@ interface Listing {
     seoKeywords?: string;
     rating: number;
     reviewCount: number;
+    is_video?: boolean;
+    video_url?: string;
 }
+
+const QUILL_MODULES = {
+    toolbar: [
+        [{ header: [1, 2, 3, false] }],
+        ["bold", "italic", "underline", "strike"],
+        [{ list: "ordered" }, { list: "bullet" }],
+        ["link", "clean"],
+    ],
+};
+
+const QUILL_FORMATS = [
+    "header",
+    "bold",
+    "italic",
+    "underline",
+    "strike",
+    "list",
+    "bullet",
+    "link",
+];
 
 const ListingsPage = () => {
     const [listings, setListings] = useState<Listing[]>([]);
@@ -75,7 +101,7 @@ const ListingsPage = () => {
         categoryId: "",
         location: "",
         address: "",
-        priceRange: "$$",
+        priceRange: "",
         status: "Draft",
         excerpt: "",
         content: "",
@@ -89,7 +115,9 @@ const ListingsPage = () => {
         seoDescription: "",
         seoKeywords: "",
         rating: 0,
-        reviewCount: 0
+        reviewCount: 0,
+        is_video: false,
+        video_url: ""
     });
 
     const { toast } = useToast();
@@ -158,7 +186,7 @@ const ListingsPage = () => {
                 categoryId: item.categoryId || (categories.length > 0 ? categories[0].id : ""),
                 location: item.location || "",
                 address: item.address || "",
-                priceRange: item.priceRange || "$$",
+                priceRange: item.priceRange || "",
                 status: item.status || "Draft",
                 excerpt: item.excerpt || "",
                 content: item.content || "",
@@ -172,7 +200,9 @@ const ListingsPage = () => {
                 seoDescription: item.seoDescription || "",
                 seoKeywords: item.seoKeywords || "",
                 rating: item.rating || 0,
-                reviewCount: item.reviewCount || 0
+                reviewCount: item.reviewCount || 0,
+                is_video: item.is_video || false,
+                video_url: item.video_url || ""
             });
         } else {
             setEditingItem(null);
@@ -182,7 +212,7 @@ const ListingsPage = () => {
                 categoryId: categories.length > 0 ? categories[0].id : "",
                 location: "",
                 address: "",
-                priceRange: "$$",
+                priceRange: "",
                 status: "Draft",
                 excerpt: "",
                 content: "",
@@ -196,7 +226,9 @@ const ListingsPage = () => {
                 seoDescription: "",
                 seoKeywords: "",
                 rating: 0,
-                reviewCount: 0
+                reviewCount: 0,
+                is_video: false,
+                video_url: ""
             });
         }
         setImageFile(null);
@@ -350,6 +382,8 @@ const ListingsPage = () => {
                 <Table>
                     <TableHeader>
                         <TableRow>
+                            <TableHead className="w-[80px]">Image</TableHead>
+                            <TableHead>Type</TableHead>
                             <TableHead>Title</TableHead>
                             <TableHead>Category</TableHead>
                             <TableHead>Location</TableHead>
@@ -361,7 +395,7 @@ const ListingsPage = () => {
                     <TableBody>
                         {isLoading ? (
                             <TableRow>
-                                <TableCell colSpan={6} className="text-center py-10">
+                                <TableCell colSpan={9} className="text-center py-10">
                                     <div className="flex items-center justify-center gap-2">
                                         <Loader2 className="h-5 w-5 animate-spin" />
                                         <span>Loading listings...</span>
@@ -370,13 +404,37 @@ const ListingsPage = () => {
                             </TableRow>
                         ) : listings.length === 0 ? (
                             <TableRow>
-                                <TableCell colSpan={6} className="text-center py-10 text-muted-foreground">
+                                <TableCell colSpan={9} className="text-center py-10 text-muted-foreground">
                                     No listings found. Create your first one!
                                 </TableCell>
                             </TableRow>
                         ) : (
                             listings.map((listing) => (
                                 <TableRow key={listing.id}>
+                                    <TableCell>
+                                        <div className="w-12 h-12 rounded-md overflow-hidden bg-stone-100 dark:bg-stone-800 flex items-center justify-center border border-stone-200 dark:border-stone-700">
+                                            {listing.featuredImage ? (
+                                                <img
+                                                    src={listing.featuredImage}
+                                                    alt={listing.title}
+                                                    className="w-full h-full object-cover"
+                                                />
+                                            ) : (
+                                                <ImageIcon className="w-5 h-5 text-stone-400" />
+                                            )}
+                                        </div>
+                                    </TableCell>
+                                    <TableCell>
+                                        {listing.is_video ? (
+                                            <Badge variant="secondary" className="bg-red-100 text-red-600 border-red-200">
+                                                <Video className="w-3 h-3 mr-1" /> Video
+                                            </Badge>
+                                        ) : (
+                                            <Badge variant="secondary" className="bg-blue-100 text-blue-600 border-blue-200">
+                                                <ImageIcon className="w-3 h-3 mr-1" /> Image
+                                            </Badge>
+                                        )}
+                                    </TableCell>
                                     <TableCell className="font-medium">
                                         <div className="flex flex-col text-black dark:text-white">
                                             <span>{listing.title}</span>
@@ -494,18 +552,14 @@ const ListingsPage = () => {
                                 </div>
                                 <div className="grid grid-cols-2 gap-4">
                                     <div className="grid gap-2">
-                                        <Label htmlFor="priceRange" className="text-black dark:text-white">Price Range</Label>
-                                        <select
+                                        <Label htmlFor="priceRange" className="text-black dark:text-white">Price</Label>
+                                        <Input
                                             id="priceRange"
-                                            className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring text-black dark:text-white"
                                             value={formData.priceRange}
                                             onChange={(e) => setFormData({ ...formData, priceRange: e.target.value })}
-                                        >
-                                            <option value="$">Low ($)</option>
-                                            <option value="$$">Medium ($$)</option>
-                                            <option value="$$$">High ($$$)</option>
-                                            <option value="$$$$">Luxury ($$$$)</option>
-                                        </select>
+                                            placeholder="e.g. $100 or 1,500"
+                                            className="text-black dark:text-white"
+                                        />
                                     </div>
                                     <div className="grid gap-2">
                                         <Label htmlFor="status" className="text-black dark:text-white">Status</Label>
@@ -576,6 +630,33 @@ const ListingsPage = () => {
                                     <Label htmlFor="googleMapUrl" className="text-black dark:text-white">Google Map Embed URL</Label>
                                     <Input id="googleMapUrl" value={formData.googleMapUrl} onChange={(e) => setFormData({ ...formData, googleMapUrl: e.target.value })} placeholder="https://www.google.com/maps/embed?..." className="text-black dark:text-white" />
                                 </div>
+                                <div className="space-y-4 pt-4 border-t dark:border-stone-800">
+                                    <div className="flex items-center space-x-2">
+                                        <input
+                                            type="checkbox"
+                                            id="is_video"
+                                            checked={formData.is_video}
+                                            onChange={(e) => setFormData({ ...formData, is_video: e.target.checked })}
+                                            className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
+                                        />
+                                        <Label htmlFor="is_video" className="text-black dark:text-white font-medium cursor-pointer">
+                                            This is a Video Listing
+                                        </Label>
+                                    </div>
+                                    {formData.is_video && (
+                                        <div className="grid gap-2 animate-in fade-in slide-in-from-top-1">
+                                            <Label htmlFor="video_url" className="text-black dark:text-white">Video URL (YouTube, Vimeo, etc.)</Label>
+                                            <Input
+                                                id="video_url"
+                                                value={formData.video_url}
+                                                onChange={(e) => setFormData({ ...formData, video_url: e.target.value })}
+                                                placeholder="https://www.youtube.com/watch?v=..."
+                                                className="text-black dark:text-white border-red-200 focus:border-red-500"
+                                            />
+                                            <p className="text-[10px] text-muted-foreground italic">Enter a direct link to your video content.</p>
+                                        </div>
+                                    )}
+                                </div>
                             </div>
 
                             {/* DESCRIPTION & SEO */}
@@ -591,15 +672,18 @@ const ListingsPage = () => {
                                         className="text-black dark:text-white"
                                     />
                                 </div>
-                                <div className="grid gap-2">
+                                <div className="grid gap-2 min-h-[250px] mb-12">
                                     <Label htmlFor="content" className="text-black dark:text-white">Full Content (Detail Page)</Label>
-                                    <Textarea
-                                        id="content"
-                                        className="min-h-[150px] text-black dark:text-white"
-                                        value={formData.content}
-                                        onChange={(e) => setFormData({ ...formData, content: e.target.value })}
-                                        placeholder="Write a detailed description of the listing..."
-                                    />
+                                    <div className="bg-white dark:bg-stone-800 text-black dark:text-white rounded-md overflow-hidden">
+                                        <ReactQuill
+                                            theme="snow"
+                                            value={formData.content}
+                                            onChange={(val) => setFormData({ ...formData, content: val })}
+                                            modules={QUILL_MODULES}
+                                            formats={QUILL_FORMATS}
+                                            className="h-[200px]"
+                                        />
+                                    </div>
                                 </div>
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 border-t dark:border-stone-800 pt-4 mt-2">
                                     <div className="grid gap-2">

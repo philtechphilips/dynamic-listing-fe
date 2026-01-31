@@ -39,9 +39,15 @@ interface Post {
   author_name?: string;
   author_profile_image?: string;
   user?: User;
+  author?: User;
   category?: Category;
   categories?: Category[];
   tags?: Tag[];
+  // Backend fields
+  featuredImage?: string;
+  createdAt?: string | Date;
+  updatedAt?: string | Date;
+  authorId?: string;
 }
 
 interface BlogCardProps {
@@ -224,12 +230,12 @@ export default function BlogCard({
     contentType = post.type || post.content_type || 'post';
 
     // Get image
-    image = post.featured_image_webp || post.featured_image || propImage;
+    image = post.featuredImage || post.featured_image_webp || post.featured_image || propImage;
 
     switch (contentType) {
       case 'post':
-        date = formatDate(post.published_at);
-        author = post.author_name || post.user?.name || 'Anonymous';
+        date = formatDate(post.published_at || post.createdAt);
+        author = post.author?.name || post.user?.name || post.author_name || 'Anonymous';
         authorImage = post.author_profile_image || '/images/profile-img.svg';
         category = post.category?.name || 'Blog';
         href = getContentRoute('post', post.slug);
@@ -246,7 +252,7 @@ export default function BlogCard({
         break;
 
       case 'podcast':
-        date = formatDate(post.published_at);
+        date = formatDate(post.published_at || post.createdAt);
         author = post.user?.name || 'Podcast Host';
         authorImage = '/images/profile-img.svg';
         category = post.category?.name || 'Podcast';
@@ -264,8 +270,8 @@ export default function BlogCard({
         break;
 
       default:
-        date = formatDate(post.published_at);
-        author = post.author_name || post.user?.name || 'Anonymous';
+        date = formatDate(post.published_at || post.createdAt);
+        author = post.author?.name || post.user?.name || post.author_name || 'Anonymous';
         authorImage = post.author_profile_image || '/images/profile-img.svg';
         category = post.category?.name || 'Tags';
         href = getContentRoute('post', post.slug);
@@ -289,7 +295,7 @@ export default function BlogCard({
         href={href}
         className="w-full flex md:flex-row flex-col gap-6 hover:opacity-90 transition-opacity"
       >
-        <div className="md:w-1/2 w-full h-full overflow-hidden rounded-lg relative">
+        <div className={`md:w-1/2 w-full ${imageHeight || 'h-[200px]'} overflow-hidden rounded-lg relative`}>
           <Image
             src={image}
             alt={title}
