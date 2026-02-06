@@ -1,3 +1,22 @@
+/**
+ * =============================================================================
+ * ITEM DETAIL PAGE
+ * =============================================================================
+ * 
+ * Dynamic page displaying full details of a single listing/item.
+ * This is a server component with SEO metadata support.
+ * 
+ * Features:
+ * - Full listing details (title, description, images, contact info)
+ * - Rating and review system
+ * - Comments section
+ * - Share functionality
+ * - Related listings
+ * - SEO metadata generation
+ * 
+ * @route /item/[slug]
+ */
+
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import Image from 'next/image';
@@ -28,6 +47,7 @@ import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 
+/** Base API URL for fetching listing data */
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8007/api/v1';
 
 // Helper types

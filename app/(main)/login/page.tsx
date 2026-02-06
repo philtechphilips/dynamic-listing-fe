@@ -1,3 +1,20 @@
+/**
+ * =============================================================================
+ * LOGIN PAGE
+ * =============================================================================
+ * 
+ * User authentication page supporting multiple login methods.
+ * 
+ * Features:
+ * - Email/password login
+ * - OTP (One-Time Password) login
+ * - Google OAuth login
+ * - Remember me functionality
+ * - Automatic redirect if already authenticated
+ * 
+ * @route /login
+ */
+
 'use client';
 
 import React, { useState, useEffect } from 'react';
@@ -13,8 +30,13 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 
+/** Available login methods */
 type LoginMethod = 'password' | 'otp';
 
+/**
+ * Login Page Component
+ * Handles user authentication with multiple methods.
+ */
 export default function LoginPage() {
   const [loginMethod, setLoginMethod] = useState<LoginMethod>('password');
   const [isLoading, setIsLoading] = useState(false);

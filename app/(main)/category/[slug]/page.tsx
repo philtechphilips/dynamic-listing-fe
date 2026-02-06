@@ -1,3 +1,20 @@
+/**
+ * =============================================================================
+ * CATEGORY PAGE
+ * =============================================================================
+ * 
+ * Dynamic page displaying listings filtered by category.
+ * 
+ * Features:
+ * - Display category details
+ * - List all listings in category
+ * - Pagination with "load more"
+ * - Sort options
+ * - Video and podcast support
+ * 
+ * @route /category/[slug]
+ */
+
 'use client';
 
 import { useParams } from 'next/navigation';
@@ -19,11 +36,16 @@ import {
 import PodcastCard from '@/components/PodcastCard';
 import PodcastPlayerModal from '@/components/PodcastPlayerModal';
 
+/** Base API URL for fetching category data */
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8007/api/v1";
 
-// Helper to normalize slugs for comparison (e.g., "Restaurants" -> "restaurants")
+/** Helper to normalize slugs for comparison (e.g., "Restaurants" -> "restaurants") */
 const normalizeSlug = (slug: string) => slug.toLowerCase();
 
+/**
+ * Category Page Component
+ * Displays listings filtered by the category slug.
+ */
 export default function CategoryPage() {
   const params = useParams();
   const slug = params.slug as string;

@@ -1,3 +1,19 @@
+/**
+ * =============================================================================
+ * VERIFY EMAIL PAGE
+ * =============================================================================
+ * 
+ * Email verification page that confirms a user's email address.
+ * Users are redirected here from the verification link in their email.
+ * 
+ * Features:
+ * - Token validation
+ * - Success/error state display
+ * - Redirect to login after verification
+ * 
+ * @route /verify-email?token=xxx
+ */
+
 'use client';
 
 import React, { Suspense, useEffect, useState } from 'react';
@@ -7,6 +23,10 @@ import { CheckCircle2, XCircle, Loader2 } from 'lucide-react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 
+/**
+ * Verify Email Content Component
+ * Handles the email verification logic.
+ */
 function VerifyEmailContent() {
     const searchParams = useSearchParams();
     const [status, setStatus] = useState<'loading' | 'success' | 'error'>('loading');

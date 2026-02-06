@@ -1,3 +1,21 @@
+/**
+ * =============================================================================
+ * ADMIN SINGLE USER PAGE
+ * =============================================================================
+ * 
+ * Detailed view of a single user's profile and activity for administrators.
+ * 
+ * Features:
+ * - Comprehensive user profile information
+ * - User activity charts (activity over time)
+ * - User badges and achievements display
+ * - Profile completion progress tracking
+ * - Recent transaction history
+ * - Interactive edit user modal
+ * 
+ * @route /admin/users/[username]
+ */
+
 import CardList from "@/components/CardList";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -21,6 +39,10 @@ import EditUser from "@/components/EditUser";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import AppLineChart from "@/components/AppLineChart";
 
+/**
+ * Single User Page Component
+ * Renders the detailed profile view for a specific user.
+ */
 const SingleUserPage = () => {
   return (
     <div className="">

@@ -1,3 +1,20 @@
+/**
+ * =============================================================================
+ * ADMIN APP-USERS PAGE
+ * =============================================================================
+ * 
+ * Admin page for managing regular application users (customers/public users).
+ * Allows monitoring user activity and status.
+ * 
+ * Features:
+ * - View all registered application users
+ * - Search users by name or email
+ * - Monitor user verification status
+ * - View user details and registration date
+ * 
+ * @route /admin/app-users
+ */
+
 "use client";
 
 import { useState, useEffect, useCallback } from "react";

@@ -1,5 +1,20 @@
+/**
+ * =============================================================================
+ * ABOUT US PAGE
+ * =============================================================================
+ * 
+ * Static page displaying information about the platform and company.
+ * Contains mission statement, founding story, and vision.
+ * 
+ * @route /about-us
+ */
+
 import React from 'react';
 
+/**
+ * About Us Page Component
+ * Renders the company information and mission statement.
+ */
 export default function AboutUsPage() {
     return (
         <div className="container mx-auto px-4 pt-32 pb-16 max-w-4xl">

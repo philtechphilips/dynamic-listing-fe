@@ -1,3 +1,20 @@
+/**
+ * =============================================================================
+ * SEARCH PAGE
+ * =============================================================================
+ * 
+ * Global search page for searching across all content types.
+ * 
+ * Features:
+ * - Search news articles
+ * - Search listings
+ * - Search videos
+ * - Tab-based filtering by content type
+ * - Query parameter support (?q=search_term)
+ * 
+ * @route /search?q=xxx
+ */
+
 'use client';
 
 import React, { useState, useEffect, Suspense } from 'react';
@@ -13,6 +30,10 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { Post, Listing, Podcast } from '@/types';
 
+/**
+ * Search Content Component
+ * Handles the search functionality and results display.
+ */
 function SearchContent() {
   const searchParams = useSearchParams();
   const router = useRouter();

@@ -1,3 +1,19 @@
+/**
+ * =============================================================================
+ * REGISTER PAGE
+ * =============================================================================
+ * 
+ * User registration page for creating new accounts.
+ * 
+ * Features:
+ * - Email/password registration with email verification
+ * - OTP (One-Time Password) registration
+ * - Google OAuth signup
+ * - Automatic redirect if already authenticated
+ * 
+ * @route /register
+ */
+
 'use client';
 
 import React, { useState, useEffect } from 'react';
@@ -12,8 +28,13 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 
+/** Available signup methods */
 type SignupMethod = 'password' | 'otp';
 
+/**
+ * Register Page Component
+ * Handles new user account creation.
+ */
 export default function RegisterPage() {
     const [signupMethod, setSignupMethod] = useState<SignupMethod>('password');
     const [isLoading, setIsLoading] = useState(false);

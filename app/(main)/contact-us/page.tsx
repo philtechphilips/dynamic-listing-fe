@@ -1,3 +1,19 @@
+/**
+ * =============================================================================
+ * CONTACT US PAGE
+ * =============================================================================
+ * 
+ * Contact form page for users to send messages to the support team.
+ * Includes form fields for name, email, subject, and message.
+ * 
+ * Features:
+ * - Contact form with validation
+ * - Contact information display (email, phone, address)
+ * - Loading state during submission
+ * 
+ * @route /contact-us
+ */
+
 'use client';
 
 import React, { useState } from 'react';
@@ -9,6 +25,10 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Separator } from "@/components/ui/separator";
 
+/**
+ * Contact Us Page Component
+ * Renders a contact form and company contact information.
+ */
 export default function ContactUsPage() {
     const [isLoading, setIsLoading] = useState(false);
 

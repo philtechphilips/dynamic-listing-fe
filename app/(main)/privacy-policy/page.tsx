@@ -1,5 +1,20 @@
+/**
+ * =============================================================================
+ * PRIVACY POLICY PAGE
+ * =============================================================================
+ * 
+ * Static page displaying the platform's privacy policy.
+ * Covers data collection, retention, sharing, and user rights.
+ * 
+ * @route /privacy-policy
+ */
+
 import React from 'react';
 
+/**
+ * Privacy Policy Page Component
+ * Renders the privacy policy content.
+ */
 export default function PrivacyPolicyPage() {
     return (
         <div className="container mx-auto px-4 pt-32 pb-16 max-w-4xl">

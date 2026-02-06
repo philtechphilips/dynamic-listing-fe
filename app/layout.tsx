@@ -1,3 +1,20 @@
+/**
+ * =============================================================================
+ * ROOT LAYOUT
+ * =============================================================================
+ * 
+ * The main layout wrapper for the entire application.
+ * Defines global fonts, styles, and context providers.
+ * 
+ * Global Providers:
+ * - GoogleAuthProvider: Google OAuth integration
+ * - AuthProvider: Application-wide auth state
+ * - ThemeProvider: Light/Dark mode management
+ * - Toaster: Application-wide notifications
+ * 
+ * @module fe/layout
+ */
+
 import type { Metadata } from "next";
 import { Geom, Lato } from "next/font/google";
 import "./fonts.css";

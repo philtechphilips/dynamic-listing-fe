@@ -1,3 +1,21 @@
+/**
+ * =============================================================================
+ * RESET PASSWORD PAGE
+ * =============================================================================
+ * 
+ * Password reset page for users who have received a reset link.
+ * Also used for admin invitations to set initial password.
+ * 
+ * Features:
+ * - Token validation
+ * - Password strength requirements (min 8 characters)
+ * - Password confirmation
+ * - Auto-login after successful reset
+ * - Role-based redirect (admin vs user)
+ * 
+ * @route /reset-password?token=xxx
+ */
+
 "use client";
 
 import { useState, useEffect, Suspense } from "react";
@@ -10,8 +28,13 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Lock, Eye, EyeOff, Loader2, CheckCircle, XCircle, ArrowLeft } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 
+/** Base API URL for authentication endpoints */
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8007";
 
+/**
+ * Reset Password Content Component
+ * Handles the password reset form logic.
+ */
 function ResetPasswordContent() {
     const searchParams = useSearchParams();
     const router = useRouter();

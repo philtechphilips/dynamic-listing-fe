@@ -1,3 +1,22 @@
+/**
+ * =============================================================================
+ * ADMIN LISTINGS PAGE
+ * =============================================================================
+ * 
+ * Admin page for managing business listings.
+ * Provides CRUD operations for all listings in the system.
+ * 
+ * Features:
+ * - View all listings with search and filter
+ * - Create new listings with rich text editor
+ * - Edit existing listings
+ * - Delete listings with confirmation
+ * - Toggle listing status (Published/Draft)
+ * - Image and video upload support
+ * 
+ * @route /admin/listings
+ */
+
 "use client";
 
 import { useState, useEffect, useCallback, useMemo } from "react";

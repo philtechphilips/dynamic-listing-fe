@@ -1,3 +1,18 @@
+/**
+ * =============================================================================
+ * FORGOT PASSWORD PAGE
+ * =============================================================================
+ * 
+ * Password recovery page that sends a reset link to user's email.
+ * 
+ * Features:
+ * - Email input for password recovery
+ * - Success state with confirmation message
+ * - Error handling and validation
+ * 
+ * @route /forgot-password
+ */
+
 "use client";
 
 import { useState } from "react";
@@ -8,8 +23,13 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
 import { Mail, ArrowLeft, Loader2, CheckCircle } from "lucide-react";
 
+/** Base API URL for authentication endpoints */
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8007";
 
+/**
+ * Forgot Password Page Component
+ * Handles password reset email requests.
+ */
 export default function ForgotPasswordPage() {
     const [email, setEmail] = useState("");
     const [isLoading, setIsLoading] = useState(false);

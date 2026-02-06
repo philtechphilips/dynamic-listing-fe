@@ -1,3 +1,20 @@
+/**
+ * =============================================================================
+ * USER COMMENTS PAGE
+ * =============================================================================
+ * 
+ * Dashboard page for managing user's comments.
+ * Displays all comments the user has submitted across listings.
+ * 
+ * Features:
+ * - View all user comments
+ * - Search comments
+ * - Delete comments with confirmation
+ * - Navigate to commented listings
+ * 
+ * @route /dashboard/comments
+ */
+
 "use client";
 
 import React, { useState, useEffect } from 'react';

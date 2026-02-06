@@ -1,3 +1,20 @@
+/**
+ * =============================================================================
+ * USER DASHBOARD PAGE
+ * =============================================================================
+ * 
+ * Main dashboard for authenticated users.
+ * Displays user activity summary and quick access to user content.
+ * 
+ * Features:
+ * - Statistics overview (reviews, comments count)
+ * - Recent reviews list
+ * - Recent comments list
+ * - Quick links to manage content
+ * 
+ * @route /dashboard
+ */
+
 "use client";
 
 import React, { useEffect, useState } from 'react';
@@ -18,6 +35,13 @@ import { useAuth } from '@/contexts/AuthContext';
 import { formatDistanceToNow } from 'date-fns';
 import { apiFetch, getAuthHeaders } from "@/lib/api";
 
+// ============================================================================
+// TYPE DEFINITIONS
+// ============================================================================
+
+/**
+ * Props for the StatCard component.
+ */
 interface StatCardProps {
     label: string;
     value: string | number;
@@ -26,6 +50,10 @@ interface StatCardProps {
     trend?: string;
 }
 
+/**
+ * StatCard Component
+ * Displays a single statistic with an icon.
+ */
 function StatCard({ label, value, icon: Icon, iconProps, trend }: StatCardProps) {
     return (
         <Card className="group hover:shadow-md transition-all duration-300 border-0">

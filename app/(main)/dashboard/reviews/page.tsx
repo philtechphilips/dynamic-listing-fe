@@ -1,3 +1,20 @@
+/**
+ * =============================================================================
+ * USER REVIEWS PAGE
+ * =============================================================================
+ * 
+ * Dashboard page for managing user's reviews.
+ * Displays all reviews the user has submitted across listings.
+ * 
+ * Features:
+ * - View all user reviews
+ * - Search reviews
+ * - Delete reviews with confirmation
+ * - Navigate to reviewed listings
+ * 
+ * @route /dashboard/reviews
+ */
+
 "use client";
 
 import React, { useState, useEffect } from 'react';
@@ -30,6 +47,13 @@ import {
 import { format } from 'date-fns';
 import { apiFetch, getAuthHeaders } from "@/lib/api";
 
+// ============================================================================
+// TYPE DEFINITIONS
+// ============================================================================
+
+/**
+ * Review object shape for dashboard display.
+ */
 interface Review {
     id: string;
     listing: string;

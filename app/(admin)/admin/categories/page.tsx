@@ -1,3 +1,21 @@
+/**
+ * =============================================================================
+ * ADMIN CATEGORIES PAGE
+ * =============================================================================
+ * 
+ * Admin page for managing listing categories.
+ * Categories are used to organize and filter listings.
+ * 
+ * Features:
+ * - View all categories with listing counts
+ * - Create new categories
+ * - Edit category details
+ * - Delete categories with confirmation
+ * - Search categories
+ * 
+ * @route /admin/categories
+ */
+
 "use client";
 
 import { useState, useEffect, useCallback } from "react";

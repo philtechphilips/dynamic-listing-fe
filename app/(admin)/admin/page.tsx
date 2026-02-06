@@ -1,3 +1,19 @@
+/**
+ * =============================================================================
+ * ADMIN DASHBOARD PAGE
+ * =============================================================================
+ * 
+ * The main landing page for authenticated admin users.
+ * Displays key statistics and recent activity for the platform.
+ * 
+ * Features:
+ * - Overview statistics (users, listings, news, categories counts)
+ * - Recent users list
+ * - Recent listings list
+ * 
+ * @route /admin
+ */
+
 "use client";
 
 import { useEffect, useState } from "react";
@@ -9,13 +25,22 @@ import { useAuth } from "@/contexts/AuthContext";
 import Link from "next/link";
 import { apiFetch, getAuthHeaders } from "@/lib/api";
 
+// ============================================================================
+// TYPE DEFINITIONS
+// ============================================================================
+
+/**
+ * Shape of the dashboard statistics returned from the API.
+ */
 interface DashboardStats {
+  /** Aggregate counts for key entities */
   counts: {
     users: number;
     listings: number;
     news: number;
     categories: number;
   };
+  /** Recent items lists for quick overview */
   lists: {
     recentUsers: Array<{
       id: string;
@@ -37,14 +62,32 @@ interface DashboardStats {
   };
 }
 
+// ============================================================================
+// COMPONENT
+// ============================================================================
+
+/**
+ * Admin Dashboard Component
+ * 
+ * Fetches and displays platform statistics and recent activity.
+ * Uses the global apiFetch utility for automatic 401 handling.
+ */
 const AdminDashboard = () => {
+  // State for dashboard data and loading status
   const [stats, setStats] = useState<DashboardStats | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const { user } = useAuth(); // Ensure we have auth context if needed for token handling
 
+  // Get auth context (user info available if needed)
+  const { user } = useAuth();
+
+  /**
+   * Fetch dashboard statistics on component mount.
+   * Uses apiFetch for automatic 401 handling (redirects to login if token invalid).
+   */
   useEffect(() => {
     const fetchStats = async () => {
       try {
+        // Use global apiFetch - handles 401 automatically
         const response = await apiFetch(`/admin/dashboard-stats`, {
           headers: getAuthHeaders(),
         });

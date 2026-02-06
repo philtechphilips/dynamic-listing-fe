@@ -1,3 +1,20 @@
+/**
+ * =============================================================================
+ * HOME PAGE
+ * =============================================================================
+ * 
+ * The main landing page of the application.
+ * Displays news articles, videos, and listings organized by category.
+ * 
+ * Features:
+ * - News section with headline support
+ * - Video listings with modal player
+ * - Category-based listing sections
+ * - Responsive design for mobile/desktop
+ * 
+ * @route /
+ */
+
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
@@ -32,6 +49,7 @@ import {
 } from '@/lib/mockData';
 import { Listing, NewsItem, Category } from '@/types';
 
+/** Base API URL for fetching data */
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8007/api/v1';
 
 export default function Home() {

@@ -1,3 +1,22 @@
+/**
+ * =============================================================================
+ * ADMIN NEWS PAGE
+ * =============================================================================
+ * 
+ * Admin page for managing news articles.
+ * Provides CRUD operations for all news content.
+ * 
+ * Features:
+ * - View all news articles with search
+ * - Create/edit news with rich text editor
+ * - Delete news articles with confirmation
+ * - Toggle news status (Published/Draft)
+ * - Mark articles as headlines
+ * - Image upload support
+ * 
+ * @route /admin/news
+ */
+
 "use client";
 
 import { useState, useEffect, useCallback } from "react";

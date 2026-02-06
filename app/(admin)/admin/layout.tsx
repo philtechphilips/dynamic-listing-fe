@@ -1,3 +1,20 @@
+/**
+ * =============================================================================
+ * ADMIN DASHBOARD LAYOUT
+ * =============================================================================
+ * 
+ * The layout wrapper for all admin-specific pages.
+ * Configures the admin dashboard workspace with sidebar and navigation.
+ * 
+ * Features:
+ * - Persistent administrative sidebar (AppSidebar)
+ * - Admin-specific navigation bar (AdminNavbar)
+ * - Authentication protection via AdminLayoutWrapper
+ * - Theme and font configuration for the admin panel
+ * 
+ * @module fe/admin/layout
+ */
+
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";

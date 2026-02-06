@@ -1,3 +1,20 @@
+/**
+ * =============================================================================
+ * ADMIN USERS PAGE
+ * =============================================================================
+ * 
+ * Admin page for managing admin user accounts.
+ * Allows creating and managing users with admin privileges.
+ * 
+ * Features:
+ * - View all admin users
+ * - Invite new admin users via email
+ * - Search admin users
+ * - View user details
+ * 
+ * @route /admin/users
+ */
+
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
