@@ -1,6 +1,6 @@
-import Link from 'next/link';
-import Image from 'next/image';
-import { Resource } from '@/types';
+import Link from "next/link";
+import Image from "next/image";
+import { Resource } from "@/types";
 
 interface ResourceCardProps {
   resource: Resource;
@@ -9,7 +9,7 @@ interface ResourceCardProps {
 // Helper function to limit string
 function limitString(str: string, limit: number): string {
   if (str.length <= limit) return str;
-  return str.substring(0, limit) + '...';
+  return str.substring(0, limit) + "...";
 }
 
 export default function ResourceCard({ resource }: ResourceCardProps) {
@@ -19,7 +19,7 @@ export default function ResourceCard({ resource }: ResourceCardProps) {
         {/* Image */}
         <div className="w-full h-[300px] overflow-hidden rounded-lg">
           <Image
-            src={resource.featured_image || '/images/music.svg'}
+            src={resource.featured_image || "/images/music.svg"}
             alt={resource.title}
             width={400}
             height={300}

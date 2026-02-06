@@ -1,4 +1,4 @@
-import Link from 'next/link';
+import Link from "next/link";
 
 interface SectionHeaderProps {
   title: string;
@@ -9,8 +9,8 @@ interface SectionHeaderProps {
 
 export default function SectionHeader({
   title,
-  viewAllHref = '#',
-  viewAllText = 'View all',
+  viewAllHref = "#",
+  viewAllText = "View all",
   showViewAll = true,
 }: SectionHeaderProps) {
   return (
@@ -32,7 +32,13 @@ export default function SectionHeader({
 }
 
 // Mobile View All Button component
-export function MobileViewAllButton({ href = '#', text = 'View all' }: { href?: string; text?: string }) {
+export function MobileViewAllButton({
+  href = "#",
+  text = "View all",
+}: {
+  href?: string;
+  text?: string;
+}) {
   return (
     <div className="mt-10 flex items-center justify-center">
       <Link

@@ -1,9 +1,9 @@
-import Link from 'next/link';
-import Image from 'next/image';
+import Link from "next/link";
+import Image from "next/image";
 
 // Types
-type ContentType = 'post' | 'event' | 'podcast' | 'resource';
-type LayoutType = 'default' | 'horizontal' | 'compact';
+type ContentType = "post" | "event" | "podcast" | "resource";
+type LayoutType = "default" | "horizontal" | "compact";
 
 interface Tag {
   id: string | number;
@@ -73,22 +73,26 @@ interface BlogCardProps {
 
 // Helper function to calculate read time
 function calculateReadTime(content?: string): string {
-  if (!content) return '1 mins Read';
-  const wordCount = content.replace(/<[^>]*>/g, '').split(/\s+/).length;
+  if (!content) return "1 mins Read";
+  const wordCount = content.replace(/<[^>]*>/g, "").split(/\s+/).length;
   return `${Math.ceil(wordCount / 200)} mins Read`;
 }
 
 // Helper function to format date
 function formatDate(date?: string | Date): string {
-  if (!date) return 'Coming Soon';
-  const d = typeof date === 'string' ? new Date(date) : date;
-  return d.toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' });
+  if (!date) return "Coming Soon";
+  const d = typeof date === "string" ? new Date(date) : date;
+  return d.toLocaleDateString("en-US", {
+    month: "short",
+    day: "2-digit",
+    year: "numeric",
+  });
 }
 
 // Helper function to limit string length
 function limitString(str: string, limit: number): string {
   if (str.length <= limit) return str;
-  return str.substring(0, limit) + '...';
+  return str.substring(0, limit) + "...";
 }
 
 // Helper function to get content route
@@ -97,17 +101,29 @@ function getContentRoute(type: ContentType, slug: string): string {
 }
 
 // Play button overlay component for podcasts
-function PlayButton({ size = 'lg', onClick }: { size?: 'sm' | 'lg'; onClick: (e: React.MouseEvent) => void }) {
-  const sizeClasses = size === 'lg' ? 'w-16 h-16' : 'w-12 h-12';
-  const iconSize = size === 'lg' ? 'w-6 h-6' : 'w-4 h-4';
+function PlayButton({
+  size = "lg",
+  onClick,
+}: {
+  size?: "sm" | "lg";
+  onClick: (e: React.MouseEvent) => void;
+}) {
+  const sizeClasses = size === "lg" ? "w-16 h-16" : "w-12 h-12";
+  const iconSize = size === "lg" ? "w-6 h-6" : "w-4 h-4";
 
   return (
     <button
       onClick={onClick}
       className="absolute inset-0 flex items-center justify-center bg-black/30 hover:bg-black/50 transition-all duration-200 rounded-lg group"
     >
-      <div className={`${sizeClasses} bg-white/90 rounded-full flex items-center justify-center hover:bg-white transition-all duration-200 group-hover:scale-110`}>
-        <svg className={`${iconSize} text-gray-900 ml-1`} fill="currentColor" viewBox="0 0 24 24">
+      <div
+        className={`${sizeClasses} bg-white/90 rounded-full flex items-center justify-center hover:bg-white transition-all duration-200 group-hover:scale-110`}
+      >
+        <svg
+          className={`${iconSize} text-gray-900 ml-1`}
+          fill="currentColor"
+          viewBox="0 0 24 24"
+        >
           <path d="M8 5v14l11-7z" />
         </svg>
       </div>
@@ -120,15 +136,15 @@ function AuthorAvatar({
   user,
   authorImage,
   author,
-  size = 'md'
+  size = "md",
 }: {
   user?: User;
   authorImage?: string;
   author: string;
-  size?: 'sm' | 'md';
+  size?: "sm" | "md";
 }) {
-  const sizeClasses = size === 'md' ? 'w-10 h-10' : 'w-8 h-8';
-  const textSize = size === 'md' ? 'text-sm' : 'text-xs';
+  const sizeClasses = size === "md" ? "w-10 h-10" : "w-8 h-8";
+  const textSize = size === "md" ? "text-sm" : "text-xs";
 
   const imageSrc = user?.profile_image_url || user?.image;
   if (imageSrc) {
@@ -136,20 +152,20 @@ function AuthorAvatar({
       <Image
         src={imageSrc}
         alt={author}
-        width={size === 'md' ? 40 : 32}
-        height={size === 'md' ? 40 : 32}
+        width={size === "md" ? 40 : 32}
+        height={size === "md" ? 40 : 32}
         className={`${sizeClasses} rounded-full object-cover`}
       />
     );
   }
 
-  if (authorImage && authorImage !== '/images/profile-img.svg') {
+  if (authorImage && authorImage !== "/images/profile-img.svg") {
     return (
       <Image
         src={authorImage}
         alt={author}
-        width={size === 'md' ? 40 : 32}
-        height={size === 'md' ? 40 : 32}
+        width={size === "md" ? 40 : 32}
+        height={size === "md" ? 40 : 32}
         className={`${sizeClasses} rounded-full object-cover`}
       />
     );
@@ -158,7 +174,9 @@ function AuthorAvatar({
   return (
     <div
       className={`${sizeClasses} rounded-full flex items-center justify-center`}
-      style={{ background: 'linear-gradient(135deg, #D61818 0%, #6366f1 100%)' }}
+      style={{
+        background: "linear-gradient(135deg, #D61818 0%, #6366f1 100%)",
+      }}
     >
       <span className={`text-white font-bold ${textSize}`}>
         {user?.initials || author.charAt(0).toUpperCase()}
@@ -168,7 +186,12 @@ function AuthorAvatar({
 }
 
 // Tags component
-function TagsList({ tags, category, showTags, showCategory }: {
+function TagsList({
+  tags,
+  category,
+  showTags,
+  showCategory,
+}: {
   tags?: Tag[];
   category: string;
   showTags: boolean;
@@ -178,7 +201,10 @@ function TagsList({ tags, category, showTags, showCategory }: {
     return (
       <div className="flex items-center gap-2 flex-wrap">
         {tags.map((tag) => (
-          <div key={tag.id} className="flex items-center py-1 px-2 bg-primary/10 rounded-md w-fit">
+          <div
+            key={tag.id}
+            className="flex items-center py-1 px-2 bg-primary/10 rounded-md w-fit"
+          >
             <p className="text-primary text-sm font-medium">{tag.name}</p>
           </div>
         ))}
@@ -199,19 +225,20 @@ function TagsList({ tags, category, showTags, showCategory }: {
 
 export default function BlogCard({
   post,
-  image: propImage = '/images/music.svg',
-  date: propDate = 'June 12, 2025',
-  readTime: propReadTime = '3 mins Read',
-  category: propCategory = 'Tags',
-  title: propTitle = '69 Discovery: 12 Politically-Conscious Afrobeats Songs You Should Listen To',
-  author: propAuthor = 'Stephanie white',
-  authorImage: propAuthorImage = '',
-  href: propHref = '#',
-  layout = 'default',
+  image: propImage = "/images/music.svg",
+  date: propDate = "June 12, 2025",
+  readTime: propReadTime = "3 mins Read",
+  category: propCategory = "Tags",
+  title:
+    propTitle = "69 Discovery: 12 Politically-Conscious Afrobeats Songs You Should Listen To",
+  author: propAuthor = "Stephanie white",
+  authorImage: propAuthorImage = "",
+  href: propHref = "#",
+  layout = "default",
   showCategory = true,
   showAuthor = true,
   showReadTime = true,
-  imageHeight = 'h-full',
+  imageHeight = "h-full",
   showTags = false,
   showHeadlineBadge = false,
   onPodcastPlay,
@@ -225,60 +252,76 @@ export default function BlogCard({
   let author = propAuthor;
   let authorImage = propAuthorImage;
   let href = propHref;
-  let excerpt = '';
-  let contentType: ContentType = 'post';
+  let excerpt = "";
+  let contentType: ContentType = "post";
 
   if (post) {
     title = post.title;
-    excerpt = post.excerpt || '';
-    contentType = post.type || post.content_type || 'post';
+    excerpt = post.excerpt || "";
+    contentType = post.type || post.content_type || "post";
 
     // Get image
-    image = post.featuredImage || post.featured_image_webp || post.featured_image || propImage;
+    image =
+      post.featuredImage ||
+      post.featured_image_webp ||
+      post.featured_image ||
+      propImage;
 
     switch (contentType) {
-      case 'post':
+      case "post":
         date = formatDate(post.published_at || post.createdAt);
-        author = post.author?.name || post.user?.name || post.author_name || 'Anonymous';
-        authorImage = post.author_profile_image || post.author?.image || post.user?.image || '/images/profile-img.svg';
-        category = post.category?.name || 'Blog';
-        href = getContentRoute('post', post.slug);
+        author =
+          post.author?.name ||
+          post.user?.name ||
+          post.author_name ||
+          "Anonymous";
+        authorImage =
+          post.author_profile_image ||
+          post.author?.image ||
+          post.user?.image ||
+          "/images/profile-img.svg";
+        category = post.category?.name || "Blog";
+        href = getContentRoute("post", post.slug);
         readTime = calculateReadTime(post.content);
         break;
 
-      case 'event':
-        date = formatDate(post.event_date_time) || 'TBD';
-        author = post.user?.name || 'Event Organizer';
-        authorImage = '/images/profile-img.svg';
-        category = post.category?.name || 'Event';
-        href = getContentRoute('event', post.slug);
-        readTime = 'Event';
+      case "event":
+        date = formatDate(post.event_date_time) || "TBD";
+        author = post.user?.name || "Event Organizer";
+        authorImage = "/images/profile-img.svg";
+        category = post.category?.name || "Event";
+        href = getContentRoute("event", post.slug);
+        readTime = "Event";
         break;
 
-      case 'podcast':
+      case "podcast":
         date = formatDate(post.published_at || post.createdAt);
-        author = post.user?.name || 'Podcast Host';
-        authorImage = '/images/profile-img.svg';
-        category = post.category?.name || 'Podcast';
-        href = getContentRoute('podcast', post.slug);
-        readTime = post.reading_time ? `${post.reading_time} mins` : 'Podcast';
+        author = post.user?.name || "Podcast Host";
+        authorImage = "/images/profile-img.svg";
+        category = post.category?.name || "Podcast";
+        href = getContentRoute("podcast", post.slug);
+        readTime = post.reading_time ? `${post.reading_time} mins` : "Podcast";
         break;
 
-      case 'resource':
-        date = formatDate(post.created_at) || 'Available';
-        author = post.user?.name || 'Resource Provider';
-        authorImage = '/images/profile-img.svg';
-        category = post.categories?.[0]?.name || 'Resource';
-        href = getContentRoute('resource', post.slug);
-        readTime = 'Resource';
+      case "resource":
+        date = formatDate(post.created_at) || "Available";
+        author = post.user?.name || "Resource Provider";
+        authorImage = "/images/profile-img.svg";
+        category = post.categories?.[0]?.name || "Resource";
+        href = getContentRoute("resource", post.slug);
+        readTime = "Resource";
         break;
 
       default:
         date = formatDate(post.published_at || post.createdAt);
-        author = post.author?.name || post.user?.name || post.author_name || 'Anonymous';
-        authorImage = post.author_profile_image || '/images/profile-img.svg';
-        category = post.category?.name || 'Tags';
-        href = getContentRoute('post', post.slug);
+        author =
+          post.author?.name ||
+          post.user?.name ||
+          post.author_name ||
+          "Anonymous";
+        authorImage = post.author_profile_image || "/images/profile-img.svg";
+        category = post.category?.name || "Tags";
+        href = getContentRoute("post", post.slug);
         readTime = calculateReadTime(post.content);
     }
   }
@@ -290,11 +333,11 @@ export default function BlogCard({
     }
   };
 
-  const isPodcast = post?.video_url && contentType === 'podcast';
+  const isPodcast = post?.video_url && contentType === "podcast";
 
   // Horizontal Layout
-  if (layout === 'horizontal') {
-    const imageMatchesContent = imageHeight === 'h-full';
+  if (layout === "horizontal") {
+    const imageMatchesContent = imageHeight === "h-full";
     return (
       <Link
         href={href}
@@ -303,15 +346,15 @@ export default function BlogCard({
         <div
           className={
             imageMatchesContent
-              ? 'md:w-1/2 w-full min-h-[200px] md:min-h-0 overflow-hidden rounded-lg relative shrink-0'
-              : `md:w-1/2 w-full ${imageHeight || 'h-[200px]'} overflow-hidden rounded-lg relative`
+              ? "md:w-1/2 w-full min-h-[200px] md:min-h-0 overflow-hidden rounded-lg relative shrink-0"
+              : `md:w-1/2 w-full ${imageHeight || "h-[200px]"} overflow-hidden rounded-lg relative`
           }
         >
           <Image
             src={image}
             alt={title}
             fill
-            className={`object-cover scale-100 hover:scale-105 transition-all duration-500 ${imageMatchesContent ? 'w-full h-full' : `w-full ${imageHeight}`}`}
+            className={`object-cover scale-100 hover:scale-105 transition-all duration-500 ${imageMatchesContent ? "w-full h-full" : `w-full ${imageHeight}`}`}
           />
           {isPodcast && <PlayButton onClick={handlePodcastPlay} />}
           {showHeadlineBadge && (
@@ -323,7 +366,12 @@ export default function BlogCard({
 
         <div className="flex flex-col md:w-1/2 w-full md:min-w-0">
           <div className="md:mb-4 mb-0">
-            <TagsList tags={post?.tags} category={category} showTags={showTags} showCategory={showCategory} />
+            <TagsList
+              tags={post?.tags}
+              category={category}
+              showTags={showTags}
+              showCategory={showCategory}
+            />
           </div>
 
           {showReadTime && (
@@ -346,7 +394,11 @@ export default function BlogCard({
 
           {showAuthor && (
             <div className="flex items-center gap-2 mt-6">
-              <AuthorAvatar user={post?.author || post?.user} authorImage={authorImage} author={author} />
+              <AuthorAvatar
+                user={post?.author || post?.user}
+                authorImage={authorImage}
+                author={author}
+              />
               <p className="font-medium text-sm text-foreground">{author}</p>
             </div>
           )}
@@ -356,9 +408,12 @@ export default function BlogCard({
   }
 
   // Compact Layout
-  if (layout === 'compact') {
+  if (layout === "compact") {
     return (
-      <Link href={href} className="w-full block hover:opacity-90 transition-opacity">
+      <Link
+        href={href}
+        className="w-full block hover:opacity-90 transition-opacity"
+      >
         <div className="w-full overflow-hidden rounded-lg relative">
           <Image
             src={image}
@@ -376,7 +431,12 @@ export default function BlogCard({
         </div>
 
         <div className="mt-4">
-          <TagsList tags={post?.tags} category={category} showTags={showTags} showCategory={showCategory} />
+          <TagsList
+            tags={post?.tags}
+            category={category}
+            showTags={showTags}
+            showCategory={showCategory}
+          />
         </div>
 
         <h5 className="font-clash text-foreground font-semibold text-lg mt-4">
@@ -393,7 +453,12 @@ export default function BlogCard({
 
         {showAuthor && (
           <div className="flex items-center gap-2 mt-4">
-            <AuthorAvatar user={post?.author || post?.user} authorImage={authorImage} author={author} size="sm" />
+            <AuthorAvatar
+              user={post?.author || post?.user}
+              authorImage={authorImage}
+              author={author}
+              size="sm"
+            />
             <p className="font-medium text-sm text-foreground">{author}</p>
           </div>
         )}
@@ -403,8 +468,13 @@ export default function BlogCard({
 
   // Default Layout
   return (
-    <Link href={href} className="w-full h-full flex flex-col hover:opacity-90 transition-opacity">
-      <div className={`w-full overflow-hidden rounded-lg relative ${imageHeight === 'h-full' ? 'flex-1' : imageHeight}`}>
+    <Link
+      href={href}
+      className="w-full h-full flex flex-col hover:opacity-90 transition-opacity"
+    >
+      <div
+        className={`w-full overflow-hidden rounded-lg relative ${imageHeight === "h-full" ? "flex-1" : imageHeight}`}
+      >
         <Image
           src={image}
           alt={title}
@@ -427,7 +497,12 @@ export default function BlogCard({
             <p>{readTime}</p>
           </div>
         )}
-        <TagsList tags={post?.tags} category={category} showTags={showTags} showCategory={showCategory} />
+        <TagsList
+          tags={post?.tags}
+          category={category}
+          showTags={showTags}
+          showCategory={showCategory}
+        />
       </div>
 
       <h5 className="font-clash text-foreground font-semibold text-2xl mt-4">
@@ -442,7 +517,11 @@ export default function BlogCard({
 
       {showAuthor && (
         <div className="flex items-center gap-2 mt-6">
-          <AuthorAvatar user={post?.author || post?.user} authorImage={authorImage} author={author} />
+          <AuthorAvatar
+            user={post?.author || post?.user}
+            authorImage={authorImage}
+            author={author}
+          />
           <p className="font-medium text-sm text-foreground">{author}</p>
         </div>
       )}

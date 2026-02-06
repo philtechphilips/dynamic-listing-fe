@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from 'react';
-import { Share2, Check, Link2, Copy } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { useState } from "react";
+import { Share2, Check, Link2, Copy } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 export default function ShareActions({ title }: { title: string }) {
   const [showTooltip, setShowTooltip] = useState(false);
@@ -56,7 +56,7 @@ export default function ShareActions({ title }: { title: string }) {
             </>
           )}
         </span>
-        
+
         {/* Animated background on hover */}
         <div className="absolute inset-0 bg-gradient-to-r from-primary/5 to-primary/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
       </Button>

@@ -1,8 +1,14 @@
-import React, { ButtonHTMLAttributes, ReactNode } from 'react';
+import React, { ButtonHTMLAttributes, ReactNode } from "react";
 
-type ButtonVariant = 'primary' | 'secondary' | 'danger' | 'success' | 'warning' | 'info';
-type ButtonSize = 'sm' | 'md' | 'lg';
-type IconPosition = 'left' | 'right';
+type ButtonVariant =
+  | "primary"
+  | "secondary"
+  | "danger"
+  | "success"
+  | "warning"
+  | "info";
+type ButtonSize = "sm" | "md" | "lg";
+type IconPosition = "left" | "right";
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: ButtonVariant;
@@ -13,32 +19,38 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   children: ReactNode;
 }
 
-const baseClasses = 'inline-flex items-center justify-center font-medium rounded-xl transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed';
+const baseClasses =
+  "inline-flex items-center justify-center font-medium rounded-xl transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed";
 
 const sizeClasses: Record<ButtonSize, string> = {
-  sm: 'px-3 py-1.5 text-xs',
-  md: 'px-4 py-2.5 text-sm',
-  lg: 'px-6 py-3 text-base'
+  sm: "px-3 py-1.5 text-xs",
+  md: "px-4 py-2.5 text-sm",
+  lg: "px-6 py-3 text-base",
 };
 
 const variantClasses: Record<ButtonVariant, string> = {
-  primary: 'bg-gray-600 text-white hover:bg-gray-700 focus:ring-gray-500 shadow-sm hover:shadow-md',
-  secondary: 'bg-white text-gray-700 border border-gray-200 hover:bg-gray-50 focus:ring-gray-500',
-  danger: 'bg-red-600 text-white hover:bg-red-700 focus:ring-red-500 shadow-sm hover:shadow-md',
-  success: 'bg-green-600 text-white hover:bg-green-700 focus:ring-green-500 shadow-sm hover:shadow-md',
-  warning: 'bg-amber-600 text-white hover:bg-amber-700 focus:ring-amber-500 shadow-sm hover:shadow-md',
-  info: 'bg-blue-600 text-white hover:bg-blue-700 focus:ring-blue-500 shadow-sm hover:shadow-md'
+  primary:
+    "bg-gray-600 text-white hover:bg-gray-700 focus:ring-gray-500 shadow-sm hover:shadow-md",
+  secondary:
+    "bg-white text-gray-700 border border-gray-200 hover:bg-gray-50 focus:ring-gray-500",
+  danger:
+    "bg-red-600 text-white hover:bg-red-700 focus:ring-red-500 shadow-sm hover:shadow-md",
+  success:
+    "bg-green-600 text-white hover:bg-green-700 focus:ring-green-500 shadow-sm hover:shadow-md",
+  warning:
+    "bg-amber-600 text-white hover:bg-amber-700 focus:ring-amber-500 shadow-sm hover:shadow-md",
+  info: "bg-blue-600 text-white hover:bg-blue-700 focus:ring-blue-500 shadow-sm hover:shadow-md",
 };
 
 export default function Button({
-  type = 'button',
-  variant = 'primary',
-  size = 'md',
+  type = "button",
+  variant = "primary",
+  size = "md",
   disabled = false,
   loading = false,
   icon,
-  iconPosition = 'left',
-  className = '',
+  iconPosition = "left",
+  className = "",
   children,
   ...props
 }: ButtonProps) {
@@ -73,12 +85,12 @@ export default function Button({
           />
         </svg>
       ) : (
-        icon && iconPosition === 'left' && <span className="mr-2">{icon}</span>
+        icon && iconPosition === "left" && <span className="mr-2">{icon}</span>
       )}
 
       <span>{children}</span>
 
-      {icon && iconPosition === 'right' && !loading && (
+      {icon && iconPosition === "right" && !loading && (
         <span className="ml-2">{icon}</span>
       )}
     </button>

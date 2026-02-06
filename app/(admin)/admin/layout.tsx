@@ -2,16 +2,16 @@
  * =============================================================================
  * ADMIN DASHBOARD LAYOUT
  * =============================================================================
- * 
+ *
  * The layout wrapper for all admin-specific pages.
  * Configures the admin dashboard workspace with sidebar and navigation.
- * 
+ *
  * Features:
  * - Persistent administrative sidebar (AppSidebar)
  * - Admin-specific navigation bar (AdminNavbar)
  * - Authentication protection via AdminLayoutWrapper
  * - Theme and font configuration for the admin panel
- * 
+ *
  * @module fe/admin/layout
  */
 
@@ -44,12 +44,13 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-
-  const cookieStore = await cookies()
-  const defaultOpen = cookieStore.get("sidebar_state")?.value === "true"
+  const cookieStore = await cookies();
+  const defaultOpen = cookieStore.get("sidebar_state")?.value === "true";
 
   return (
-    <div className={`${geistSans.variable} ${geistMono.variable} antialiased flex min-h-screen w-full admin-root`}>
+    <div
+      className={`${geistSans.variable} ${geistMono.variable} antialiased flex min-h-screen w-full admin-root`}
+    >
       <AdminLayoutWrapper>
         <SidebarProvider defaultOpen={defaultOpen}>
           <AppSidebar />

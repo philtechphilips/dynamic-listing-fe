@@ -545,7 +545,7 @@ export const topRestaurants: Listing[] = [
     tags: [
       { id: 1, name: "Fine Dining", slug: "fine-dining" },
       { id: 101, name: "Romantic", slug: "romantic" },
-      { id: 102, name: "Fusion", slug: "fusion" }
+      { id: 102, name: "Fusion", slug: "fusion" },
     ],
     created_at: "2025-06-01T10:00:00Z",
     seo_title: "The Gourmet Kitchen - Best Fine Dining Restaurant in Lagos",
@@ -557,7 +557,8 @@ export const topRestaurants: Listing[] = [
     phone: "+234 800 123 4567",
     email: "reservations@thegourmetkitchen.com",
     opening_hours: "Mon-Sun: 11:00 AM - 11:00 PM",
-    google_map_url: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3963.952912260219!2d3.375295414770757!3d6.527631695278783!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x103b8b2ae68280c1%3A0xdc939f243026a798!2sLagos%2C%20Nigeria!5e0!3m2!1sen!2sng!4v1626078726000!5m2!1sen!2sng",
+    google_map_url:
+      "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3963.952912260219!2d3.375295414770757!3d6.527631695278783!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x103b8b2ae68280c1%3A0xdc939f243026a798!2sLagos%2C%20Nigeria!5e0!3m2!1sen!2sng!4v1626078726000!5m2!1sen!2sng",
   },
   {
     id: 302,
@@ -580,7 +581,7 @@ export const topRestaurants: Listing[] = [
     tags: [
       { id: 2, name: "Fusion", slug: "fusion" },
       { id: 103, name: "Spicy", slug: "spicy" },
-      { id: 104, name: "Casual", slug: "casual" }
+      { id: 104, name: "Casual", slug: "casual" },
     ],
     created_at: "2025-06-02T10:00:00Z",
     seo_title: "Spice Route Bistro - Indian-African Fusion Restaurant Nairobi",
@@ -696,7 +697,7 @@ export const topMovies: Listing[] = [
     tags: [
       { id: 1, name: "Animation", slug: "animation" },
       { id: 105, name: "Family", slug: "family" },
-      { id: 106, name: "Adventure", slug: "adventure" }
+      { id: 106, name: "Adventure", slug: "adventure" },
     ],
     created_at: "2025-06-10T10:00:00Z",
     seo_title: "The Lion King: Legacy - Best Animated Movie 2025",
@@ -796,11 +797,12 @@ export const topElectricians: Listing[] = [
     location: "Makati",
     category: "Electrical Services",
     price_range: "$$",
-    google_map_url: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d15856.88569502795!2d3.375295414770757!3d6.527631695278783!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x103b8b2ae68280c1%3A0xdc939f243026a798!2sLagos%2C%20Nigeria!5e0!3m2!1sen!2sng!4v1626078726000!5m2!1sen!2sng",
+    google_map_url:
+      "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d15856.88569502795!2d3.375295414770757!3d6.527631695278783!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x103b8b2ae68280c1%3A0xdc939f243026a798!2sLagos%2C%20Nigeria!5e0!3m2!1sen!2sng!4v1626078726000!5m2!1sen!2sng",
     tags: [
       { id: 1, name: "Residential", slug: "residential" },
       { id: 107, name: "Commercial", slug: "commercial" },
-      { id: 108, name: "Licensed", slug: "licensed" }
+      { id: 108, name: "Licensed", slug: "licensed" },
     ],
     created_at: "2025-06-01T10:00:00Z",
     seo_title: "Pro Electric Services - Best Electrician Lagos",
@@ -917,7 +919,7 @@ export const topHotels: Listing[] = [
     tags: [
       { id: 1, name: "Beachfront", slug: "beachfront" },
       { id: 109, name: "Spa", slug: "spa" },
-      { id: 110, name: "Pool", slug: "pool" }
+      { id: 110, name: "Pool", slug: "pool" },
     ],
     created_at: "2025-06-01T10:00:00Z",
     seo_title: "Grand African Resort - Best Luxury Hotel Lagos",
@@ -1018,7 +1020,7 @@ export const topGyms: Listing[] = [
     tags: [
       { id: 1, name: "Premium", slug: "premium" },
       { id: 111, name: "Classes", slug: "classes" },
-      { id: 112, name: "Personal Training", slug: "personal-training" }
+      { id: 112, name: "Personal Training", slug: "personal-training" },
     ],
     created_at: "2025-06-01T10:00:00Z",
     seo_title: "FitZone Premium Gym - Best Gym Lagos",
@@ -1134,7 +1136,7 @@ export const topSalons: Listing[] = [
     tags: [
       { id: 1, name: "Hair", slug: "hair" },
       { id: 113, name: "Beauty", slug: "beauty" },
-      { id: 114, name: "Coloring", slug: "coloring" }
+      { id: 114, name: "Coloring", slug: "coloring" },
     ],
     created_at: "2025-06-01T10:00:00Z",
     seo_title: "Glamour Hair & Beauty Salon - Best Hair Salon Lagos",
@@ -1250,7 +1252,7 @@ export const topPlumbers: Listing[] = [
     tags: [
       { id: 1, name: "Emergency", slug: "emergency" },
       { id: 115, name: "Repairs", slug: "repairs" },
-      { id: 116, name: "Maintenance", slug: "maintenance" }
+      { id: 116, name: "Maintenance", slug: "maintenance" },
     ],
     created_at: "2025-06-01T10:00:00Z",
     seo_title: "Reliable Plumbing Services - Best Plumber Lagos",

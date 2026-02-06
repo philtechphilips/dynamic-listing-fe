@@ -2,16 +2,16 @@
  * =============================================================================
  * ADMIN USERS PAGE
  * =============================================================================
- * 
+ *
  * Admin page for managing admin user accounts.
  * Allows creating and managing users with admin privileges.
- * 
+ *
  * Features:
  * - View all admin users
  * - Invite new admin users via email
  * - Search admin users
  * - View user details
- * 
+ *
  * @route /admin/users
  */
 
@@ -198,7 +198,7 @@ const UsersPage = () => {
         {
           method: "POST",
           headers: getAuthHeaders(),
-        }
+        },
       );
 
       const data = await response.json();
@@ -224,7 +224,7 @@ const UsersPage = () => {
   const filteredUsers = users.filter(
     (user) =>
       user.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      user.email.toLowerCase().includes(searchQuery.toLowerCase())
+      user.email.toLowerCase().includes(searchQuery.toLowerCase()),
   );
 
   return (
@@ -233,7 +233,8 @@ const UsersPage = () => {
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Admin Users</h1>
           <p className="text-muted-foreground">
-            Manage administrator accounts. New admins will receive an invitation email to set their password.
+            Manage administrator accounts. New admins will receive an invitation
+            email to set their password.
           </p>
         </div>
         <Button onClick={() => handleOpenModal()}>
@@ -276,8 +277,13 @@ const UsersPage = () => {
               </TableRow>
             ) : filteredUsers.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={5} className="text-center py-10 text-muted-foreground">
-                  {searchQuery ? "No admins found matching your search" : "No admin users yet. Add your first admin!"}
+                <TableCell
+                  colSpan={5}
+                  className="text-center py-10 text-muted-foreground"
+                >
+                  {searchQuery
+                    ? "No admins found matching your search"
+                    : "No admin users yet. Add your first admin!"}
                 </TableCell>
               </TableRow>
             ) : (
@@ -296,7 +302,11 @@ const UsersPage = () => {
                   </TableCell>
                   <TableCell>{user.email}</TableCell>
                   <TableCell>
-                    <Badge variant={user.status === "Active" ? "default" : "secondary"}>
+                    <Badge
+                      variant={
+                        user.status === "Active" ? "default" : "secondary"
+                      }
+                    >
                       {user.status}
                     </Badge>
                   </TableCell>
@@ -333,7 +343,6 @@ const UsersPage = () => {
                       >
                         <Trash2 className="h-4 w-4" />
                       </Button>
-
                     </div>
                   </TableCell>
                 </TableRow>
@@ -346,7 +355,9 @@ const UsersPage = () => {
       <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>{editingUser ? "Edit Admin" : "Add New Admin"}</DialogTitle>
+            <DialogTitle>
+              {editingUser ? "Edit Admin" : "Add New Admin"}
+            </DialogTitle>
             <DialogDescription>
               {editingUser
                 ? "Modify the admin's information below."
@@ -359,7 +370,9 @@ const UsersPage = () => {
               <Input
                 id="name"
                 value={formData.name}
-                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, name: e.target.value })
+                }
                 placeholder="John Doe"
                 disabled={isSubmitting}
               />
@@ -370,19 +383,26 @@ const UsersPage = () => {
                 id="email"
                 type="email"
                 value={formData.email}
-                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, email: e.target.value })
+                }
                 placeholder="john@example.com"
                 disabled={isSubmitting}
               />
             </div>
             {!editingUser && (
               <p className="text-sm text-muted-foreground bg-muted p-3 rounded-md">
-                📧 An invitation email will be sent to this address with instructions to set their password.
+                📧 An invitation email will be sent to this address with
+                instructions to set their password.
               </p>
             )}
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setIsModalOpen(false)} disabled={isSubmitting}>
+            <Button
+              variant="outline"
+              onClick={() => setIsModalOpen(false)}
+              disabled={isSubmitting}
+            >
               Cancel
             </Button>
             <Button onClick={handleSave} disabled={isSubmitting}>

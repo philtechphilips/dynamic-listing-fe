@@ -2,9 +2,9 @@
  * =============================================================================
  * ADMIN SINGLE USER PAGE
  * =============================================================================
- * 
+ *
  * Detailed view of a single user's profile and activity for administrators.
- * 
+ *
  * Features:
  * - Comprehensive user profile information
  * - User activity charts (activity over time)
@@ -12,7 +12,7 @@
  * - Profile completion progress tracking
  * - Recent transaction history
  * - Interactive edit user modal
- * 
+ *
  * @route /admin/users/[username]
  */
 

@@ -2,34 +2,34 @@
  * =============================================================================
  * HOME PAGE
  * =============================================================================
- * 
+ *
  * The main landing page of the application.
  * Displays news articles, videos, and listings organized by category.
- * 
+ *
  * Features:
  * - News section with headline support
  * - Video listings with modal player
  * - Category-based listing sections
  * - Responsive design for mobile/desktop
- * 
+ *
  * @route /
  */
 
-'use client';
+"use client";
 
-import { useState, useEffect, useCallback } from 'react';
-import SectionHeader, { MobileViewAllButton } from '@/components/SectionHeader';
-import BlogCard from '@/components/BlogCard';
-import TabSection from '@/components/TabSection';
-import EventTabSection from '@/components/EventTabSection';
-import ResourceCard from '@/components/ResourceCard';
-import PodcastCard from '@/components/PodcastCard';
-import PodcastPlayerModal from '@/components/PodcastPlayerModal';
-import FeaturedBanner from '@/components/FeaturedBanner';
-import ListingCard from '@/components/ListingCard';
-import { Skeleton } from '@/components/ui/skeleton';
-import { Podcast } from '@/types';
-import { Newspaper, Loader2 } from 'lucide-react';
+import { useState, useEffect, useCallback } from "react";
+import SectionHeader, { MobileViewAllButton } from "@/components/SectionHeader";
+import BlogCard from "@/components/BlogCard";
+import TabSection from "@/components/TabSection";
+import EventTabSection from "@/components/EventTabSection";
+import ResourceCard from "@/components/ResourceCard";
+import PodcastCard from "@/components/PodcastCard";
+import PodcastPlayerModal from "@/components/PodcastPlayerModal";
+import FeaturedBanner from "@/components/FeaturedBanner";
+import ListingCard from "@/components/ListingCard";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Podcast } from "@/types";
+import { Newspaper, Loader2 } from "lucide-react";
 
 // Import mock data
 import {
@@ -46,11 +46,12 @@ import {
   topGyms,
   topSalons,
   topPlumbers,
-} from '@/lib/mockData';
-import { Listing, NewsItem, Category } from '@/types';
+} from "@/lib/mockData";
+import { Listing, NewsItem, Category } from "@/types";
 
 /** Base API URL for fetching data */
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8007/api/v1';
+const API_URL =
+  process.env.NEXT_PUBLIC_API_URL || "http://localhost:8007/api/v1";
 
 export default function Home() {
   const [selectedPodcast, setSelectedPodcast] = useState<Podcast | null>(null);
@@ -66,20 +67,20 @@ export default function Home() {
       const [newsRes, listingsRes, categoriesRes] = await Promise.all([
         fetch(`${API_URL}/news?status=Published`),
         fetch(`${API_URL}/listings?status=Published`),
-        fetch(`${API_URL}/categories`)
+        fetch(`${API_URL}/categories`),
       ]);
 
       const [newsData, listingsData, categoriesData] = await Promise.all([
         newsRes.json(),
         listingsRes.json(),
-        categoriesRes.json()
+        categoriesRes.json(),
       ]);
 
       setNews(newsData.news || []);
       setListings(listingsData.listings || []);
       setCategories(categoriesData.categories || []);
     } catch (error) {
-      console.error('Error fetching home data:', error);
+      console.error("Error fetching home data:", error);
     } finally {
       setIsLoading(false);
     }
@@ -125,7 +126,10 @@ export default function Home() {
       <main className="min-h-screen bg-gray-50/50 pt-20">
         <div className="w-full 2xl:px-[120px] md:px-10 px-5 py-20">
           <div className="flex flex-col items-center justify-center min-h-[50vh] gap-6">
-            <Loader2 className="w-12 h-12 text-primary animate-spin" strokeWidth={2} />
+            <Loader2
+              className="w-12 h-12 text-primary animate-spin"
+              strokeWidth={2}
+            />
             <p className="text-muted-foreground font-medium">Loading...</p>
           </div>
           <div className="mt-8 space-y-12 max-w-5xl mx-auto">
@@ -167,7 +171,7 @@ export default function Home() {
             <>
               <div className="md:w-1/2 w-full">
                 <BlogCard
-                  post={{ ...displayNews[0], type: 'post' }}
+                  post={{ ...displayNews[0], type: "post" }}
                   imageHeight="h-[450px]"
                   showTags
                   showHeadlineBadge={isEffectiveHeadline(displayNews[0])}
@@ -177,7 +181,7 @@ export default function Home() {
                 {displayNews.slice(1, 3).map((post) => (
                   <BlogCard
                     key={post.id}
-                    post={{ ...post, type: 'post' }}
+                    post={{ ...post, type: "post" }}
                     layout="horizontal"
                     imageHeight="h-full"
                     showTags
@@ -188,7 +192,9 @@ export default function Home() {
             </>
           ) : (
             <div className="w-full flex items-center justify-center py-16">
-              <p className="text-muted-foreground text-base">No news available.</p>
+              <p className="text-muted-foreground text-base">
+                No news available.
+              </p>
             </div>
           )}
         </div>
@@ -199,7 +205,7 @@ export default function Home() {
             displayNews.map((post) => (
               <BlogCard
                 key={post.id}
-                post={{ ...post, type: 'post' }}
+                post={{ ...post, type: "post" }}
                 imageHeight="h-[300px]"
                 showTags
                 showHeadlineBadge={isEffectiveHeadline(post)}
@@ -210,7 +216,9 @@ export default function Home() {
               <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mb-4">
                 <Newspaper className="w-8 h-8 text-muted-foreground" />
               </div>
-              <h3 className="text-foreground font-semibold text-lg mb-2">No News Available</h3>
+              <h3 className="text-foreground font-semibold text-lg mb-2">
+                No News Available
+              </h3>
               <p className="text-muted-foreground text-center text-sm max-w-md">
                 We&apos;re working on bringing you the latest news.
               </p>
@@ -219,33 +227,35 @@ export default function Home() {
         </div>
       </section>
 
-
-
-
-
       {/* Videos Section */}
-      {listings.filter(l => l.is_video).length > 0 && (
+      {listings.filter((l) => l.is_video).length > 0 && (
         <section className="w-full bg-background 2xl:px-[120px] md:px-10 px-5 py-16">
           <SectionHeader title="Videos" viewAllHref="/category/videos" />
 
           <div className="mt-12 w-full flex md:flex-row flex-col gap-8">
-            {listings.filter(l => l.is_video).slice(0, 3).map((video) => (
-              <div key={video.id} className="w-full">
-                <PodcastCard
-                  podcast={{
-                    id: video.id,
-                    title: video.title,
-                    slug: video.slug,
-                    featured_image: video.featuredImage || video.featured_image,
-                    published_at: video.published_at || video.createdAt,
-                    video_url: video.video_url,
-                    content: video.excerpt || video.content,
-                  } as any}
-                  variant="sidebar"
-                  onPlay={handleVideoPlay}
-                />
-              </div>
-            ))}
+            {listings
+              .filter((l) => l.is_video)
+              .slice(0, 3)
+              .map((video) => (
+                <div key={video.id} className="w-full">
+                  <PodcastCard
+                    podcast={
+                      {
+                        id: video.id,
+                        title: video.title,
+                        slug: video.slug,
+                        featured_image:
+                          video.featuredImage || video.featured_image,
+                        published_at: video.published_at || video.createdAt,
+                        video_url: video.video_url,
+                        content: video.excerpt || video.content,
+                      } as any
+                    }
+                    variant="sidebar"
+                    onPlay={handleVideoPlay}
+                  />
+                </div>
+              ))}
           </div>
 
           <MobileViewAllButton href="/all-post/videos" />
@@ -253,16 +263,28 @@ export default function Home() {
       )}
 
       {categories.map((cat) => {
-        const catListings = listings.filter(l => l.categoryId === cat.id && !l.is_video);
+        const catListings = listings.filter(
+          (l) => l.categoryId === cat.id && !l.is_video,
+        );
         if (catListings.length === 0) return null;
 
         return (
-          <section key={cat.id} className="w-full bg-background 2xl:px-[120px] md:px-10 px-5 py-16 border-t dark:border-stone-800">
-            <SectionHeader title={cat.name} viewAllHref={`/category/${cat.slug}`} />
+          <section
+            key={cat.id}
+            className="w-full bg-background 2xl:px-[120px] md:px-10 px-5 py-16 border-t dark:border-stone-800"
+          >
+            <SectionHeader
+              title={cat.name}
+              viewAllHref={`/category/${cat.slug}`}
+            />
 
             <div className="mt-12 w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {catListings.slice(0, 3).map((listing) => (
-                <ListingCard key={listing.id} listing={listing} imageHeight="h-[300px]" />
+                <ListingCard
+                  key={listing.id}
+                  listing={listing}
+                  imageHeight="h-[300px]"
+                />
               ))}
             </div>
 

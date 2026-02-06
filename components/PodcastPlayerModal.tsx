@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import { Podcast } from '@/types';
+import { Podcast } from "@/types";
 
 interface PodcastPlayerModalProps {
   podcast: Podcast | null;
@@ -10,7 +10,8 @@ interface PodcastPlayerModalProps {
 
 // Helper to extract YouTube video ID
 function getYouTubeVideoId(url: string): string | null {
-  const regExp = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#&?]*).*/;
+  const regExp =
+    /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#&?]*).*/;
   const match = url.match(regExp);
   return match && match[7].length === 11 ? match[7] : null;
 }
@@ -25,7 +26,11 @@ function getEmbedUrl(url: string): string {
   return url;
 }
 
-export default function PodcastPlayerModal({ podcast, isOpen, onClose }: PodcastPlayerModalProps) {
+export default function PodcastPlayerModal({
+  podcast,
+  isOpen,
+  onClose,
+}: PodcastPlayerModalProps) {
   if (!isOpen || !podcast) return null;
 
   const handleBackdropClick = (e: React.MouseEvent) => {
@@ -46,13 +51,25 @@ export default function PodcastPlayerModal({ podcast, isOpen, onClose }: Podcast
           className="absolute -top-10 right-0 text-white hover:text-gray-300 transition-colors"
           aria-label="Close video player"
         >
-          <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+          <svg
+            className="w-8 h-8"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M6 18L18 6M6 6l12 12"
+            />
           </svg>
         </button>
 
         {/* Video Title */}
-        <h3 className="text-white font-semibold text-xl mb-4 font-clash">{podcast.title}</h3>
+        <h3 className="text-white font-semibold text-xl mb-4 font-clash">
+          {podcast.title}
+        </h3>
 
         {/* Video Player */}
         <div className="aspect-video bg-black rounded-lg overflow-hidden">

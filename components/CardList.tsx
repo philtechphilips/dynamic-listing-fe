@@ -7,40 +7,35 @@ const popularContent = [
     id: 1,
     title: "Luxury Beachfront Villa",
     badge: "Real Estate",
-    image:
-      "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=800",
+    image: "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=800",
     count: 12500,
   },
   {
     id: 2,
     title: "The Golden Fork Restaurant",
     badge: "Dining",
-    image:
-      "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=800",
+    image: "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=800",
     count: 8200,
   },
   {
     id: 3,
     title: "Mountain View Cabin",
     badge: "Real Estate",
-    image:
-      "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=800",
+    image: "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=800",
     count: 5400,
   },
   {
     id: 4,
     title: "Zen Spa & Wellness",
     badge: "Health",
-    image:
-      "https://images.unsplash.com/photo-1540555700478-4be289fbecef?w=800",
+    image: "https://images.unsplash.com/photo-1540555700478-4be289fbecef?w=800",
     count: 4100,
   },
   {
     id: 5,
     title: "Cozy Downtown Studio",
     badge: "Real Estate",
-    image:
-      "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=800",
+    image: "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=800",
     count: 3800,
   },
 ];
@@ -135,7 +130,10 @@ const CardList = ({ title }: { title: string }) => {
       <h1 className="text-lg font-medium mb-6">{title}</h1>
       <div className="flex flex-col gap-2">
         {list.map((item: any) => (
-          <Card key={item.id} className="flex-row items-center justify-between gap-4 p-4">
+          <Card
+            key={item.id}
+            className="flex-row items-center justify-between gap-4 p-4"
+          >
             <div className="w-12 h-12 rounded-sm relative overflow-hidden flex-shrink-0">
               <Image
                 src={item.image}
@@ -145,12 +143,18 @@ const CardList = ({ title }: { title: string }) => {
               />
             </div>
             <CardContent className="flex-1 p-0 min-w-0">
-              <CardTitle className="text-sm font-medium line-clamp-2">{item.title}</CardTitle>
-              <Badge variant="secondary" className="mt-1 truncate max-w-full">{item.badge}</Badge>
+              <CardTitle className="text-sm font-medium line-clamp-2">
+                {item.title}
+              </CardTitle>
+              <Badge variant="secondary" className="mt-1 truncate max-w-full">
+                {item.badge}
+              </Badge>
             </CardContent>
             {title !== "Latest Comments" && (
               <CardFooter className="p-0 flex-shrink-0 font-semibold text-gray-500">
-                {item.count >= 1000 ? `${(item.count / 1000).toFixed(1)}K` : item.count}
+                {item.count >= 1000
+                  ? `${(item.count / 1000).toFixed(1)}K`
+                  : item.count}
               </CardFooter>
             )}
           </Card>

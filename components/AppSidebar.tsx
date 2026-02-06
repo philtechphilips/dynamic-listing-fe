@@ -167,7 +167,9 @@ const AppSidebar = () => {
                   </div>
                   <div className="flex flex-col items-start min-w-0 flex-1">
                     <div className="flex items-center gap-1.5">
-                      <span className="font-medium text-sm truncate">{user?.name || "Admin"}</span>
+                      <span className="font-medium text-sm truncate">
+                        {user?.name || "Admin"}
+                      </span>
                       {user?.role === "admin" && (
                         <Shield className="w-3 h-3 text-amber-600 shrink-0" />
                       )}
@@ -179,17 +181,25 @@ const AppSidebar = () => {
                   <ChevronUp className="ml-auto shrink-0" />
                 </SidebarMenuButton>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-[--radix-dropdown-menu-trigger-width]">
+              <DropdownMenuContent
+                align="end"
+                className="w-[--radix-dropdown-menu-trigger-width]"
+              >
                 <div className="px-2 py-2 border-b mb-1">
                   <p className="text-xs text-muted-foreground">Signed in as</p>
-                  <p className="text-sm font-medium truncate">{user?.email || "No email"}</p>
+                  <p className="text-sm font-medium truncate">
+                    {user?.email || "No email"}
+                  </p>
                 </div>
                 <DropdownMenuItem>
                   <User className="mr-2 h-4 w-4" />
                   <span>Profile</span>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={logout} className="text-destructive focus:text-destructive">
+                <DropdownMenuItem
+                  onClick={logout}
+                  className="text-destructive focus:text-destructive"
+                >
                   <LogOut className="mr-2 h-4 w-4" />
                   <span>Sign out</span>
                 </DropdownMenuItem>

@@ -2,33 +2,33 @@
  * =============================================================================
  * SEARCH PAGE
  * =============================================================================
- * 
+ *
  * Global search page for searching across all content types.
- * 
+ *
  * Features:
  * - Search news articles
  * - Search listings
  * - Search videos
  * - Tab-based filtering by content type
  * - Query parameter support (?q=search_term)
- * 
+ *
  * @route /search?q=xxx
  */
 
-'use client';
+"use client";
 
-import React, { useState, useEffect, Suspense } from 'react';
-import { useSearchParams, useRouter } from 'next/navigation';
-import BlogCard from '@/components/BlogCard';
-import ListingCard from '@/components/ListingCard';
-import PodcastCard from '@/components/PodcastCard';
-import { Search, Filter, X, Sparkles } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Badge } from '@/components/ui/badge';
-import { Card, CardContent } from '@/components/ui/card';
-import { Separator } from '@/components/ui/separator';
-import { Post, Listing, Podcast } from '@/types';
+import React, { useState, useEffect, Suspense } from "react";
+import { useSearchParams, useRouter } from "next/navigation";
+import BlogCard from "@/components/BlogCard";
+import ListingCard from "@/components/ListingCard";
+import PodcastCard from "@/components/PodcastCard";
+import { Search, Filter, X, Sparkles } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
+import { Card, CardContent } from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
+import { Post, Listing, Podcast } from "@/types";
 
 /**
  * Search Content Component
@@ -37,9 +37,11 @@ import { Post, Listing, Podcast } from '@/types';
 function SearchContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
-  const initialQuery = searchParams.get('q') || '';
+  const initialQuery = searchParams.get("q") || "";
   const [query, setQuery] = useState(initialQuery);
-  const [activeTab, setActiveTab] = useState<'all' | 'news' | 'listings' | 'videos'>('all');
+  const [activeTab, setActiveTab] = useState<
+    "all" | "news" | "listings" | "videos"
+  >("all");
 
   // Search Results State
   const [newsResults, setNewsResults] = useState<Post[]>([]);
@@ -62,12 +64,12 @@ function SearchContent() {
 
       setLoading(true);
       try {
-        const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8007/api/v1';
+        const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
         // Fetch listings and news in parallel
         const [listingsRes, newsRes] = await Promise.all([
           fetch(`${API_URL}/listings?search=${encodeURIComponent(query)}`),
-          fetch(`${API_URL}/news?search=${encodeURIComponent(query)}`)
+          fetch(`${API_URL}/news?search=${encodeURIComponent(query)}`),
         ]);
 
         if (listingsRes.ok) {
@@ -76,16 +78,15 @@ function SearchContent() {
           // For now, let's separate them if your API distinguishes videos
           const allListings: Listing[] = data.listings || [];
 
-          setListingResults(allListings.filter(l => !l.is_video));
+          setListingResults(allListings.filter((l) => !l.is_video));
           // @ts-ignore
-          setVideoResults(allListings.filter(l => l.is_video));
+          setVideoResults(allListings.filter((l) => l.is_video));
         }
 
         if (newsRes.ok) {
           const data = await newsRes.json();
           setNewsResults(data.news || []);
         }
-
       } catch (error) {
         console.error("Error fetching search results:", error);
       } finally {
@@ -104,18 +105,19 @@ function SearchContent() {
   };
 
   const handleClearSearch = () => {
-    setQuery('');
-    router.push('/search');
+    setQuery("");
+    router.push("/search");
   };
 
   const tabs = [
-    { id: 'all', label: 'All Results' },
-    { id: 'news', label: 'News' },
-    { id: 'listings', label: 'Listings' },
-    { id: 'videos', label: 'Videos' },
+    { id: "all", label: "All Results" },
+    { id: "news", label: "News" },
+    { id: "listings", label: "Listings" },
+    { id: "videos", label: "Videos" },
   ] as const;
 
-  const totalResults = newsResults.length + listingResults.length + videoResults.length;
+  const totalResults =
+    newsResults.length + listingResults.length + videoResults.length;
 
   return (
     <div className="min-h-screen bg-gray-50/50 pt-28 pb-20">
@@ -163,9 +165,12 @@ function SearchContent() {
         {query && totalResults > 0 && (
           <div className="mb-8 space-y-4">
             <div className="flex items-center gap-2 flex-wrap">
-              <Badge variant="secondary" className="border-0 px-3 py-1.5 text-sm">
+              <Badge
+                variant="secondary"
+                className="border-0 px-3 py-1.5 text-sm"
+              >
                 <Sparkles className="w-3.5 h-3.5 mr-1.5" />
-                {totalResults} {totalResults === 1 ? 'result' : 'results'} found
+                {totalResults} {totalResults === 1 ? "result" : "results"} found
               </Badge>
               <span className="text-muted-foreground text-sm">for</span>
               <span className="font-semibold text-foreground">"{query}"</span>
@@ -175,25 +180,26 @@ function SearchContent() {
 
             <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
               {tabs.map((tab) => {
-                const count = tab.id === 'all'
-                  ? totalResults
-                  : tab.id === 'news'
-                    ? newsResults.length
-                    : tab.id === 'listings'
-                      ? listingResults.length
-                      : videoResults.length;
+                const count =
+                  tab.id === "all"
+                    ? totalResults
+                    : tab.id === "news"
+                      ? newsResults.length
+                      : tab.id === "listings"
+                        ? listingResults.length
+                        : videoResults.length;
 
                 return (
                   <Button
                     key={tab.id}
                     onClick={() => setActiveTab(tab.id)}
-                    variant={activeTab === tab.id ? 'default' : 'outline'}
-                    className={`whitespace-nowrap gap-2 ${activeTab === tab.id ? 'text-white shadow-md' : ''}`}
+                    variant={activeTab === tab.id ? "default" : "outline"}
+                    className={`whitespace-nowrap gap-2 ${activeTab === tab.id ? "text-white shadow-md" : ""}`}
                   >
                     {tab.label}
                     <Badge
-                      variant={activeTab === tab.id ? 'secondary' : 'secondary'}
-                      className={`${activeTab === tab.id ? 'bg-white/20 text-white border-0' : 'border-0'}`}
+                      variant={activeTab === tab.id ? "secondary" : "secondary"}
+                      className={`${activeTab === tab.id ? "bg-white/20 text-white border-0" : "border-0"}`}
                     >
                       {count}
                     </Badge>
@@ -219,7 +225,8 @@ function SearchContent() {
                 Start Your Search
               </h3>
               <p className="text-muted-foreground max-w-md mx-auto">
-                Enter keywords to discover listings, news articles, videos and more
+                Enter keywords to discover listings, news articles, videos and
+                more
               </p>
             </CardContent>
           </Card>
@@ -243,94 +250,142 @@ function SearchContent() {
                   <li>Searching for more general terms</li>
                 </ul>
               </div>
-              <Button onClick={handleClearSearch} variant="outline" className="mt-6">
+              <Button
+                onClick={handleClearSearch}
+                variant="outline"
+                className="mt-6"
+              >
                 Clear Search
               </Button>
             </CardContent>
           </Card>
         ) : (
           <div className="space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-700">
-            {(activeTab === 'all' || activeTab === 'news') && newsResults.length > 0 && (
-              <section>
-                <div className="flex items-center justify-between mb-6">
-                  <div>
-                    <h2 className="text-2xl font-clash font-bold text-foreground">News Articles</h2>
-                    <p className="text-sm text-muted-foreground mt-1">
-                      {newsResults.length} {newsResults.length === 1 ? 'article' : 'articles'} found
-                    </p>
-                  </div>
-                  {activeTab === 'all' && newsResults.length > 3 && (
-                    <Button variant="ghost" onClick={() => setActiveTab('news')}>
-                      View All
-                    </Button>
-                  )}
-                </div>
-                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {(activeTab === 'all' ? newsResults.slice(0, 3) : newsResults).map((post) => (
-                    <BlogCard key={post.id} post={post} imageHeight="h-48" showTags />
-                  ))}
-                </div>
-              </section>
-            )}
-
-            {(activeTab === 'all' || activeTab === 'listings') && listingResults.length > 0 && (
-              <section>
-                <div className="flex items-center justify-between mb-6">
-                  <div>
-                    <h2 className="text-2xl font-clash font-bold text-foreground">Listings</h2>
-                    <p className="text-sm text-muted-foreground mt-1">
-                      {listingResults.length} {listingResults.length === 1 ? 'listing' : 'listings'} found
-                    </p>
-                  </div>
-                  {activeTab === 'all' && listingResults.length > 3 && (
-                    <Button variant="ghost" onClick={() => setActiveTab('listings')}>
-                      View All
-                    </Button>
-                  )}
-                </div>
-                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {(activeTab === 'all' ? listingResults.slice(0, 3) : listingResults).map((listing) => (
-                    <ListingCard key={listing.id} listing={listing} imageHeight="h-48" />
-                  ))}
-                </div>
-              </section>
-            )}
-
-            {(activeTab === 'all' || activeTab === 'videos') && videoResults.length > 0 && (
-              <section>
-                <div className="flex items-center justify-between mb-6">
-                  <div>
-                    <h2 className="text-2xl font-clash font-bold text-foreground">Videos & Podcasts</h2>
-                    <p className="text-sm text-muted-foreground mt-1">
-                      {videoResults.length} {videoResults.length === 1 ? 'video' : 'videos'} found
-                    </p>
-                  </div>
-                  {activeTab === 'all' && videoResults.length > 3 && (
-                    <Button variant="ghost" onClick={() => setActiveTab('videos')}>
-                      View All
-                    </Button>
-                  )}
-                </div>
-                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {(activeTab === 'all' ? videoResults.slice(0, 3) : videoResults).map((video: any) => (
-                    <div key={video.id}>
-                      <PodcastCard
-                        podcast={{
-                          id: video.id,
-                          title: video.title,
-                          slug: video.slug,
-                          featured_image: video.featuredImage || video.featured_image,
-                          published_at: video.createdAt || video.created_at,
-                          video_url: video.video_url,
-                          content: video.excerpt || video.content,
-                        } as any}
-                        variant="sidebar"
-                      />
+            {(activeTab === "all" || activeTab === "news") &&
+              newsResults.length > 0 && (
+                <section>
+                  <div className="flex items-center justify-between mb-6">
+                    <div>
+                      <h2 className="text-2xl font-clash font-bold text-foreground">
+                        News Articles
+                      </h2>
+                      <p className="text-sm text-muted-foreground mt-1">
+                        {newsResults.length}{" "}
+                        {newsResults.length === 1 ? "article" : "articles"}{" "}
+                        found
+                      </p>
                     </div>
-                  ))}
-                </div>
-              </section>
-            )}
+                    {activeTab === "all" && newsResults.length > 3 && (
+                      <Button
+                        variant="ghost"
+                        onClick={() => setActiveTab("news")}
+                      >
+                        View All
+                      </Button>
+                    )}
+                  </div>
+                  <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {(activeTab === "all"
+                      ? newsResults.slice(0, 3)
+                      : newsResults
+                    ).map((post) => (
+                      <BlogCard
+                        key={post.id}
+                        post={post}
+                        imageHeight="h-48"
+                        showTags
+                      />
+                    ))}
+                  </div>
+                </section>
+              )}
+
+            {(activeTab === "all" || activeTab === "listings") &&
+              listingResults.length > 0 && (
+                <section>
+                  <div className="flex items-center justify-between mb-6">
+                    <div>
+                      <h2 className="text-2xl font-clash font-bold text-foreground">
+                        Listings
+                      </h2>
+                      <p className="text-sm text-muted-foreground mt-1">
+                        {listingResults.length}{" "}
+                        {listingResults.length === 1 ? "listing" : "listings"}{" "}
+                        found
+                      </p>
+                    </div>
+                    {activeTab === "all" && listingResults.length > 3 && (
+                      <Button
+                        variant="ghost"
+                        onClick={() => setActiveTab("listings")}
+                      >
+                        View All
+                      </Button>
+                    )}
+                  </div>
+                  <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {(activeTab === "all"
+                      ? listingResults.slice(0, 3)
+                      : listingResults
+                    ).map((listing) => (
+                      <ListingCard
+                        key={listing.id}
+                        listing={listing}
+                        imageHeight="h-48"
+                      />
+                    ))}
+                  </div>
+                </section>
+              )}
+
+            {(activeTab === "all" || activeTab === "videos") &&
+              videoResults.length > 0 && (
+                <section>
+                  <div className="flex items-center justify-between mb-6">
+                    <div>
+                      <h2 className="text-2xl font-clash font-bold text-foreground">
+                        Videos & Podcasts
+                      </h2>
+                      <p className="text-sm text-muted-foreground mt-1">
+                        {videoResults.length}{" "}
+                        {videoResults.length === 1 ? "video" : "videos"} found
+                      </p>
+                    </div>
+                    {activeTab === "all" && videoResults.length > 3 && (
+                      <Button
+                        variant="ghost"
+                        onClick={() => setActiveTab("videos")}
+                      >
+                        View All
+                      </Button>
+                    )}
+                  </div>
+                  <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {(activeTab === "all"
+                      ? videoResults.slice(0, 3)
+                      : videoResults
+                    ).map((video: any) => (
+                      <div key={video.id}>
+                        <PodcastCard
+                          podcast={
+                            {
+                              id: video.id,
+                              title: video.title,
+                              slug: video.slug,
+                              featured_image:
+                                video.featuredImage || video.featured_image,
+                              published_at: video.createdAt || video.created_at,
+                              video_url: video.video_url,
+                              content: video.excerpt || video.content,
+                            } as any
+                          }
+                          variant="sidebar"
+                        />
+                      </div>
+                    ))}
+                  </div>
+                </section>
+              )}
           </div>
         )}
       </div>
@@ -340,11 +395,13 @@ function SearchContent() {
 
 export default function SearchPage() {
   return (
-    <Suspense fallback={
-      <div className="min-h-screen flex items-center justify-center bg-gray-50/50">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-      </div>
-    }>
+    <Suspense
+      fallback={
+        <div className="min-h-screen flex items-center justify-center bg-gray-50/50">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+        </div>
+      }
+    >
       <SearchContent />
     </Suspense>
   );

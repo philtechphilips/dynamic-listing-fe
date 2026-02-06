@@ -15,13 +15,41 @@ const TodoList = () => {
   const [open, setOpen] = useState(false);
 
   const tasks = [
-    { id: "task1", label: "Verify 'Luxury Beachfront Villa' listing", checked: true },
-    { id: "task2", label: "Review new category proposal: 'Co-working Spaces'", checked: true },
-    { id: "task3", label: "Approve business owner verification for 'Zen Spa'", checked: false },
-    { id: "task4", label: "Check reported listing: 'Cheap iPhone Shop'", checked: false },
-    { id: "task5", label: "Update SEO keywords for 'Real Estate' category", checked: false },
-    { id: "task6", label: "Moderation: Review 12 new comments on 'The Golden Fork'", checked: false },
-    { id: "task7", label: "Newsletter: Draft weekly featured listings", checked: false },
+    {
+      id: "task1",
+      label: "Verify 'Luxury Beachfront Villa' listing",
+      checked: true,
+    },
+    {
+      id: "task2",
+      label: "Review new category proposal: 'Co-working Spaces'",
+      checked: true,
+    },
+    {
+      id: "task3",
+      label: "Approve business owner verification for 'Zen Spa'",
+      checked: false,
+    },
+    {
+      id: "task4",
+      label: "Check reported listing: 'Cheap iPhone Shop'",
+      checked: false,
+    },
+    {
+      id: "task5",
+      label: "Update SEO keywords for 'Real Estate' category",
+      checked: false,
+    },
+    {
+      id: "task6",
+      label: "Moderation: Review 12 new comments on 'The Golden Fork'",
+      checked: false,
+    },
+    {
+      id: "task7",
+      label: "Newsletter: Draft weekly featured listings",
+      checked: false,
+    },
   ];
 
   return (
@@ -52,7 +80,10 @@ const TodoList = () => {
             <Card key={task.id} className="p-4">
               <div className="flex items-center gap-4">
                 <Checkbox id={task.id} checked={task.checked} />
-                <label htmlFor={task.id} className="text-sm text-muted-foreground">
+                <label
+                  htmlFor={task.id}
+                  className="text-sm text-muted-foreground"
+                >
                   {task.label}
                 </label>
               </div>

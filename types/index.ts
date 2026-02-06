@@ -26,7 +26,7 @@ export interface Category {
 }
 
 // Base content type
-export type ContentType = 'post' | 'event' | 'podcast' | 'resource';
+export type ContentType = "post" | "event" | "podcast" | "resource";
 
 // Post type
 export interface Post {
@@ -167,6 +167,9 @@ export interface NewsItem {
 }
 
 // Helper function types
-export function getOptimizedImageUrl(post: Post | Podcast, format?: string): string {
-  return post.featured_image_webp || post.featured_image || '/images/music.svg';
+export function getOptimizedImageUrl(
+  post: Post | Podcast,
+  format?: string,
+): string {
+  return post.featured_image_webp || post.featured_image || "/images/music.svg";
 }

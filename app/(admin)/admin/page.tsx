@@ -2,15 +2,15 @@
  * =============================================================================
  * ADMIN DASHBOARD PAGE
  * =============================================================================
- * 
+ *
  * The main landing page for authenticated admin users.
  * Displays key statistics and recent activity for the platform.
- * 
+ *
  * Features:
  * - Overview statistics (users, listings, news, categories counts)
  * - Recent users list
  * - Recent listings list
- * 
+ *
  * @route /admin
  */
 
@@ -19,7 +19,14 @@
 import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Users, FileText, Newspaper, Grid, Loader2, ArrowUpRight } from "lucide-react";
+import {
+  Users,
+  FileText,
+  Newspaper,
+  Grid,
+  Loader2,
+  ArrowUpRight,
+} from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { useAuth } from "@/contexts/AuthContext";
 import Link from "next/link";
@@ -68,7 +75,7 @@ interface DashboardStats {
 
 /**
  * Admin Dashboard Component
- * 
+ *
  * Fetches and displays platform statistics and recent activity.
  * Uses the global apiFetch utility for automatic 401 handling.
  */
@@ -124,7 +131,9 @@ const AdminDashboard = () => {
     <div className="space-y-8">
       <div>
         <h2 className="text-3xl font-bold tracking-tight">Dashboard</h2>
-        <p className="text-muted-foreground">Overview of your platform's activity.</p>
+        <p className="text-muted-foreground">
+          Overview of your platform's activity.
+        </p>
       </div>
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
@@ -140,7 +149,9 @@ const AdminDashboard = () => {
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Listings</CardTitle>
+            <CardTitle className="text-sm font-medium">
+              Total Listings
+            </CardTitle>
             <FileText className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -174,27 +185,43 @@ const AdminDashboard = () => {
         <Card className="col-span-4">
           <CardHeader className="flex flex-row items-center justify-between">
             <CardTitle>Recent Listings</CardTitle>
-            <Link href="/admin/listings" className="text-sm text-primary hover:underline flex items-center">
+            <Link
+              href="/admin/listings"
+              className="text-sm text-primary hover:underline flex items-center"
+            >
               View All <ArrowUpRight className="ml-1 h-3 w-3" />
             </Link>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
               {stats.lists.recentListings.map((listing) => (
-                <div key={listing.id} className="flex items-center justify-between border-b pb-4 last:border-0 last:pb-0">
+                <div
+                  key={listing.id}
+                  className="flex items-center justify-between border-b pb-4 last:border-0 last:pb-0"
+                >
                   <div className="space-y-1">
-                    <p className="text-sm font-medium leading-none">{listing.title}</p>
-                    <p className="text-sm text-muted-foreground">{listing.category?.name || "Uncategorized"}</p>
+                    <p className="text-sm font-medium leading-none">
+                      {listing.title}
+                    </p>
+                    <p className="text-sm text-muted-foreground">
+                      {listing.category?.name || "Uncategorized"}
+                    </p>
                   </div>
                   <div className="flex items-center gap-4">
-                    <Badge variant={listing.status === "Published" ? "default" : "secondary"}>
+                    <Badge
+                      variant={
+                        listing.status === "Published" ? "default" : "secondary"
+                      }
+                    >
                       {listing.status}
                     </Badge>
                   </div>
                 </div>
               ))}
               {stats.lists.recentListings.length === 0 && (
-                <p className="text-muted-foreground text-sm">No listings found.</p>
+                <p className="text-muted-foreground text-sm">
+                  No listings found.
+                </p>
               )}
             </div>
           </CardContent>
@@ -202,14 +229,20 @@ const AdminDashboard = () => {
         <Card className="col-span-3">
           <CardHeader className="flex flex-row items-center justify-between">
             <CardTitle>Recent Users</CardTitle>
-            <Link href="/admin/app-users" className="text-sm text-primary hover:underline flex items-center">
+            <Link
+              href="/admin/app-users"
+              className="text-sm text-primary hover:underline flex items-center"
+            >
               View All <ArrowUpRight className="ml-1 h-3 w-3" />
             </Link>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
               {stats.lists.recentUsers.map((user) => (
-                <div key={user.id} className="flex items-center justify-between border-b pb-4 last:border-0 last:pb-0">
+                <div
+                  key={user.id}
+                  className="flex items-center justify-between border-b pb-4 last:border-0 last:pb-0"
+                >
                   <div className="flex items-center gap-4">
                     <Avatar className="h-9 w-9">
                       <AvatarImage src={user.image} alt={user.name} />
@@ -218,8 +251,12 @@ const AdminDashboard = () => {
                       </AvatarFallback>
                     </Avatar>
                     <div className="space-y-1">
-                      <p className="text-sm font-medium leading-none">{user.name}</p>
-                      <p className="text-sm text-muted-foreground">{user.email}</p>
+                      <p className="text-sm font-medium leading-none">
+                        {user.name}
+                      </p>
+                      <p className="text-sm text-muted-foreground">
+                        {user.email}
+                      </p>
                     </div>
                   </div>
                   <div>

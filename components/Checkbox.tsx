@@ -1,11 +1,17 @@
-import React, { InputHTMLAttributes } from 'react';
+import React, { InputHTMLAttributes } from "react";
 
 interface CheckboxProps extends InputHTMLAttributes<HTMLInputElement> {
   label?: string;
 }
 
-export default function Checkbox({ label, className = '', id, ...props }: CheckboxProps) {
-  const checkboxId = id || props.name || Math.random().toString(36).substr(2, 9);
+export default function Checkbox({
+  label,
+  className = "",
+  id,
+  ...props
+}: CheckboxProps) {
+  const checkboxId =
+    id || props.name || Math.random().toString(36).substr(2, 9);
 
   return (
     <div className={`flex items-center ${className}`}>

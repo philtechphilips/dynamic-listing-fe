@@ -5,6 +5,7 @@ This is the frontend for the Dynamic Listing Application, built with Next.js (Ap
 ## 🚀 Getting Started
 
 1. **Install Dependencies**:
+
    ```bash
    npm install
    ```
@@ -14,6 +15,7 @@ This is the frontend for the Dynamic Listing Application, built with Next.js (Ap
    - Update `NEXT_PUBLIC_API_URL` and Firebase configuration.
 
 3. **Run Development Server**:
+
    ```bash
    npm run dev
    ```
@@ -40,4 +42,3 @@ This is the frontend for the Dynamic Listing Application, built with Next.js (Ap
 - Dark Theme Support (via next-themes)
 
 For more details, see the main [Project README](../README.md).
-

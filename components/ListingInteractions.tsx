@@ -1,12 +1,12 @@
 "use client";
 
-import { useState, useEffect } from 'react';
-import { Share2, Star, Loader2 } from 'lucide-react';
-import { useAuth } from '@/contexts/AuthContext';
-import { toast } from 'sonner';
+import { useState, useEffect } from "react";
+import { Share2, Star, Loader2 } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
+import { toast } from "sonner";
 import { apiFetch, getAuthHeaders } from "@/lib/api";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8007/api/v1";
+const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 interface ListingInteractionsProps {
   listingTitle: string;
@@ -19,7 +19,7 @@ export default function ListingInteractions({
   listingTitle,
   listingId,
   initialRating = 0,
-  initialReviewCount = 0
+  initialReviewCount = 0,
 }: ListingInteractionsProps) {
   const { isAuthenticated, token } = useAuth();
   const [userRating, setUserRating] = useState<number>(0);
@@ -36,7 +36,7 @@ export default function ListingInteractions({
 
       try {
         const response = await apiFetch(`/ratings/${listingId}`, {
-          headers: getAuthHeaders()
+          headers: getAuthHeaders(),
         });
         if (response.ok) {
           const data = await response.json();
@@ -66,11 +66,11 @@ export default function ListingInteractions({
     setIsSubmitting(true);
     try {
       const response = await apiFetch(`/ratings`, {
-        method: 'POST',
+        method: "POST",
         headers: getAuthHeaders(),
         body: JSON.stringify({
           listingId,
-          value: rating
+          value: rating,
         }),
       });
 
@@ -119,7 +119,6 @@ export default function ListingInteractions({
   return (
     <div className="border-t border-gray-100 pt-8 mt-8">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6">
-
         {/* Rating Section */}
         {listingId && (
           <div className="space-y-2">
@@ -127,7 +126,9 @@ export default function ListingInteractions({
               <h3 className="font-clash font-semibold text-lg text-gray-900">
                 {hasRated ? "Thanks for rating!" : "Rate this listing"}
               </h3>
-              {isSubmitting && <Loader2 className="w-4 h-4 animate-spin text-primary" />}
+              {isSubmitting && (
+                <Loader2 className="w-4 h-4 animate-spin text-primary" />
+              )}
             </div>
 
             <div className="flex items-center gap-4">
@@ -139,15 +140,16 @@ export default function ListingInteractions({
                     onMouseEnter={() => setStarHoverRating(star)}
                     onMouseLeave={() => setStarHoverRating(0)}
                     disabled={isSubmitting || !isAuthenticated}
-                    className={`group focus:outline-none transition-transform ${!isAuthenticated ? 'cursor-not-allowed opacity-50' : 'hover:scale-110 active:scale-95'}`}
+                    className={`group focus:outline-none transition-transform ${!isAuthenticated ? "cursor-not-allowed opacity-50" : "hover:scale-110 active:scale-95"}`}
                     aria-label={`Rate ${star} stars`}
                     type="button"
                   >
                     <Star
-                      className={`w-6 h-6 transition-colors duration-200 ${(startHoverRating || userRating) >= star
-                        ? 'text-yellow-400 fill-yellow-400'
-                        : 'text-gray-200 fill-transparent'
-                        }`}
+                      className={`w-6 h-6 transition-colors duration-200 ${
+                        (startHoverRating || userRating) >= star
+                          ? "text-yellow-400 fill-yellow-400"
+                          : "text-gray-200 fill-transparent"
+                      }`}
                       strokeWidth={1.5}
                     />
                   </button>
@@ -160,11 +162,15 @@ export default function ListingInteractions({
                   {avgRating.toFixed(1)}
                   <span className="text-gray-400 font-normal ml-1">/ 5</span>
                 </span>
-                <span className="text-xs text-gray-500">{reviewCount} reviews</span>
+                <span className="text-xs text-gray-500">
+                  {reviewCount} reviews
+                </span>
               </div>
             </div>
             {!isAuthenticated && (
-              <p className="text-xs text-muted-foreground italic">Sign in to rate</p>
+              <p className="text-xs text-muted-foreground italic">
+                Sign in to rate
+              </p>
             )}
           </div>
         )}
@@ -189,7 +195,6 @@ export default function ListingInteractions({
             )}
           </div>
         </div>
-
       </div>
     </div>
   );

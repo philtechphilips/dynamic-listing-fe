@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import GetStartedButton from './GetStartedButton';
+import { useState, useEffect } from "react";
+import GetStartedButton from "./GetStartedButton";
 
 interface FeaturedBannerProps {
   href?: string;
@@ -10,9 +10,9 @@ interface FeaturedBannerProps {
 }
 
 export default function FeaturedBanner({
-  href = '/get-featured',
+  href = "/get-featured",
   text = "Ready for the spotlight? Let's make it happen.",
-  buttonText = 'Get Featured',
+  buttonText = "Get Featured",
 }: FeaturedBannerProps) {
   const [isVisible, setIsVisible] = useState(true);
   const [isMounted, setIsMounted] = useState(false);
@@ -25,16 +25,16 @@ export default function FeaturedBanner({
   const closeBanner = () => {
     setIsVisible(false);
     // Optionally persist to localStorage
-    if (typeof window !== 'undefined') {
-      localStorage.setItem('featured-banner-closed', 'true');
+    if (typeof window !== "undefined") {
+      localStorage.setItem("featured-banner-closed", "true");
     }
   };
 
   // Check if banner was previously closed
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const wasClosed = localStorage.getItem('featured-banner-closed');
-      if (wasClosed === 'true') {
+    if (typeof window !== "undefined") {
+      const wasClosed = localStorage.getItem("featured-banner-closed");
+      if (wasClosed === "true") {
         setIsVisible(false);
       }
     }
@@ -64,8 +64,18 @@ export default function FeaturedBanner({
         className="text-white cursor-pointer text-lg transition-colors absolute top-2 right-2 hover:text-gray-300"
         aria-label="Close featured banner"
       >
-        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+        <svg
+          className="w-5 h-5"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M6 18L18 6M6 6l12 12"
+          />
         </svg>
       </button>
     </div>

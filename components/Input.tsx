@@ -1,4 +1,4 @@
-import React, { InputHTMLAttributes, ReactNode } from 'react';
+import React, { InputHTMLAttributes, ReactNode } from "react";
 
 interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   label?: string;
@@ -10,9 +10,9 @@ export default function Input({
   label,
   error,
   icon,
-  className = '',
+  className = "",
   id,
-  type = 'text',
+  type = "text",
   ...props
 }: InputProps) {
   const inputId = id || props.name || Math.random().toString(36).substr(2, 9);
@@ -39,13 +39,13 @@ export default function Input({
           type={type}
           className={`
             w-full bg-white border border-gray-200 text-gray-900 rounded-xl 
-            ${icon ? 'pl-10' : 'pl-4'} pr-4 py-3 
+            ${icon ? "pl-10" : "pl-4"} pr-4 py-3 
             placeholder-gray-200
             transition-all duration-200
             focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary focus:bg-white
             hover:border-gray-300 hover:bg-gray-50
             disabled:opacity-50 disabled:cursor-not-allowed
-            ${hasError ? 'border-red-500 focus:ring-red-500/50 focus:border-red-500' : ''}
+            ${hasError ? "border-red-500 focus:ring-red-500/50 focus:border-red-500" : ""}
           `}
           {...props}
         />

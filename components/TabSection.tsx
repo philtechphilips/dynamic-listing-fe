@@ -1,15 +1,18 @@
-'use client';
+"use client";
 
-import { useState, useRef, useEffect } from 'react';
-import { Category } from '@/types';
-import BlogCard from './BlogCard';
+import { useState, useRef, useEffect } from "react";
+import { Category } from "@/types";
+import BlogCard from "./BlogCard";
 
 interface TabSectionProps {
   categorySlug: string;
   subcategories: Category[];
 }
 
-export default function TabSection({ categorySlug, subcategories }: TabSectionProps) {
+export default function TabSection({
+  categorySlug,
+  subcategories,
+}: TabSectionProps) {
   const [activeTab, setActiveTab] = useState(0);
   const [indicatorStyle, setIndicatorStyle] = useState({ left: 0, width: 80 });
   const tabsRef = useRef<HTMLDivElement>(null);
@@ -19,11 +22,11 @@ export default function TabSection({ categorySlug, subcategories }: TabSectionPr
   useEffect(() => {
     const activeTabEl = tabRefs.current[activeTab];
     const container = tabsRef.current;
-    
+
     if (activeTabEl && container) {
       const containerRect = container.getBoundingClientRect();
       const tabRect = activeTabEl.getBoundingClientRect();
-      
+
       setIndicatorStyle({
         left: tabRect.left - containerRect.left,
         width: tabRect.width,
@@ -36,11 +39,11 @@ export default function TabSection({ categorySlug, subcategories }: TabSectionPr
     const handleResize = () => {
       const activeTabEl = tabRefs.current[activeTab];
       const container = tabsRef.current;
-      
+
       if (activeTabEl && container) {
         const containerRect = container.getBoundingClientRect();
         const tabRect = activeTabEl.getBoundingClientRect();
-        
+
         setIndicatorStyle({
           left: tabRect.left - containerRect.left,
           width: tabRect.width,
@@ -48,12 +51,12 @@ export default function TabSection({ categorySlug, subcategories }: TabSectionPr
       }
     };
 
-    window.addEventListener('resize', handleResize);
+    window.addEventListener("resize", handleResize);
     // Initial calculation after render
     const timeout = setTimeout(handleResize, 100);
-    
+
     return () => {
-      window.removeEventListener('resize', handleResize);
+      window.removeEventListener("resize", handleResize);
       clearTimeout(timeout);
     };
   }, [activeTab]);
@@ -75,11 +78,13 @@ export default function TabSection({ categorySlug, subcategories }: TabSectionPr
           {subcategories.map((subcategory, index) => (
             <button
               key={subcategory.id}
-              ref={(el) => { tabRefs.current[index] = el; }}
+              ref={(el) => {
+                tabRefs.current[index] = el;
+              }}
               className={`font-semibold tab-button flex-shrink-0 ${
-                index === activeTab ? 'active' : ''
+                index === activeTab ? "active" : ""
               }`}
-              style={{ color: index === activeTab ? '#1A1A1A' : '#808080' }}
+              style={{ color: index === activeTab ? "#1A1A1A" : "#808080" }}
               onClick={() => switchTab(index)}
             >
               {subcategory.name}
@@ -105,7 +110,7 @@ export default function TabSection({ categorySlug, subcategories }: TabSectionPr
           <div
             key={subcategory.id}
             className={`w-full grid md:grid-cols-3 grid-cols-1 gap-6 ${
-              index === activeTab ? '' : 'hidden'
+              index === activeTab ? "" : "hidden"
             }`}
           >
             {subcategory.latest_posts?.length ? (

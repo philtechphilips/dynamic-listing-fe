@@ -1,8 +1,8 @@
-import { clsx, type ClassValue } from "clsx"
-import { twMerge } from "tailwind-merge"
+import { clsx, type ClassValue } from "clsx";
+import { twMerge } from "tailwind-merge";
 
 export function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs))
+  return twMerge(clsx(inputs));
 }
 
 /**
@@ -12,7 +12,7 @@ export function cn(...inputs: ClassValue[]) {
 export async function handleApiResponse(response: Response): Promise<boolean> {
   if (response.status === 401) {
     // Clear stored auth data
-    if (typeof window !== 'undefined') {
+    if (typeof window !== "undefined") {
       localStorage.removeItem("token");
       localStorage.removeItem("user");
       // Redirect to login
@@ -26,11 +26,14 @@ export async function handleApiResponse(response: Response): Promise<boolean> {
 /**
  * Wrapper for fetch that automatically handles 401 errors
  */
-export async function authFetch(url: string, options?: RequestInit): Promise<Response> {
+export async function authFetch(
+  url: string,
+  options?: RequestInit,
+): Promise<Response> {
   const response = await fetch(url, options);
 
   if (response.status === 401) {
-    if (typeof window !== 'undefined') {
+    if (typeof window !== "undefined") {
       localStorage.removeItem("token");
       localStorage.removeItem("user");
       window.location.href = "/login";

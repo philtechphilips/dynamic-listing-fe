@@ -11,7 +11,7 @@ import {
   LayoutDashboard,
   MessageSquare,
   LogOut,
-  Menu
+  Menu,
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -20,18 +20,14 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-} from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useAuth } from "@/contexts/AuthContext";
 import { cn } from "@/lib/utils";
 import { ProfileModal } from "./ProfileModal";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8007/api/v1";
+const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 interface Category {
   id: string;
@@ -65,21 +61,27 @@ export default function Navbar() {
     fetchCategories();
   }, []);
 
-  const navLinks = categories.length > 0
-    ? categories.slice(0, 4).map(cat => ({ href: `/category/${cat.slug}`, label: cat.name }))
-    : [
-      { href: "/category/restaurants", label: "Restaurants" },
-      { href: "/category/videos", label: "Videos" },
-      { href: "/category/news", label: "News" },
-      { href: "/category/hotels", label: "Hotels" },
-    ];
+  const navLinks =
+    categories.length > 0
+      ? categories
+          .slice(0, 4)
+          .map((cat) => ({ href: `/category/${cat.slug}`, label: cat.name }))
+      : [
+          { href: "/category/restaurants", label: "Restaurants" },
+          { href: "/category/videos", label: "Videos" },
+          { href: "/category/news", label: "News" },
+          { href: "/category/hotels", label: "Hotels" },
+        ];
 
-  const moreLinks = categories.length > 0
-    ? categories.slice(4).map(cat => ({ href: `/category/${cat.slug}`, label: cat.name }))
-    : [
-      { href: "/category/salons", label: "Salons" },
-      { href: "/category/podcasts", label: "Podcasts" },
-    ];
+  const moreLinks =
+    categories.length > 0
+      ? categories
+          .slice(4)
+          .map((cat) => ({ href: `/category/${cat.slug}`, label: cat.name }))
+      : [
+          { href: "/category/salons", label: "Salons" },
+          { href: "/category/podcasts", label: "Podcasts" },
+        ];
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -147,7 +149,7 @@ export default function Navbar() {
                       "font-semibold text-sm transition-colors",
                       isPathActive(link.href)
                         ? "text-primary"
-                        : "text-foreground hover:text-primary"
+                        : "text-foreground hover:text-primary",
                     )}
                   >
                     {link.label}
@@ -184,7 +186,7 @@ export default function Navbar() {
                 onSubmit={handleSearch}
                 className={cn(
                   "relative flex items-center bg-muted rounded-full overflow-hidden transition-all duration-300",
-                  searchQuery ? "w-64 shadow-sm" : "w-10 h-10 hover:w-64"
+                  searchQuery ? "w-64 shadow-sm" : "w-10 h-10 hover:w-64",
                 )}
               >
                 <button
@@ -208,16 +210,29 @@ export default function Navbar() {
             {isAuthenticated ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" className="relative h-10 w-10 rounded-full">
+                  <Button
+                    variant="ghost"
+                    className="relative h-10 w-10 rounded-full"
+                  >
                     <Avatar className="h-10 w-10">
-                      <AvatarImage src={user?.image} alt={user?.name || "User"} />
-                      <AvatarFallback>{user?.name?.charAt(0).toUpperCase() || "U"}</AvatarFallback>
+                      <AvatarImage
+                        src={user?.image}
+                        alt={user?.name || "User"}
+                      />
+                      <AvatarFallback>
+                        {user?.name?.charAt(0).toUpperCase() || "U"}
+                      </AvatarFallback>
                     </Avatar>
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-56 z-[1100] border-0 shadow-lg">
+                <DropdownMenuContent
+                  align="end"
+                  className="w-56 z-[1100] border-0 shadow-lg"
+                >
                   <div className="px-3 py-2">
-                    <p className="text-xs text-muted-foreground">Signed in as</p>
+                    <p className="text-xs text-muted-foreground">
+                      Signed in as
+                    </p>
                     <p className="text-sm font-semibold text-foreground truncate">
                       {user?.name || "User"}
                     </p>
@@ -231,13 +246,19 @@ export default function Navbar() {
                     <span>Profile</span>
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild>
-                    <Link href="/dashboard" className="flex items-center gap-2 cursor-pointer">
+                    <Link
+                      href="/dashboard"
+                      className="flex items-center gap-2 cursor-pointer"
+                    >
                       <LayoutDashboard className="w-4 h-4" />
                       <span>Dashboard</span>
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild>
-                    <Link href="/dashboard/comments" className="flex items-center gap-2 cursor-pointer">
+                    <Link
+                      href="/dashboard/comments"
+                      className="flex items-center gap-2 cursor-pointer"
+                    >
                       <MessageSquare className="w-4 h-4" />
                       <span>My Comments</span>
                     </Link>
@@ -274,7 +295,9 @@ export default function Navbar() {
       <div
         className={cn(
           "md:hidden fixed inset-0 bg-black/50 z-40 transition-opacity duration-300",
-          isMobileMenuOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
+          isMobileMenuOpen
+            ? "opacity-100 pointer-events-auto"
+            : "opacity-0 pointer-events-none",
         )}
         onClick={() => setIsMobileMenuOpen(false)}
       />
@@ -284,7 +307,7 @@ export default function Navbar() {
         ref={mobileMenuRef}
         className={cn(
           "md:hidden bg-white w-[85vw] h-screen z-50 fixed top-0 right-0 shadow-2xl transition-transform duration-300 flex flex-col",
-          isMobileMenuOpen ? "translate-x-0" : "translate-x-full"
+          isMobileMenuOpen ? "translate-x-0" : "translate-x-full",
         )}
       >
         {/* Mobile Menu Header */}
@@ -333,7 +356,7 @@ export default function Navbar() {
                   "block px-4 py-3 rounded-lg font-semibold text-base transition-colors",
                   isPathActive(link.href)
                     ? "bg-primary/10 text-primary"
-                    : "text-foreground hover:bg-muted"
+                    : "text-foreground hover:bg-muted",
                 )}
               >
                 {link.label}
@@ -352,7 +375,7 @@ export default function Navbar() {
                     "flex items-center gap-3 px-4 py-3 rounded-lg font-semibold text-base transition-colors",
                     isPathActive("/dashboard")
                       ? "bg-primary/10 text-primary"
-                      : "text-foreground hover:bg-muted"
+                      : "text-foreground hover:bg-muted",
                   )}
                 >
                   <LayoutDashboard className="w-5 h-5" />
@@ -365,7 +388,7 @@ export default function Navbar() {
                     "flex items-center gap-3 px-4 py-3 rounded-lg font-semibold text-base transition-colors",
                     isPathActive("/dashboard/comments")
                       ? "bg-primary/10 text-primary"
-                      : "text-foreground hover:bg-muted"
+                      : "text-foreground hover:bg-muted",
                   )}
                 >
                   <MessageSquare className="w-5 h-5" />
@@ -383,7 +406,9 @@ export default function Navbar() {
               <div className="flex items-center gap-3 px-3 py-2 bg-muted rounded-lg">
                 <Avatar className="h-9 w-9">
                   <AvatarImage src={user?.image} alt={user?.name || "User"} />
-                  <AvatarFallback>{user?.name?.charAt(0).toUpperCase() || "U"}</AvatarFallback>
+                  <AvatarFallback>
+                    {user?.name?.charAt(0).toUpperCase() || "U"}
+                  </AvatarFallback>
                 </Avatar>
                 <div className="min-w-0 flex-1">
                   <p className="text-xs text-muted-foreground">Signed in as</p>
@@ -413,7 +438,10 @@ export default function Navbar() {
           )}
         </div>
       </div>
-      <ProfileModal isOpen={isProfileOpen} onClose={() => setIsProfileOpen(false)} />
+      <ProfileModal
+        isOpen={isProfileOpen}
+        onClose={() => setIsProfileOpen(false)}
+      />
     </>
   );
 }

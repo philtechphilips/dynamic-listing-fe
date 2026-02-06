@@ -1,6 +1,6 @@
-import Link from 'next/link';
-import Image from 'next/image';
-import { Event } from '@/types';
+import Link from "next/link";
+import Image from "next/image";
+import { Event } from "@/types";
 
 interface EventCardProps {
   event: Event;
@@ -8,22 +8,31 @@ interface EventCardProps {
 
 // Helper function to format date
 function formatDate(date?: string | Date): string {
-  if (!date) return 'TBD';
-  const d = typeof date === 'string' ? new Date(date) : date;
-  return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+  if (!date) return "TBD";
+  const d = typeof date === "string" ? new Date(date) : date;
+  return d.toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  });
 }
 
 // Helper function to format time
 function formatTime(date?: string | Date): string {
-  if (!date) return 'TBD';
-  const d = typeof date === 'string' ? new Date(date) : date;
-  return d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true, timeZoneName: 'short' });
+  if (!date) return "TBD";
+  const d = typeof date === "string" ? new Date(date) : date;
+  return d.toLocaleTimeString("en-US", {
+    hour: "numeric",
+    minute: "2-digit",
+    hour12: true,
+    timeZoneName: "short",
+  });
 }
 
 // Helper function to limit string
 function limitString(str: string, limit: number): string {
   if (str.length <= limit) return str;
-  return str.substring(0, limit) + '...';
+  return str.substring(0, limit) + "...";
 }
 
 export default function EventCard({ event }: EventCardProps) {
@@ -32,7 +41,7 @@ export default function EventCard({ event }: EventCardProps) {
       {/* Event Image */}
       <div className="md:w-1/2 h-[248px] overflow-hidden rounded-lg relative">
         <Image
-          src={event.featured_image || '/images/music.svg'}
+          src={event.featured_image || "/images/music.svg"}
           alt={event.title}
           fill
           className="w-full h-full object-cover scale-100 hover:scale-105 transition-all duration-500"
@@ -44,7 +53,9 @@ export default function EventCard({ event }: EventCardProps) {
         {/* Tags */}
         {event.tags && event.tags.length > 0 && (
           <div className="flex items-center py-1 px-2 bg-primary-300 rounded-md w-fit">
-            <p className="text-primary text-sm font-medium">{event.tags[0].name}</p>
+            <p className="text-primary text-sm font-medium">
+              {event.tags[0].name}
+            </p>
           </div>
         )}
 
@@ -67,7 +78,7 @@ export default function EventCard({ event }: EventCardProps) {
 
         {/* Excerpt */}
         <p className="text-sm font-medium text-gray-200">
-          {limitString(event.excerpt || '', 120)}
+          {limitString(event.excerpt || "", 120)}
         </p>
 
         {/* Location */}
@@ -93,7 +104,9 @@ export default function EventCard({ event }: EventCardProps) {
                   d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
                 />
               </svg>
-              <p className="text-gray-100 font-medium text-sm">{event.event_location}</p>
+              <p className="text-gray-100 font-medium text-sm">
+                {event.event_location}
+              </p>
             </div>
           </div>
         )}
