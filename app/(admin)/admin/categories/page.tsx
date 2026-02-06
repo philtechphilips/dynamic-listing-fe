@@ -24,8 +24,7 @@ import {
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8007/api/v1";
+import { apiFetch, getAuthHeaders, API_URL } from "@/lib/api";
 
 interface Category {
     id: string;
@@ -47,18 +46,10 @@ const CategoriesPage = () => {
     const [searchQuery, setSearchQuery] = useState("");
     const { toast } = useToast();
 
-    const getAuthHeaders = () => {
-        const token = localStorage.getItem("token");
-        return {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-        };
-    };
-
     const fetchCategories = useCallback(async () => {
         try {
             setIsLoading(true);
-            const response = await fetch(`${API_URL}/categories`);
+            const response = await apiFetch(`/categories`);
             if (!response.ok) throw new Error("Failed to fetch categories");
             const data = await response.json();
             setCategories(data.categories || []);
@@ -109,8 +100,8 @@ const CategoriesPage = () => {
         setIsSubmitting(true);
         try {
             const url = editingCategory
-                ? `${API_URL}/admin/categories/${editingCategory.id}`
-                : `${API_URL}/admin/categories`;
+                ? `/admin/categories/${editingCategory.id}`
+                : `/admin/categories`;
 
             const method = editingCategory ? "PUT" : "POST";
 
@@ -119,7 +110,7 @@ const CategoriesPage = () => {
                 description: formData.description,
                 sortOrder: Number(formData.sortOrder) || 0,
             };
-            const response = await fetch(url, {
+            const response = await apiFetch(url, {
                 method,
                 headers: getAuthHeaders(),
                 body: JSON.stringify(payload),
@@ -158,7 +149,7 @@ const CategoriesPage = () => {
         }
 
         try {
-            const response = await fetch(`${API_URL}/admin/categories/${category.id}`, {
+            const response = await apiFetch(`/admin/categories/${category.id}`, {
                 method: "DELETE",
                 headers: getAuthHeaders(),
             });

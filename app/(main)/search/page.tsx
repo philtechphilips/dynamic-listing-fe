@@ -291,9 +291,20 @@ function SearchContent() {
                   )}
                 </div>
                 <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {(activeTab === 'all' ? videoResults.slice(0, 3) : videoResults).map((video) => (
+                  {(activeTab === 'all' ? videoResults.slice(0, 3) : videoResults).map((video: any) => (
                     <div key={video.id}>
-                      <PodcastCard podcast={video} variant="sidebar" />
+                      <PodcastCard
+                        podcast={{
+                          id: video.id,
+                          title: video.title,
+                          slug: video.slug,
+                          featured_image: video.featuredImage || video.featured_image,
+                          published_at: video.createdAt || video.created_at,
+                          video_url: video.video_url,
+                          content: video.excerpt || video.content,
+                        } as any}
+                        variant="sidebar"
+                      />
                     </div>
                   ))}
                 </div>

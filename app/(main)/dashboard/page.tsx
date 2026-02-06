@@ -16,6 +16,7 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { useAuth } from '@/contexts/AuthContext';
 import { formatDistanceToNow } from 'date-fns';
+import { apiFetch, getAuthHeaders } from "@/lib/api";
 
 interface StatCardProps {
     label: string;
@@ -117,10 +118,8 @@ export default function UserDashboardPage() {
             if (!token) return;
 
             try {
-                const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/user/dashboard`, {
-                    headers: {
-                        Authorization: `Bearer ${token}`
-                    }
+                const response = await apiFetch(`/user/dashboard`, {
+                    headers: getAuthHeaders()
                 });
 
                 if (response.ok) {

@@ -28,6 +28,7 @@ import {
     AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { format } from 'date-fns';
+import { apiFetch, getAuthHeaders } from "@/lib/api";
 
 interface Review {
     id: string;
@@ -145,10 +146,8 @@ export default function MyReviewsPage() {
             if (!token) return;
 
             try {
-                const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/user/ratings`, {
-                    headers: {
-                        Authorization: `Bearer ${token}`
-                    }
+                const response = await apiFetch(`/user/ratings`, {
+                    headers: getAuthHeaders()
                 });
 
                 if (response.ok) {
@@ -172,11 +171,9 @@ export default function MyReviewsPage() {
         if (!deleteId) return;
 
         try {
-            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/ratings/${deleteId}`, {
+            const response = await apiFetch(`/ratings/${deleteId}`, {
                 method: 'DELETE',
-                headers: {
-                    Authorization: `Bearer ${token}`
-                }
+                headers: getAuthHeaders()
             });
 
             if (response.ok) {

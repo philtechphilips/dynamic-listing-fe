@@ -14,8 +14,7 @@ import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Search, Loader2, User } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8007";
+import { apiFetch, getAuthHeaders, API_URL } from "@/lib/api";
 
 interface AppUser {
     id: string;
@@ -35,18 +34,10 @@ const AppUsersPage = () => {
     const [searchQuery, setSearchQuery] = useState("");
     const { toast } = useToast();
 
-    const getAuthHeaders = () => {
-        const token = localStorage.getItem("token");
-        return {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-        };
-    };
-
     const fetchUsers = useCallback(async () => {
         try {
             setIsLoading(true);
-            const response = await fetch(`${API_URL}/admin/app-users`, {
+            const response = await apiFetch(`/admin/app-users`, {
                 headers: getAuthHeaders(),
             });
 

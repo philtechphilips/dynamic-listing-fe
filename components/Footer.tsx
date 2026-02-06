@@ -155,7 +155,7 @@ export default function Footer() {
             <ul className="space-y-3">
               <li>
                 <Link
-                  href="/about"
+                  href="/about-us"
                   className="text-sm text-muted-foreground hover:text-foreground transition-colors inline-block"
                 >
                   About Us
@@ -163,7 +163,7 @@ export default function Footer() {
               </li>
               <li>
                 <Link
-                  href="/contact"
+                  href="/contact-us"
                   className="text-sm text-muted-foreground hover:text-foreground transition-colors inline-block"
                 >
                   Contact

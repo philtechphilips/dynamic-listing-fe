@@ -16,6 +16,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useAuth } from "@/contexts/AuthContext";
 import { Loader2, Upload, User, Camera } from "lucide-react";
 import { toast } from "sonner";
+import { apiFetch, getAuthHeaders } from "@/lib/api";
 
 interface ProfileModalProps {
     isOpen: boolean;
@@ -61,11 +62,9 @@ export function ProfileModal({ isOpen, onClose }: ProfileModalProps) {
         formData.append("image", selectedFile);
 
         try {
-            const response = await fetch(`${API_URL}/auth/profile-image`, {
+            const response = await apiFetch(`/auth/profile-image`, {
                 method: "POST",
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
+                headers: getAuthHeaders(true),
                 body: formData,
             });
 

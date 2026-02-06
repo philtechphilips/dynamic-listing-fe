@@ -7,8 +7,7 @@ import { Users, FileText, Newspaper, Grid, Loader2, ArrowUpRight } from "lucide-
 import { Badge } from "@/components/ui/badge";
 import { useAuth } from "@/contexts/AuthContext";
 import Link from "next/link";
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8007";
+import { apiFetch, getAuthHeaders } from "@/lib/api";
 
 interface DashboardStats {
   counts: {
@@ -46,12 +45,8 @@ const AdminDashboard = () => {
   useEffect(() => {
     const fetchStats = async () => {
       try {
-        const token = localStorage.getItem("token");
-        const response = await fetch(`${API_URL}/admin/dashboard-stats`, {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
+        const response = await apiFetch(`/admin/dashboard-stats`, {
+          headers: getAuthHeaders(),
         });
 
         if (response.ok) {

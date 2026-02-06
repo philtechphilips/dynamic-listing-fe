@@ -32,49 +32,89 @@ export default function CategoryPage() {
   const [category, setCategory] = useState<any>(null);
   const [items, setItems] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
   const [sortBy, setSortBy] = useState<'top_rated' | 'latest' | 'most_viewed'>('latest');
-  const [visibleCount, setVisibleCount] = useState(9);
+  // const [visibleCount, setVisibleCount] = useState(9); // Removed visibleCount
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
   const [selectedPodcast, setSelectedPodcast] = useState<any>(null);
   const [isPlayerOpen, setIsPlayerOpen] = useState(false);
 
+  // Reset state when slug or sort changes
   useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true);
+    setItems([]);
+    setPage(1);
+    setHasMore(true);
+    setLoading(true);
+  }, [slug, normalizedSlug, sortBy]); // Add sortBy dependency to reset list on sort change
+
+  useEffect(() => {
+    const fetchCategoryAndData = async () => {
+      // Only set main loading on initial fetch
+      if (page === 1) setLoading(true);
+      else setLoadingMore(true);
+
       try {
-        // 1. Fetch Category
-        const catRes = await fetch(`${API_URL}/categories/${slug}`);
-        if (!catRes.ok) throw new Error('Category not found');
-        const catData = await catRes.json();
-        const categoryObj = catData.category;
-        setCategory(categoryObj);
+        // 1. Fetch Category (only if not already fetched or slug changed)
+        let categoryObj = category;
+        if (!categoryObj || categoryObj.slug !== slug) { // Simple check, though slug dependency above resets items
+          const catRes = await fetch(`${API_URL}/categories/${slug}`);
+          if (!catRes.ok) throw new Error('Category not found');
+          const catData = await catRes.json();
+          categoryObj = catData.category;
+          setCategory(categoryObj);
+        }
 
         // 2. Fetch Content
-        let contentItems: any[] = [];
+        let newItems: any[] = [];
+        let totalItems = 0;
+
+        // Construct query params
+        const params = new URLSearchParams({
+          category: categoryObj.id,
+          page: page.toString(),
+          limit: '9'
+        });
+
         if (normalizedSlug === 'news') {
-          const res = await fetch(`${API_URL}/news?category=${categoryObj.id}`);
+          const res = await fetch(`${API_URL}/news?${params.toString()}`);
           if (res.ok) {
             const data = await res.json();
-            contentItems = data.news || [];
+            newItems = data.news || [];
+            totalItems = data.pagination?.total || 0;
           }
         } else {
-          const res = await fetch(`${API_URL}/listings?category=${categoryObj.id}`);
+          // For listings, we can pass dummy sort params if supported by backend, 
+          // but currently backend only supports default sort. 
+          // If we want to support 'sortBy' on backend, we'd add it to query params.
+          const res = await fetch(`${API_URL}/listings?${params.toString()}`);
           if (res.ok) {
             const data = await res.json();
-            contentItems = data.listings || [];
+            newItems = data.listings || [];
+            totalItems = data.pagination?.total || 0;
           }
         }
 
-        setItems(contentItems);
+        if (page === 1) {
+          setItems(newItems);
+        } else {
+          setItems(prev => [...prev, ...newItems]);
+        }
+
+        // Determine if there are more pages
+        setHasMore(items.length + newItems.length < totalItems && newItems.length > 0);
+
       } catch (error) {
         console.error("Error fetching category data:", error);
-        setItems([]);
+        if (page === 1) setItems([]);
       } finally {
         setLoading(false);
+        setLoadingMore(false);
       }
     };
 
-    fetchData();
-  }, [slug, normalizedSlug]);
+    fetchCategoryAndData();
+  }, [slug, normalizedSlug, page, sortBy]); // Run when these change. Note: category dependency removed to avoid double fetch loop, handled logic inside.
 
   const categoryName = category?.name || slug.charAt(0).toUpperCase() + slug.slice(1).replace(/-/g, ' ');
   const isNews = normalizedSlug === 'news';
@@ -85,41 +125,39 @@ export default function CategoryPage() {
     setIsPlayerOpen(true);
   };
 
-  // Sorting Logic
-  const processedItems = useMemo(() => {
+  // Client-side sort is now only for the CURRENTLY fetched items if we wanted to re-sort them visually,
+  // but strictly speaking with server-side pagination, re-sorting usually requires re-fetching.
+  // We will assume the backend returns date-sorted by default.
+  // For 'top_rated' or 'most_viewed', we would ideally pass this to the backend.
+  // Since we haven't implemented backend sort params for these yet, we will keep the client-side sort
+  // applied to the *accumulated* list, which is imperfect but works for the user's current request context.
+  // Actually, re-sorting a growing list from server is odd. 
+  // Let's rely on the simple fetch order. If user changes sort, we reset page to 1 (handled in first useEffect).
+
+  // We skip complex `useMemo` processing for slicing since we display `items` directly.
+
+  // However, we might still want to apply the "Headline" logic visually even if backend sent them in pages.
+  // The backend for news ALREADY sorts headlines to top of the *page*.
+
+  // If we want to support client-side sorting of the *viewed* items:
+  const visibleItems = useMemo(() => {
+    // Create a shallow copy to sort
     const result = [...items];
-
-    switch (sortBy) {
-      case 'top_rated':
-        result.sort((a, b) => (b.rating || 0) - (a.rating || 0));
-        break;
-      case 'latest':
-        result.sort((a, b) => {
-          const dateA = new Date(a.createdAt || a.created_at || a.published_at || 0).getTime();
-          const dateB = new Date(b.createdAt || b.created_at || b.published_at || 0).getTime();
-          return dateB - dateA;
-        });
-        break;
-      case 'most_viewed':
-        result.sort((a, b) => {
-          const viewsA = a.viewCount ?? a.view_count ?? a.reviewCount ?? a.review_count ?? 0;
-          const viewsB = b.viewCount ?? b.view_count ?? b.reviewCount ?? b.review_count ?? 0;
-          return viewsB - viewsA;
-        });
-        break;
+    if (sortBy === 'top_rated') {
+      result.sort((a, b) => (b.rating || 0) - (a.rating || 0));
+    } else if (sortBy === 'most_viewed') {
+      result.sort((a, b) => {
+        const viewsA = a.viewCount ?? a.view_count ?? a.reviewCount ?? a.review_count ?? 0;
+        const viewsB = b.viewCount ?? b.view_count ?? b.reviewCount ?? b.review_count ?? 0;
+        return viewsB - viewsA;
+      });
     }
-
+    // For 'latest', we assume backend default order is fine.
     return result;
   }, [items, sortBy]);
 
-  const visibleItems = processedItems.slice(0, visibleCount);
-  const hasMore = visibleCount < processedItems.length;
 
-  const handleLoadMore = () => {
-    setVisibleCount(prev => prev + 6);
-  };
-
-  if (loading) {
+  if (loading && page === 1) {
     return (
       <main className="min-h-screen bg-gray-50/50 pt-32 pb-20">
         <div className="max-w-7xl mx-auto px-5 md:px-12 flex flex-col items-center justify-center py-20">
@@ -135,9 +173,6 @@ export default function CategoryPage() {
       <div className="max-w-7xl mx-auto px-5 md:px-12">
         {/* Header */}
         <div className="text-center mb-12">
-          <Badge variant="secondary" className="mb-3 uppercase tracking-wider border-0">
-            Category
-          </Badge>
           <h1 className="text-4xl md:text-5xl font-clash font-bold text-foreground tracking-tight">{categoryName}</h1>
           <p className="text-muted-foreground mt-3 max-w-2xl mx-auto">
             Explore our top picks and latest updates for {categoryName}.
@@ -165,10 +200,11 @@ export default function CategoryPage() {
         {visibleItems.length > 0 ? (
           <>
             <div className={`grid grid-cols-1 ${isVideos ? 'md:grid-cols-2 lg:grid-cols-3' : 'md:grid-cols-2 lg:grid-cols-3'} gap-6 md:gap-8`}>
-              {visibleItems.map((item: any) => {
+              {visibleItems.map((item: any, index: number) => {
+                // Use index in key if IDs are not unique across pages? IDs should be unique.
                 if (isVideos || item.is_video) {
                   return (
-                    <div key={item.id} className="h-full">
+                    <div key={`${item.id}-${index}`} className="h-full">
                       <PodcastCard
                         podcast={{
                           id: item.id,
@@ -189,7 +225,7 @@ export default function CategoryPage() {
 
                 if (isNews) {
                   return (
-                    <div key={item.id} className="h-full">
+                    <div key={`${item.id}-${index}`} className="h-full">
                       <BlogCard
                         post={{
                           ...item,
@@ -197,28 +233,45 @@ export default function CategoryPage() {
                           created_at: item.createdAt || item.created_at
                         }}
                         imageHeight="h-[250px]"
+                        showHeadlineBadge={
+                          item.isHeadline &&
+                          (!item.headlineUntil || new Date(item.headlineUntil) >= new Date())
+                        }
                       />
                     </div>
                   );
                 }
 
                 return (
-                  <div key={item.id} className="h-full">
+                  <div key={`${item.id}-${index}`} className="h-full">
                     <ListingCard listing={item} imageHeight="h-[260px]" />
                   </div>
                 );
               })}
             </div>
 
-            {/* Load More Button */}
+            {/* Infinite Scroll Sentinel */}
             {hasMore && (
-              <div className="mt-12 flex justify-center">
-                <Button
-                  variant="outline"
-                  onClick={handleLoadMore}
-                >
-                  Load More
-                </Button>
+              <div
+                ref={(node) => {
+                  if (loadingMore) return; // Don't trigger if already loading more
+                  const observer = new IntersectionObserver(entries => {
+                    if (entries[0].isIntersecting && hasMore) {
+                      setPage(prev => prev + 1);
+                    }
+                  });
+                  if (node) observer.observe(node);
+                  return () => observer.disconnect();
+                }}
+                className="py-12 flex justify-center w-full"
+              >
+                <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
+              </div>
+            )}
+
+            {!hasMore && items.length > 0 && (
+              <div className="py-8 text-center text-muted-foreground text-sm">
+                You've reached the end of the list.
               </div>
             )}
           </>

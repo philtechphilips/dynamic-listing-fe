@@ -44,9 +44,11 @@ export default function PodcastCard({ podcast, variant = 'sidebar', onPlay }: Po
             <span className="w-1 h-1 rounded-full bg-current" />
             <p>{podcast.reading_time || 30} mins</p>
           </div>
-          <h5 className="font-semibold text-4xl font-clash text-white mb-4">
-            {podcast.title}
-          </h5>
+          <Link href={`/item/${podcast.slug}`} className="block">
+            <h5 className="font-semibold text-4xl font-clash text-white mb-4 hover:underline">
+              {podcast.title}
+            </h5>
+          </Link>
           {podcast.content && (
             <Link
               href={`/item/${podcast.slug}`}
@@ -110,17 +112,11 @@ export default function PodcastCard({ podcast, variant = 'sidebar', onPlay }: Po
             <span className="w-1 h-1 rounded-full bg-current" />
             <p>{podcast.reading_time || 30} mins</p>
           </div>
-          <h5 className="font-semibold text-lg font-clash text-gray-100 mb-4">
-            {podcast.title}
-          </h5>
-          {podcast.content && (
-            <Link
-              href={`/item/${podcast.slug}`}
-              className="mt-4 text-sm font-medium text-gray-100 pb-1 hover-line-effect"
-            >
-              Read about it
-            </Link>
-          )}
+          <Link href={`/item/${podcast.slug}`} className="block">
+            <h5 className="font-semibold text-lg font-clash text-gray-100 mb-4 hover:underline">
+              {podcast.title}
+            </h5>
+          </Link>
         </div>
       </div>
     );
@@ -162,9 +158,11 @@ export default function PodcastCard({ podcast, variant = 'sidebar', onPlay }: Po
           <span className="w-1 h-1 rounded-full bg-current" />
           <p>{podcast.reading_time || 30} mins</p>
         </div>
-        <h5 className="font-semibold text-lg font-clash text-gray-100 mb-4">
-          {podcast.title}
-        </h5>
+        <Link href={`/item/${podcast.slug}`} className="block">
+          <h5 className="font-semibold text-lg font-clash text-gray-100 mb-4 hover:underline">
+            {podcast.title}
+          </h5>
+        </Link>
         {podcast.content && (
           <Link
             href={`/item/${podcast.slug}`}

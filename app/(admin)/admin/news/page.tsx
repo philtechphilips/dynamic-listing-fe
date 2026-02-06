@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from "react";
 import dynamic from "next/dynamic";
 import { Button } from "@/components/ui/button";
 import "react-quill-new/dist/quill.snow.css";
+import { apiFetch, getAuthHeaders, API_URL } from "@/lib/api";
 
 const ReactQuill = dynamic(() => import("react-quill-new"), { ssr: false });
 import {
@@ -29,8 +30,6 @@ import {
 import { Label } from "@/components/ui/label";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useToast } from "@/hooks/use-toast";
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8007/api/v1";
 
 interface NewsItem {
     id: string;
@@ -87,6 +86,11 @@ const NewsPage = () => {
     const [editingItem, setEditingItem] = useState<NewsItem | null>(null);
     const [imageFile, setImageFile] = useState<File | null>(null);
 
+    // Pagination state
+    const [page, setPage] = useState(1);
+    const [limit] = useState(10);
+    const [total, setTotal] = useState(0);
+
     const [formData, setFormData] = useState({
         title: "",
         slug: "",
@@ -104,20 +108,9 @@ const NewsPage = () => {
 
     const { toast } = useToast();
 
-    const getAuthHeaders = (isFormData = false) => {
-        const token = localStorage.getItem("token");
-        const headers: any = {
-            Authorization: `Bearer ${token}`,
-        };
-        if (!isFormData) {
-            headers["Content-Type"] = "application/json";
-        }
-        return headers;
-    };
-
     const fetchCategories = useCallback(async () => {
         try {
-            const response = await fetch(`${API_URL}/categories`);
+            const response = await apiFetch(`/categories`);
             if (!response.ok) throw new Error("Failed to fetch categories");
             const data = await response.json();
             setCategories(data.categories || []);
@@ -129,10 +122,13 @@ const NewsPage = () => {
     const fetchNews = useCallback(async () => {
         try {
             setIsLoading(true);
-            const response = await fetch(`${API_URL}/news`);
+            const response = await apiFetch(`/news?page=${page}&limit=${limit}`);
             if (!response.ok) throw new Error("Failed to fetch news");
             const data = await response.json();
             setNews(data.news || []);
+            if (data.pagination) {
+                setTotal(data.pagination.total);
+            }
         } catch (error) {
             console.error("Error fetching news:", error);
             toast({
@@ -143,7 +139,7 @@ const NewsPage = () => {
         } finally {
             setIsLoading(false);
         }
-    }, [toast]);
+    }, [toast, page, limit]);
 
     useEffect(() => {
         fetchNews();
@@ -213,12 +209,12 @@ const NewsPage = () => {
             }
 
             const url = editingItem
-                ? `${API_URL}/admin/news/${editingItem.id}`
-                : `${API_URL}/admin/news`;
+                ? `/admin/news/${editingItem.id}`
+                : `/admin/news`;
 
             const method = editingItem ? "PUT" : "POST";
 
-            const response = await fetch(url, {
+            const response = await apiFetch(url, {
                 method,
                 headers: getAuthHeaders(true),
                 body: formDataToSend,
@@ -253,7 +249,7 @@ const NewsPage = () => {
         if (!confirm("Are you sure you want to delete this article?")) return;
 
         try {
-            const response = await fetch(`${API_URL}/admin/news/${id}`, {
+            const response = await apiFetch(`/admin/news/${id}`, {
                 method: "DELETE",
                 headers: getAuthHeaders(),
             });
@@ -279,7 +275,7 @@ const NewsPage = () => {
     const handleStatusToggle = async (item: NewsItem) => {
         const newStatus = item.status === "Published" ? "Draft" : "Published";
         try {
-            const response = await fetch(`${API_URL}/admin/news/${item.id}`, {
+            const response = await apiFetch(`/admin/news/${item.id}`, {
                 method: "PUT",
                 headers: getAuthHeaders(),
                 body: JSON.stringify({ status: newStatus }),
@@ -311,7 +307,7 @@ const NewsPage = () => {
 
     const handleSetHeadline = async (item: NewsItem, headlineUntil?: string) => {
         try {
-            const response = await fetch(`${API_URL}/admin/news/${item.id}`, {
+            const response = await apiFetch(`/admin/news/${item.id}`, {
                 method: "PUT",
                 headers: getAuthHeaders(),
                 body: JSON.stringify({
@@ -337,7 +333,7 @@ const NewsPage = () => {
 
     const handleRemoveHeadline = async (item: NewsItem) => {
         try {
-            const response = await fetch(`${API_URL}/admin/news/${item.id}`, {
+            const response = await apiFetch(`/admin/news/${item.id}`, {
                 method: "PUT",
                 headers: getAuthHeaders(),
                 body: JSON.stringify({ isHeadline: false }),
@@ -516,6 +512,32 @@ const NewsPage = () => {
                 </Table>
             </div>
 
+            {/* Pagination Controls */}
+            <div className="flex items-center justify-between">
+                <div className="text-sm text-muted-foreground">
+                    Showing {news.length} of {total} articles
+                </div>
+                <div className="flex items-center space-x-2">
+                    <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setPage(p => Math.max(1, p - 1))}
+                        disabled={page === 1 || isLoading}
+                    >
+                        Previous
+                    </Button>
+                    <div className="text-sm font-medium">Page {page} of {Math.ceil(total / limit) || 1}</div>
+                    <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setPage(p => p + 1)}
+                        disabled={page >= Math.ceil(total / limit) || isLoading}
+                    >
+                        Next
+                    </Button>
+                </div>
+            </div>
+
             <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
                 <DialogContent className="max-w-4xl h-[90vh] flex flex-col p-0 bg-white dark:bg-stone-900 border-stone-200 dark:border-stone-800 overflow-hidden">
                     <DialogHeader className="p-6 pb-0">
@@ -617,10 +639,11 @@ const NewsPage = () => {
                                         <Input
                                             id="featuredImageFile"
                                             type="file"
-                                            accept="image/*"
+                                            accept="image/jpeg,image/png,image/gif,image/webp,image/svg+xml,image/bmp,image/tiff,image/*"
                                             onChange={(e) => setImageFile(e.target.files ? e.target.files[0] : null)}
                                             className="text-black dark:text-white"
                                         />
+                                        <p className="text-xs text-muted-foreground">Accepts any image format. Max 10MB.</p>
                                         {imageFile ? (
                                             <div className="relative w-full h-40 rounded-lg overflow-hidden border">
                                                 <img

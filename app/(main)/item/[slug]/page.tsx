@@ -490,6 +490,53 @@ export default async function UnifiedDetailPage({ params }: { params: Promise<{ 
                     )}
                   </div>
 
+                  {/* Google Map */}
+                  {(item.googleMapUrl || item.google_map_url || item.address) && (() => {
+                    const mapUrl = item.googleMapUrl || item.google_map_url || '';
+                    const isEmbedUrl = mapUrl.includes('/embed') || mapUrl.includes('maps/embed');
+
+                    // For non-embed URLs or if we have an address, construct an embed URL using the address
+                    const address = item.address || item.location || '';
+                    const embedUrl = isEmbedUrl
+                      ? mapUrl
+                      : `https://maps.google.com/maps?q=${encodeURIComponent(address)}&t=&z=15&ie=UTF8&iwloc=&output=embed`;
+
+                    return (
+                      <>
+                        <Separator />
+                        <div className="space-y-3">
+                          <h4 className="font-semibold text-foreground text-sm flex items-center gap-2">
+                            <MapPin className="w-4 h-4 text-primary" />
+                            Location Map
+                          </h4>
+                          <div className="rounded-lg overflow-hidden border border-border/50">
+                            <iframe
+                              src={embedUrl}
+                              width="100%"
+                              height="200"
+                              style={{ border: 0 }}
+                              allowFullScreen
+                              loading="lazy"
+                              referrerPolicy="no-referrer-when-downgrade"
+                              className="w-full"
+                            ></iframe>
+                          </div>
+                          {mapUrl && !isEmbedUrl && (
+                            <a
+                              href={mapUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="flex items-center justify-center gap-2 w-full py-2 text-primary hover:underline text-sm"
+                            >
+                              <Globe className="w-3.5 h-3.5" />
+                              Open in Google Maps
+                            </a>
+                          )}
+                        </div>
+                      </>
+                    );
+                  })()}
+
                   <Separator />
 
                   <Button asChild variant="outline" className="w-full gap-2">

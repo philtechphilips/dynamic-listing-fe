@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Star, Loader2 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
+import { apiFetch, getAuthHeaders } from "@/lib/api";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8007/api/v1";
 
@@ -30,10 +31,8 @@ export default function RatingSystem({ listingId, initialRating = 0, initialRevi
         }
 
         try {
-            const response = await fetch(`${API_URL}/ratings/${listingId}`, {
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                }
+            const response = await apiFetch(`/ratings/${listingId}`, {
+                headers: getAuthHeaders()
             });
             if (response.ok) {
                 const data = await response.json();
@@ -60,12 +59,9 @@ export default function RatingSystem({ listingId, initialRating = 0, initialRevi
 
         setIsSubmitting(true);
         try {
-            const response = await fetch(`${API_URL}/ratings`, {
+            const response = await apiFetch(`/ratings`, {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                },
+                headers: getAuthHeaders(),
                 body: JSON.stringify({
                     listingId,
                     value
@@ -128,8 +124,8 @@ export default function RatingSystem({ listingId, initialRating = 0, initialRevi
                             >
                                 <Star
                                     className={`w-7 h-7 transition-colors ${(hoverRating || rating) >= star
-                                            ? 'text-yellow-400 fill-yellow-400'
-                                            : 'text-muted-foreground/20'
+                                        ? 'text-yellow-400 fill-yellow-400'
+                                        : 'text-muted-foreground/20'
                                         }`}
                                 />
                             </button>

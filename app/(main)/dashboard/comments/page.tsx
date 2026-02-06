@@ -35,6 +35,7 @@ import {
     AlertDialogHeader,
     AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { apiFetch, getAuthHeaders } from "@/lib/api";
 
 interface Comment {
     id: string;
@@ -157,10 +158,8 @@ export default function MyCommentsPage() {
             if (!token) return;
 
             try {
-                const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/user/comments`, {
-                    headers: {
-                        Authorization: `Bearer ${token}`
-                    }
+                const response = await apiFetch(`/user/comments`, {
+                    headers: getAuthHeaders()
                 });
 
                 if (response.ok) {
@@ -183,11 +182,9 @@ export default function MyCommentsPage() {
         if (!deleteId) return;
 
         try {
-            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/comments/${deleteId}`, {
+            const response = await apiFetch(`/comments/${deleteId}`, {
                 method: 'DELETE',
-                headers: {
-                    Authorization: `Bearer ${token}`
-                }
+                headers: getAuthHeaders()
             });
 
             if (response.ok) {

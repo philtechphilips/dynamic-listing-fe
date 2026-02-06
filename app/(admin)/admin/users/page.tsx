@@ -25,9 +25,7 @@ import {
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
-
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8007";
+import { apiFetch, getAuthHeaders, API_URL } from "@/lib/api";
 
 interface AdminUser {
   id: string;
@@ -52,19 +50,10 @@ const UsersPage = () => {
   const { toast } = useToast();
   const { user: currentUser } = useAuth();
 
-
-  const getAuthHeaders = () => {
-    const token = localStorage.getItem("token");
-    return {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
-    };
-  };
-
   const fetchUsers = useCallback(async () => {
     try {
       setIsLoading(true);
-      const response = await fetch(`${API_URL}/admin/users`, {
+      const response = await apiFetch(`/admin/users`, {
         headers: getAuthHeaders(),
       });
 
@@ -114,12 +103,12 @@ const UsersPage = () => {
     setIsSubmitting(true);
     try {
       const url = editingUser
-        ? `${API_URL}/admin/users/${editingUser.id}`
-        : `${API_URL}/admin/users`;
+        ? `/admin/users/${editingUser.id}`
+        : `/admin/users`;
 
       const method = editingUser ? "PUT" : "POST";
 
-      const response = await fetch(url, {
+      const response = await apiFetch(url, {
         method,
         headers: getAuthHeaders(),
         body: JSON.stringify(formData),
@@ -158,7 +147,7 @@ const UsersPage = () => {
     }
 
     try {
-      const response = await fetch(`${API_URL}/admin/users/${user.id}`, {
+      const response = await apiFetch(`/admin/users/${user.id}`, {
         method: "DELETE",
         headers: getAuthHeaders(),
       });
@@ -187,8 +176,8 @@ const UsersPage = () => {
 
   const handleResendInvitation = async (user: AdminUser) => {
     try {
-      const response = await fetch(
-        `${API_URL}/admin/users/${user.id}/resend-invitation`,
+      const response = await apiFetch(
+        `/admin/users/${user.id}/resend-invitation`,
         {
           method: "POST",
           headers: getAuthHeaders(),

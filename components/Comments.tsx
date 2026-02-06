@@ -7,6 +7,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { MessageSquare, Loader2 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import Link from 'next/link';
+import { apiFetch, getAuthHeaders } from "@/lib/api";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8007/api/v1";
 
@@ -61,12 +62,9 @@ export default function Comments({ listingId, newsId }: CommentsProps) {
         setIsSubmitting(true);
 
         try {
-            const response = await fetch(`${API_URL}/comments`, {
+            const response = await apiFetch(`/comments`, {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                },
+                headers: getAuthHeaders(),
                 body: JSON.stringify({
                     content: newComment,
                     listingId,

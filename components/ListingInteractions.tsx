@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { Share2, Star, Loader2 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
+import { apiFetch, getAuthHeaders } from "@/lib/api";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8007/api/v1";
 
@@ -34,10 +35,8 @@ export default function ListingInteractions({
       if (!isAuthenticated || !listingId) return;
 
       try {
-        const response = await fetch(`${API_URL}/ratings/${listingId}`, {
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }
+        const response = await apiFetch(`/ratings/${listingId}`, {
+          headers: getAuthHeaders()
         });
         if (response.ok) {
           const data = await response.json();
@@ -66,12 +65,9 @@ export default function ListingInteractions({
 
     setIsSubmitting(true);
     try {
-      const response = await fetch(`${API_URL}/ratings`, {
+      const response = await apiFetch(`/ratings`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
+        headers: getAuthHeaders(),
         body: JSON.stringify({
           listingId,
           value: rating
