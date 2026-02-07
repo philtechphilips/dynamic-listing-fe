@@ -56,9 +56,18 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
+import styles from "./item-content.module.css";
 
 /** Base API URL for fetching listing data */
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
+
+/** Body HTML for display: content from DB is raw HTML (WYSIWYG); excerpt/fallback get newlines as <br />. */
+function getBodyHtml(content: string | null | undefined, excerpt: string | null | undefined, fallback: string): string {
+  const raw = content || excerpt || fallback;
+  if (!raw) return "";
+  /* Always replace newlines with <br /> so multiple enters in the editor are preserved (HTML collapses \n between tags). */
+  return raw.replace(/\n/g, "<br />");
+}
 
 // Helper types
 type ContentItem = Listing | Post | Podcast | Resource | Event;
@@ -314,6 +323,12 @@ export default async function UnifiedDetailPage({
   // @ts-ignore
   const bodyContent =
     item.content || item.excerpt || "No description available.";
+  /** Raw HTML from DB (WYSIWYG) when item.content is set; else plain text with newlines as <br /> */
+  const bodyHtml = getBodyHtml(
+    item.content,
+    item.excerpt,
+    "No description available.",
+  );
   // @ts-ignore
   const categoryName =
     item.category?.name || item.category_obj?.name || item.category || type;
@@ -380,13 +395,12 @@ export default async function UnifiedDetailPage({
                   <h2 className="text-2xl font-clash font-bold text-foreground mb-4">
                     About
                   </h2>
-                  <div className="prose max-w-none text-muted-foreground leading-relaxed break-words overflow-hidden">
-                    <div
-                      dangerouslySetInnerHTML={{
-                        __html: bodyContent.replace(/\n/g, "<br />"),
-                      }}
-                    />
-                  </div>
+                  <div
+                    className={`${styles.wrapper} max-w-none text-muted-foreground overflow-hidden`}
+                    dangerouslySetInnerHTML={{
+                      __html: bodyHtml,
+                    }}
+                  />
                 </CardContent>
               </Card>
 
@@ -749,13 +763,12 @@ export default async function UnifiedDetailPage({
             {/* Content */}
             <Card className="border-0 shadow-sm overflow-hidden">
               <CardContent className="p-6 md:p-8">
-                <div className="prose prose-lg max-w-none text-muted-foreground leading-relaxed break-words">
-                  <div
-                    dangerouslySetInnerHTML={{
-                      __html: bodyContent.replace(/\n/g, "<br />"),
-                    }}
-                  />
-                </div>
+                <div
+                  className={`${styles.wrapper} text-base md:text-lg max-w-none text-muted-foreground`}
+                  dangerouslySetInnerHTML={{
+                    __html: bodyHtml,
+                  }}
+                />
               </CardContent>
             </Card>
 
