@@ -101,7 +101,7 @@ const findItemBySlug = async (
       const data = await listingRes.json();
       if (data.listing) return { item: data.listing, type: "listing" };
     }
-  } catch (e) {}
+  } catch (e) { }
 
   // 2. Try fetching from API News
   try {
@@ -112,7 +112,7 @@ const findItemBySlug = async (
       const data = await newsRes.json();
       if (data.news) return { item: data.news, type: "post" };
     }
-  } catch (e) {}
+  } catch (e) { }
 
   // 3. Check mock listings
   const allListings = [
@@ -210,7 +210,7 @@ const getRelatedContent = async (
         if (data.news) apiContent = [...apiContent, ...data.news];
       }
     }
-  } catch (e) {}
+  } catch (e) { }
 
   // 2. Filter and return
   return apiContent
@@ -869,14 +869,25 @@ export default async function UnifiedDetailPage({
 
               return (
                 <Card className="mt-10 border-0 shadow-sm overflow-hidden">
-                  <div className="aspect-video bg-muted">
+                  {/* iOS-compatible responsive video container using padding-bottom technique */}
+                  <div
+                    className="relative w-full bg-muted overflow-hidden"
+                    style={{ paddingBottom: '56.25%' }} /* 16:9 aspect ratio */
+                  >
                     <iframe
-                      src={`https://www.youtube.com/embed/${videoId}`}
+                      src={`https://www.youtube.com/embed/${videoId}?playsinline=1`}
                       title={title}
                       frameBorder="0"
-                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                       allowFullScreen
-                      className="w-full h-full min-h-[400px]"
+                      className="absolute top-0 left-0 w-full h-full border-0"
+                      style={{
+                        position: 'absolute',
+                        top: 0,
+                        left: 0,
+                        width: '100%',
+                        height: '100%',
+                      }}
                     ></iframe>
                   </div>
                 </Card>

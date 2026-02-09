@@ -71,13 +71,23 @@ export default function PodcastPlayerModal({
           {podcast.title}
         </h3>
 
-        {/* Video Player */}
-        <div className="aspect-video bg-black rounded-lg overflow-hidden">
+        {/* Video Player - iOS-compatible responsive container */}
+        <div
+          className="relative w-full bg-black rounded-lg overflow-hidden"
+          style={{ paddingBottom: '56.25%' }} /* 16:9 aspect ratio */
+        >
           {podcast.video_url && (
             <iframe
-              src={getEmbedUrl(podcast.video_url)}
-              className="w-full h-full"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              src={getEmbedUrl(podcast.video_url) + '&playsinline=1'}
+              className="absolute top-0 left-0 w-full h-full border-0"
+              style={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                width: '100%',
+                height: '100%',
+              }}
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
               allowFullScreen
               title={podcast.title}
             />

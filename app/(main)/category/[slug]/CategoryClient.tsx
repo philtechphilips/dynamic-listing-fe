@@ -85,6 +85,7 @@ export default function CategoryClient({
           category: category.id,
           page: page.toString(),
           limit: "9",
+          status: "Published",
         });
 
         if (normalizedSlug === "news") {

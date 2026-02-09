@@ -100,14 +100,14 @@ export default function PodcastCard({
             className="object-cover w-full h-full"
           />
 
-          {/* Gradient Overlay - visible on hover */}
-          <div className="absolute inset-0 gradient-overlay opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+          {/* Gradient Overlay - visible on mobile, hidden on desktop until hover */}
+          <div className="absolute inset-0 gradient-overlay md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-300" />
 
-          {/* Play Button */}
+          {/* Play Button - visible on mobile, hidden on desktop until hover */}
           {podcast.video_url && (
             <button
               onClick={handlePlay}
-              className="bg-gray-100/50 w-20 h-20 rounded-full flex items-center justify-center absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 cursor-pointer hover:bg-opacity-70"
+              className="bg-gray-100/50 w-20 h-20 rounded-full flex items-center justify-center absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 md:opacity-0 md:group-hover:opacity-100 transition-opacity duration-300 cursor-pointer hover:bg-opacity-70"
               aria-label={`Play podcast: ${podcast.title}`}
             >
               <svg

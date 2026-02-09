@@ -292,6 +292,13 @@ export default function Home() {
           </section>
         );
       })}
+
+      {/* Podcast/Video Player Modal */}
+      <PodcastPlayerModal
+        podcast={selectedPodcast}
+        isOpen={isPodcastModalOpen}
+        onClose={closePodcastModal}
+      />
     </main>
   );
 }
