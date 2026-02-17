@@ -74,7 +74,16 @@ export default function Comments({ listingId, newsId }: CommentsProps) {
 
       if (response.ok) {
         const data = await response.json();
-        setComments([data.comment, ...comments]);
+        // Ensure the comment has proper user data from auth context
+        const newCommentData = {
+          ...data.comment,
+          user: data.comment.user || {
+            id: user?.id || "",
+            name: user?.name || "Anonymous",
+            image: user?.image,
+          },
+        };
+        setComments([newCommentData, ...comments]);
         setNewComment("");
       }
     } catch (error) {
@@ -98,102 +107,138 @@ export default function Comments({ listingId, newsId }: CommentsProps) {
   return (
     <div
       id="comments"
-      className="mt-12 space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700"
+      className="mt-12 space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700"
     >
-      <div className="flex items-center gap-2 border-b border-border/40 pb-4">
-        <MessageSquare className="w-5 h-5 text-primary" />
-        <h2 className="text-2xl font-clash font-semibold text-foreground">
-          Comments ({comments.length})
+      <div className="flex items-center gap-3">
+        <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+          <MessageSquare className="w-5 h-5 text-primary" />
+        </div>
+        <h2 className="text-2xl md:text-3xl font-clash font-bold text-foreground">
+          Comments
+          <span className="text-lg text-muted-foreground font-normal ml-2">
+            ({comments.length})
+          </span>
         </h2>
       </div>
 
       {/* Comment Form */}
       {isAuthenticated ? (
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="flex gap-4">
-            <Avatar className="w-10 h-10">
-              <AvatarImage src={user?.image} alt={user?.name || "User"} />
-              <AvatarFallback className="bg-primary/10 text-primary font-semibold">
-                {user?.name?.charAt(0) || "U"}
-              </AvatarFallback>
-            </Avatar>
-            <div className="flex-1 space-y-4">
-              <div className="space-y-3">
+        <div className="bg-card border border-border/50 rounded-2xl p-6 shadow-sm">
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="flex gap-4">
+              <Avatar className="w-11 h-11 border-2 border-primary/20">
+                <AvatarImage src={user?.image} alt={user?.name || "User"} />
+                <AvatarFallback className="bg-primary text-primary-foreground font-bold text-lg">
+                  {user?.name?.charAt(0)?.toUpperCase() || "U"}
+                </AvatarFallback>
+              </Avatar>
+              <div className="flex-1 space-y-4">
                 <Textarea
                   placeholder="Share your thoughts..."
                   value={newComment}
                   onChange={(e) => setNewComment(e.target.value)}
-                  className="min-h-[100px] resize-none border-0 bg-muted focus:bg-background focus:ring-2 focus:ring-primary/20 rounded-xl transition-all"
+                  className="min-h-[120px] resize-none border-border/50 bg-background focus:border-primary/50 focus:ring-2 focus:ring-primary/10 rounded-xl transition-all text-base"
                 />
-                <div className="flex justify-end">
+                <div className="flex justify-between items-center">
+                  <p className="text-xs text-muted-foreground">
+                    {newComment.length > 0 && `${newComment.length} characters`}
+                  </p>
                   <Button
                     type="submit"
                     disabled={isSubmitting || !newComment.trim()}
-                    className="rounded-full px-6 py-2.5 h-auto flex items-center gap-2.5 group text-white shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/30 transition-all duration-300 hover:scale-105 disabled:opacity-50 disabled:hover:scale-100 disabled:shadow-md"
+                    className="rounded-full px-8 py-2.5 h-auto font-semibold text-white shadow-lg shadow-primary/20 hover:shadow-xl hover:shadow-primary/30 transition-all duration-300 hover:scale-105 disabled:opacity-50 disabled:hover:scale-100"
                   >
                     {isSubmitting ? (
-                      <span className="flex items-center gap-2">
-                        <Loader2 className="w-4 h-4 animate-spin" />
-                        <span className="font-semibold">Posting...</span>
-                      </span>
+                      <>
+                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                        Posting...
+                      </>
                     ) : (
-                      <span className="font-semibold">Post Comment</span>
+                      "Post Comment"
                     )}
                   </Button>
                 </div>
               </div>
             </div>
-          </div>
-        </form>
+          </form>
+        </div>
       ) : (
-        <div className="bg-muted/30 p-6 rounded-2xl text-center border border-dashed border-border/60">
-          <p className="text-muted-foreground mb-4">
-            Please sign in to join the conversation.
+        <div className="bg-gradient-to-br from-muted/50 to-muted/30 p-8 rounded-2xl text-center border border-border/40">
+          <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-4">
+            <MessageSquare className="w-8 h-8 text-primary" />
+          </div>
+          <h3 className="text-lg font-semibold text-foreground mb-2">
+            Join the Conversation
+          </h3>
+          <p className="text-muted-foreground mb-5 text-sm">
+            Please sign in to share your thoughts and engage with the community.
           </p>
-          <Button asChild variant="outline" className="rounded-full px-8">
-            <Link href="/login">Sign In</Link>
+          <Button asChild className="rounded-full px-8 shadow-lg shadow-primary/20">
+            <Link href="/login">Sign In to Comment</Link>
           </Button>
         </div>
       )}
 
       {/* Comments List */}
       {isLoading ? (
-        <div className="flex justify-center py-12">
-          <Loader2 className="w-8 h-8 text-primary animate-spin" />
+        <div className="flex flex-col items-center justify-center py-16">
+          <Loader2 className="w-8 h-8 text-primary animate-spin mb-3" />
+          <p className="text-sm text-muted-foreground">Loading comments...</p>
         </div>
       ) : (
-        <div className="space-y-6 pt-4">
+        <div className="space-y-4">
           {comments.length > 0 ? (
-            comments.map((comment) => (
-              <div key={comment.id} className="flex gap-4 group">
-                <Avatar className="w-10 h-10">
-                  <AvatarImage
-                    src={comment.user.image}
-                    alt={comment.user.name}
-                  />
-                  <AvatarFallback className="bg-muted text-muted-foreground font-medium">
-                    {comment.user.name.charAt(0)}
-                  </AvatarFallback>
-                </Avatar>
-                <div className="flex-1 bg-muted/30 p-4 rounded-2xl group-hover:bg-muted/50 transition-colors">
-                  <div className="flex items-center justify-between mb-2">
-                    <h4 className="font-semibold text-foreground">
-                      {comment.user.name}
-                    </h4>
-                    <span className="text-xs text-muted-foreground font-medium">
-                      {formatDate(comment.createdAt)}
-                    </span>
-                  </div>
-                  <p className="text-muted-foreground leading-relaxed text-sm md:text-base">
-                    {comment.content}
-                  </p>
-                </div>
+            <>
+              <div className="flex items-center gap-2 mb-2">
+                <div className="h-px bg-border flex-1" />
+                <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
+                  {comments.length} {comments.length === 1 ? "Comment" : "Comments"}
+                </span>
+                <div className="h-px bg-border flex-1" />
               </div>
-            ))
+              {comments.map((comment, index) => (
+                <div
+                  key={comment.id}
+                  className="flex gap-4 group animate-in fade-in slide-in-from-bottom-2"
+                  style={{ animationDelay: `${index * 50}ms` }}
+                >
+                  <Avatar className="w-11 h-11 border-2 border-border/50 ring-2 ring-background">
+                    <AvatarImage
+                      src={comment.user.image}
+                      alt={comment.user.name}
+                    />
+                    <AvatarFallback className="bg-gradient-to-br from-primary/20 to-primary/10 text-primary font-bold text-base">
+                      {comment.user?.name?.charAt(0)?.toUpperCase() || "U"}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div className="flex-1 bg-card border border-border/50 p-5 rounded-2xl group-hover:border-border group-hover:shadow-sm transition-all duration-200">
+                    <div className="flex items-start justify-between gap-3 mb-3">
+                      <div>
+                        <h4 className="font-bold text-foreground text-base break-words">
+                          {comment.user?.name || "Anonymous"}
+                        </h4>
+                        <span className="text-xs text-muted-foreground/80 font-medium">
+                          {formatDate(comment.createdAt)}
+                        </span>
+                      </div>
+                    </div>
+                    <p className="text-foreground/90 leading-relaxed text-[15px] break-words whitespace-pre-wrap">
+                      {comment.content}
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </>
           ) : (
-            <div className="text-center py-8">
-              <p className="text-muted-foreground italic">
-                No comments yet. Be the first to share your thoughts!
+            <div className="text-center py-16 bg-muted/30 rounded-2xl border border-dashed border-border/50">
+              <div className="w-16 h-16 rounded-full bg-muted flex items-center justify-center mx-auto mb-4">
+                <MessageSquare className="w-8 h-8 text-muted-foreground/50" />
+              </div>
+              <h3 className="text-base font-semibold text-foreground mb-1">
+                No comments yet
+              </h3>
+              <p className="text-sm text-muted-foreground">
+                Be the first to share your thoughts!
               </p>
             </div>
           )}
