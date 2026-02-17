@@ -19,14 +19,11 @@
 
 "use client";
 
-import { useState, useEffect, useCallback, useMemo } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
-import dynamic from "next/dynamic";
 import { Button } from "@/components/ui/button";
-import "react-quill-new/dist/quill.snow.css";
 import { apiFetch, apiDelete, getAuthHeaders, API_URL } from "@/lib/api";
-
-const ReactQuill = dynamic(() => import("react-quill-new"), { ssr: false });
+import { RichTextEditor } from "@/components/RichTextEditor";
 
 import {
   Table,
@@ -94,26 +91,6 @@ interface Listing {
   is_video?: boolean;
   video_url?: string;
 }
-
-const QUILL_MODULES = {
-  toolbar: [
-    [{ header: [1, 2, 3, false] }],
-    ["bold", "italic", "underline", "strike"],
-    [{ list: "ordered" }, { list: "bullet" }],
-    ["link", "clean"],
-  ],
-};
-
-const QUILL_FORMATS = [
-  "header",
-  "bold",
-  "italic",
-  "underline",
-  "strike",
-  "list",
-  "bullet",
-  "link",
-];
 
 const ListingsPage = () => {
   const [listings, setListings] = useState<Listing[]>([]);
@@ -945,15 +922,13 @@ const ListingsPage = () => {
                     Full Content (Detail Page)
                   </Label>
                   <div className="bg-white dark:bg-stone-800 text-black dark:text-white rounded-md overflow-hidden">
-                    <ReactQuill
-                      theme="snow"
+                    <RichTextEditor
                       value={formData.content}
                       onChange={(val) =>
                         setFormData({ ...formData, content: val })
                       }
-                      modules={QUILL_MODULES}
-                      formats={QUILL_FORMATS}
-                      className="h-[200px]"
+                      height={200}
+                      className="[&_.tox-tinymce]:rounded-md [&_.tox]:border-stone-200 [&_.tox]:dark:border-stone-700"
                     />
                   </div>
                 </div>

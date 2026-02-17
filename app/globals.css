@@ -166,18 +166,51 @@
   --color-chart-5: hsl(var(--chart-5));
 }
 
-/* WYSIWYG / rich text content from DB – spacing so content isn’t jampacked */
+/* ==========================================================================
+   WYSIWYG / rich text content from DB
+   Must match TinyMCE content_style (see RichTextEditor.tsx) so "what you see
+   in the editor" = "what you see on the front-end".
+   ========================================================================== */
+
 .rich-text {
-  line-height: 1.75;
-  word-wrap: break-word;
+  font-family: var(--font-lato), var(--font-geom), sans-serif;
+  font-size: 1rem;
+  line-height: 1.8;
+  color: hsl(var(--foreground));
+
+  /* word-break: normal — only break between words, never mid-character.
+     overflow-wrap: break-word — safety net for truly long unbreakable strings
+     (e.g. URLs). Unlike 'anywhere', 'break-word' does NOT affect min-content
+     sizing, so grid/flex layouts won't shrink this container and force
+     unnecessary word breaks. */
+  word-break: normal;
+  overflow-wrap: break-word;
+  white-space: normal;
+
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
 }
-.rich-text p {
-  margin: 0 0 0.75em;
+
+/* ---- Paragraphs ---- */
+/* Only apply default margins when element has NO inline style attribute,
+   so TinyMCE inline styles (font-size, spacing, etc.) are fully preserved. */
+.rich-text p:not([style]) {
+  margin: 0 0 1em;
+  font-size: inherit;
+  line-height: inherit;
+}
+/* Elements WITH inline style still inherit base values unless overridden */
+.rich-text p[style] {
+  line-height: inherit;
 }
 .rich-text p:last-child {
   margin-bottom: 0;
 }
-.rich-text h1, .rich-text h2, .rich-text h3, .rich-text h4, .rich-text h5, .rich-text h6 {
+
+/* ---- Headings ---- */
+.rich-text h1:not([style]), .rich-text h2:not([style]), .rich-text h3:not([style]),
+.rich-text h4:not([style]), .rich-text h5:not([style]), .rich-text h6:not([style]) {
   margin-top: 1.25em;
   margin-bottom: 0.5em;
   font-weight: 600;
@@ -187,36 +220,142 @@
 .rich-text h4:first-child, .rich-text h5:first-child, .rich-text h6:first-child {
   margin-top: 0;
 }
-.rich-text ul, .rich-text ol {
+.rich-text h1 { font-size: 2em; }
+.rich-text h2 { font-size: 1.5em; }
+.rich-text h3 { font-size: 1.25em; }
+.rich-text h4 { font-size: 1.125em; }
+.rich-text h5 { font-size: 1em; }
+.rich-text h6 { font-size: 0.875em; }
+
+/* ---- Lists ---- */
+.rich-text ul:not([style]) {
   margin: 0.75em 0;
-  padding-left: 1.5em;
+  padding-left: 1.75em;
+  list-style-type: disc;
 }
-.rich-text li {
-  margin: 0.25em 0;
+.rich-text ol:not([style]) {
+  margin: 0.75em 0;
+  padding-left: 1.75em;
+  list-style-type: decimal;
 }
+/* Lists WITH inline style – still ensure bullets/numbers show */
+.rich-text ul[style] { list-style-type: disc; }
+.rich-text ol[style] { list-style-type: decimal; }
+
+.rich-text li:not([style]) {
+  margin: 0.35em 0;
+  line-height: 1.7;
+}
+.rich-text li[style] {
+  line-height: 1.7;
+}
+/* Nested lists */
 .rich-text ul ul, .rich-text ol ol, .rich-text ul ol, .rich-text ol ul {
   margin: 0.25em 0;
 }
-.rich-text blockquote {
-  margin: 0.75em 0;
-  padding-left: 1em;
+.rich-text ul ul { list-style-type: circle; }
+.rich-text ul ul ul { list-style-type: square; }
+
+/* ---- Blockquote ---- */
+.rich-text blockquote:not([style]) {
+  margin: 1em 0;
+  padding: 0.75em 1.25em;
   border-left: 4px solid hsl(var(--border));
   color: hsl(var(--muted-foreground));
+  font-style: italic;
+  background: hsl(var(--muted) / 0.3);
+  border-radius: 0 0.25rem 0.25rem 0;
 }
+
+/* ---- Horizontal rule ---- */
 .rich-text hr {
-  margin: 1.25em 0;
+  margin: 1.5em 0;
   border: 0;
   border-top: 1px solid hsl(var(--border));
 }
+
+/* ---- Inline elements ---- */
 .rich-text a {
   color: hsl(var(--primary));
   text-decoration: underline;
+  word-break: break-all; /* only URLs should break mid-"word" */
 }
-.rich-text strong {
-  font-weight: 600;
+.rich-text strong { font-weight: 700; }
+.rich-text em { font-style: italic; }
+.rich-text u { text-decoration: underline; }
+.rich-text s, .rich-text strike, .rich-text del { text-decoration: line-through; }
+.rich-text sub { vertical-align: sub; font-size: 0.8em; }
+.rich-text sup { vertical-align: super; font-size: 0.8em; }
+
+/* Preserve any inline font-size from TinyMCE <span style="font-size: …"> */
+.rich-text span[style] {
+  line-height: inherit;
 }
-.rich-text img {
+
+/* ---- Images ---- */
+.rich-text img:not([style]) {
   max-width: 100%;
   height: auto;
-  margin: 0.5em 0;
+  margin: 0.75em 0;
+  border-radius: 0.375rem;
+}
+.rich-text img[style] {
+  max-width: 100%;
+  height: auto;
+}
+
+/* ---- Tables ---- */
+.rich-text table {
+  max-width: 100%;
+  width: 100%;
+  table-layout: fixed;
+  border-collapse: collapse;
+  margin: 1em 0;
+}
+.rich-text table td,
+.rich-text table th {
+  padding: 0.5em 0.75em;
+  border: 1px solid hsl(var(--border));
+  word-break: normal;
+  overflow-wrap: break-word;
+}
+.rich-text table th {
+  font-weight: 600;
+  background: hsl(var(--muted) / 0.5);
+}
+
+/* ---- Code blocks ---- */
+.rich-text pre,
+.rich-text code {
+  max-width: 100%;
+  white-space: pre-wrap;
+  word-break: normal;
+  overflow-wrap: break-word;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.9em;
+}
+.rich-text pre {
+  background: hsl(var(--muted));
+  padding: 1em;
+  border-radius: 0.375rem;
+  margin: 1em 0;
+  overflow-x: auto;
+}
+.rich-text code {
+  background: hsl(var(--muted) / 0.5);
+  padding: 0.15em 0.35em;
+  border-radius: 0.25rem;
+}
+/* Don't double-style code inside pre */
+.rich-text pre code {
+  background: none;
+  padding: 0;
+  border-radius: 0;
+}
+
+/* ---- Spacing for consecutive <br> (editor "Enter" key) ---- */
+.rich-text br {
+  content: "";
+  display: block;
+  margin-top: 0.5em;
 }

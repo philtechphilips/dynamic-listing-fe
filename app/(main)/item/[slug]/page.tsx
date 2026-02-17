@@ -61,11 +61,25 @@ import styles from "./item-content.module.css";
 /** Base API URL for fetching listing data */
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
-/** Body HTML for display: content from DB is raw HTML (WYSIWYG); excerpt/fallback get newlines as <br />. */
-function getBodyHtml(content: string | null | undefined, excerpt: string | null | undefined, fallback: string): string {
-  const raw = content || excerpt || fallback;
+/**
+ * Body HTML for display.
+ * - `content` from DB is raw HTML produced by TinyMCE (WYSIWYG).  Its \n chars
+ *   are just source formatting between tags – we must NOT convert them to <br />.
+ * - `excerpt` / `fallback` are plain text: convert \n → <br /> so line breaks show.
+ */
+function getBodyHtml(
+  content: string | null | undefined,
+  excerpt: string | null | undefined,
+  fallback: string,
+): string {
+  // Prefer rich content from WYSIWYG editor
+  if (content) {
+    // Content is already HTML; return as-is (don't inject <br /> between tags)
+    return content;
+  }
+  // Fall back to excerpt or default – plain text, so convert newlines
+  const raw = excerpt || fallback;
   if (!raw) return "";
-  /* Always replace newlines with <br /> so multiple enters in the editor are preserved (HTML collapses \n between tags). */
   return raw.replace(/\n/g, "<br />");
 }
 
@@ -396,7 +410,7 @@ export default async function UnifiedDetailPage({
                     About
                   </h2>
                   <div
-                    className={`${styles.wrapper} max-w-none text-muted-foreground overflow-hidden`}
+                    className="rich-text break-words overflow-hidden"
                     dangerouslySetInnerHTML={{
                       __html: bodyHtml,
                     }}
@@ -764,7 +778,7 @@ export default async function UnifiedDetailPage({
             <Card className="border-0 shadow-sm overflow-hidden">
               <CardContent className="p-6 md:p-8">
                 <div
-                  className={`${styles.wrapper} text-base md:text-lg max-w-none text-muted-foreground`}
+                  className="rich-text break-words overflow-hidden"
                   dangerouslySetInnerHTML={{
                     __html: bodyHtml,
                   }}

@@ -20,12 +20,9 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import dynamic from "next/dynamic";
 import { Button } from "@/components/ui/button";
-import "react-quill-new/dist/quill.snow.css";
 import { apiFetch, getAuthHeaders, API_URL } from "@/lib/api";
-
-const ReactQuill = dynamic(() => import("react-quill-new"), { ssr: false });
+import { RichTextEditor } from "@/components/RichTextEditor";
 import {
   Table,
   TableBody,
@@ -82,26 +79,6 @@ interface NewsItem {
   headlineUntil?: string | null;
   createdAt: string;
 }
-
-const QUILL_MODULES = {
-  toolbar: [
-    [{ header: [1, 2, 3, false] }],
-    ["bold", "italic", "underline", "strike"],
-    [{ list: "ordered" }, { list: "bullet" }],
-    ["link", "clean"],
-  ],
-};
-
-const QUILL_FORMATS = [
-  "header",
-  "bold",
-  "italic",
-  "underline",
-  "strike",
-  "list",
-  "bullet",
-  "link",
-];
 
 interface Category {
   id: string;
@@ -793,15 +770,13 @@ const NewsPage = () => {
                 </h3>
                 <div className="grid gap-2 min-h-[300px] mb-12">
                   <div className="bg-white dark:bg-stone-800 text-black dark:text-white rounded-md overflow-hidden border">
-                    <ReactQuill
-                      theme="snow"
+                    <RichTextEditor
                       value={formData.content}
                       onChange={(val) =>
                         setFormData({ ...formData, content: val })
                       }
-                      modules={QUILL_MODULES}
-                      formats={QUILL_FORMATS}
-                      className="h-[250px]"
+                      height={250}
+                      className="[&_.tox-tinymce]:rounded-md [&_.tox]:border-stone-200 [&_.tox]:dark:border-stone-700"
                     />
                   </div>
                 </div>
